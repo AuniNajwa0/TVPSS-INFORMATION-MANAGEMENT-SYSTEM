@@ -7,15 +7,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
-@WebServlet("/ApplicationController")
-public class ApplicationController extends HttpServlet {
+/**
+ * Servlet implementation class EquipmentController
+ */
+@WebServlet("/EquipmentController")
+public class EquipmentController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public ApplicationController() {
+    public EquipmentController() {
         super();
         // TODO Auto-generated constructor stub
     }
