@@ -1,0 +1,60 @@
+/* Theme Variables */
+:root {
+    /* Primary Colors */
+    --primary-light: #737BA7;
+    --primary-main: #515B92;
+    --primary-dark: #383F66;
+    
+    /* Secondary Colors */
+    --secondary-light: #FFD133;
+    --secondary-main: #FFC601;
+    --secondary-dark: #B28A00;
+}
+
+/* Base Typography */
+body {
+    font-family: 'Inter', Arial, sans-serif;
+    font-weight: 400;
+}
+
+/* Typography Styles */
+h1 { font-weight: 900; }
+h2 { font-weight: 800; }
+h3 { font-weight: 700; }
+h4 { font-weight: 600; }
+h5 { font-weight: 500; }
+h6 { font-weight: 400; }
+
+.body-1 { font-weight: 400; }
+.body-2 { font-weight: 300; }
+.subtitle-1 { font-weight: 300; }
+.subtitle-2 { font-weight: 400; }
+
+/* Custom Button Styles */
+.btn {
+    border-radius: 8px;
+    padding: 8px 16px;
+    text-transform: none;
+    font-weight: 600;
+}
+
+/* Primary Buttons */
+.btn-primary {
+    background-color: var(--primary-main);
+    border-color: var(--primary-main);
+}
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+}
+
+/* Secondary Buttons */
+.btn-secondary {
+    background-color: var(--secondary-main);
+    border-color: var(--secondary-main);
+    color: rgba(0, 0, 0, 0.87);
+}
+.btn-secondary:hover {
+    background-color: var(--secondary-dark);
+    border-color: var(--secondary-dark);
+}
