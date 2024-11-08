@@ -6,7 +6,6 @@ import TextInput from "@/Components/TextInput";
 import GuestLayout from "@/Layouts/GuestLayout";
 import { Inertia } from '@inertiajs/inertia';
 import { Head, Link, useForm } from "@inertiajs/react";
-import { MDBCol, MDBContainer, MDBRow } from "mdb-react-ui-kit";
 import { useState } from "react";
 
 export default function Login({ status, canResetPassword }) {
@@ -17,37 +16,13 @@ export default function Login({ status, canResetPassword }) {
   });
   const [error, setError] = useState("");
 
-  // Predefined users
-  const users = [
-    {
-      role: "AdminPPD",
-      email: "adminppd@moe.gov.my",
-      password: "Admin@123",
-    },
-    {
-      role: "AdminSchool",
-      email: "adminschool@moe.gov.my",
-      password: "AdminSchool@123",
-    },
-    {
-      role: "AdminState",
-      email: "adminstate@moe.gov.my",
-      password: "AdminState@123",
-    },
-    {
-      role: "SuperAdmin",
-      email: "superadmin@moe.gov.my",
-      password: "SuperAdmin@123",
-    },
-  ];
-
   const handleLogin = (e) => {
     e.preventDefault();
     setError(""); // Reset any existing errors
 
-    // Validate email
+    // Frontend validation
     if (!data.email) {
-      setError("Email diperlukan.");
+      setError("Email diperlukan");
       return;
     }
 
@@ -56,21 +31,8 @@ export default function Login({ status, canResetPassword }) {
       return;
     }
 
-    // Validate password
     if (!data.password) {
       setError("Kata Laluan diperlukan.");
-      return;
-    }
-
-    // Check if email and password match a user
-    const user = users.find(u => u.email === data.email && u.password === data.password);
-    if (!user) {
-        setError("Kata laluan atau email tidak sah.");
-        return;
-    }
-
-    if (!user) {
-      setError("Kata laluan atau email tidak sah.");
       return;
     }
 
@@ -101,97 +63,95 @@ export default function Login({ status, canResetPassword }) {
     // Redirect to Dashboard.jsp after successful login
     post(route("login"), {
       onSuccess: () => {
-          Inertia.visit(route("dashboard"));
+        // Redirect to dashboard after successful login
+        Inertia.visit(route("dashboard"));
+      },
+      onError: (backendErrors) => {
+        // Display backend error messages if login fails
+        if (backendErrors.email || backendErrors.password) {
+          setError("Kata laluan atau email tidak sah.");
+        }
       },
       onFinish: () => reset("password"),
-  });
+    });
   };
 
   return (
-    <GuestLayout>
-      <Head title="Log in" />
+    <div className="flex h-screen relative">
 
-      <MDBContainer fluid className="p-3 my-5">
-        <MDBRow>
-          <MDBCol col="10" md="6">
-            <img
-              src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.svg"
-              className="img-fluid"
-              alt="Phone image"
-            />
-          </MDBCol>
-
-          <MDBCol col="4" md="6">
-            {status && (
-              <div className="mb-4 text-sm font-medium text-green-600">
-                {status}
+      <div className="w-2/3 bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center relative overflow-hidden">
+      <img 
+    src="/assets/login1.jpg" 
+    alt="Login SVG 1" 
+    className="absolute inset-0 h-full w-full object-cover"/>
+      </div>
+      <div className="w-1/3 flex items-center justify-center relative">
+        <div className="bg-white p-10 rounded-xl shadow-2xl border border-gray-200 w-full max-w-md">
+          {error && <div className="mb-4 text-sm font-medium text-red-600">{error}</div>}
+          <form onSubmit={handleLogin}>
+            <div className="mb-6">
+              <div className="flex justify-left mb-8">
+                <img src="/assets/LogoTVPSS.svg" alt="Login SVG" className="h-24" />
               </div>
-            )}
+              <label htmlFor="email" className="block text-black-700 font-semibold mb-1">
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                name="email"
+                value={data.email}
+                className="mt-1 block w-full border rounded-lg px-3 py-3 shadow-md focus:ring-2 focus:ring-blue-300"
+                autoComplete="username"
+                autoFocus
+                onChange={(e) => setData({ ...data, email: e.target.value })}
+              />
+            </div>
 
-            {error && <div className="mb-4 text-sm font-medium text-red-600">{error}</div>}
+            <div className="mb-6">
+              <label htmlFor="password" className="block text-black-700 font-semibold mb-1">
+                Kata Laluan
+              </label>
+              <input
+                id="password"
+                type="password"
+                name="password"
+                value={data.password}
+                className="mt-1 block w-full border rounded-lg px-3 py-3 shadow-md focus:ring-2 focus:ring-blue-300"
+                autoComplete="current-password"
+                onChange={(e) => setData({ ...data, password: e.target.value })}
+              />
+            </div>
 
-            <form onSubmit={handleLogin}>
-              <div className="mb-4">
-                <InputLabel htmlFor="email" value="Email" />
-                <TextInput
-                  id="email"
-                  type="email"
-                  name="email"
-                  value={data.email}
-                  className="mt-1 block w-full"
-                  autoComplete="username"
-                  isFocused={true}
-                  onChange={(e) => setData("email", e.target.value)}
+            <div className="flex items-center justify-between mb-6">
+              <label className="flex items-center text-sm">
+                <input
+                  type="checkbox"
+                  name="remember"
+                  checked={data.remember}
+                  className="mr-2 border rounded"
+                  onChange={(e) => setData({ ...data, remember: e.target.checked })}
                 />
-                <InputError message={errors.email} className="mt-2" />
-              </div>
-
-              <div className="mb-4">
-                <InputLabel htmlFor="password" value="Password" />
-                <TextInput
-                  id="password"
-                  type="password"
-                  name="password"
-                  value={data.password}
-                  className="mt-1 block w-full"
-                  autoComplete="current-password"
-                  onChange={(e) => setData("password", e.target.value)}
-                />
-                <InputError message={errors.password} className="mt-2" />
-              </div>
-
-              <div className="d-flex justify-content-between mx-4 mb-4">
-                <label className="flex items-center">
-                  <Checkbox
-                    name="remember"
-                    checked={data.remember}
-                    onChange={(e) => setData("remember", e.target.checked)}
-                  />
-                  <span className="ms-2 text-sm text-gray-600 dark:text-gray-400">
-                    Remember me
-                  </span>
-                </label>
-                {canResetPassword && (
-                  <Link
-                    href={route("password.request")}
-                    className="text-sm text-gray-600 underline hover:text-gray-900"
-                  >
-                    Forgot your password?
-                  </Link>
-                )}
-              </div>
-
-              <PrimaryButton
-                type="submit"
-                className="mb-4 w-100"
-                disabled={processing}
+                <span className="text-gray-700">Ingat Saya</span>
+              </label>
+              <Link
+                href={route("password.request")}
+                className="text-sm text-blue-600 underline hover:text-blue-800"
               >
-                Log in
-              </PrimaryButton>
-            </form>
-          </MDBCol>
-        </MDBRow>
-      </MDBContainer>
-    </GuestLayout>
+                Lupa Kata Laluan
+              </Link>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full py-3 text-lg bg-[#455185] text-white rounded-lg hover:bg-[#3C4565] flex justify-center"
+              disabled={processing}
+            >
+              Log Masuk
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
   );
-}
+};
