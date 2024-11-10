@@ -17,10 +17,17 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+
+    const SUPER_ADMIN = 0;
+    const STATE_ADMIN = 1;
+    const PPD_ADMIN = 2;
+    const SCHOOL_ADMIN = 3;
+
     protected $fillable = [
         'name',
         'email',
         'password',
+        'role',
     ];
 
     /**
@@ -45,4 +52,21 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function getRoleName(): string
+    {
+        switch ($this->role) {
+            case self::SUPER_ADMIN:
+                return 'super_admin';
+            case self::STATE_ADMIN:
+                return 'state_admin';
+            case self::PPD_ADMIN:
+                return 'ppd_admin';
+            case self::SCHOOL_ADMIN:
+                return 'school_admin';
+            default:
+                return 'unknown';
+        }
+    }
+    
 }
