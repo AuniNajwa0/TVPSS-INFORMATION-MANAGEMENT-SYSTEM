@@ -13,3 +13,4 @@ class SuperAdminController extends Controller
         return Inertia::render('1-SuperAdmin/UserManagement/ListUser');
     }
 }
+ 
