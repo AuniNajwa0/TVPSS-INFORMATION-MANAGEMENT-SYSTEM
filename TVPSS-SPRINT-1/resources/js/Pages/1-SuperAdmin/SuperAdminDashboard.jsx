@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { FaUsers, FaUserShield, FaSchool } from 'react-icons/fa';
 import { Bar, Doughnut, Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, ArcElement, Tooltip, Legend, PointElement, LineElement } from 'chart.js';
+import SuperAdminSideBar from './SuperAdminSideBar';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, ArcElement, Tooltip, Legend, PointElement, LineElement);
 
@@ -133,11 +134,11 @@ export default function Dashboard() {
             <Head title="Dashboard" />
 
             <div className="flex">
-                <div className="w-1/6 p-4 text-white min-h-screen">
-                    {/* Sidebar content */}
-                </div>
+                
+                <SuperAdminSideBar/>
+                
 
-                <div className="w-5/6 p-3">
+                <div className="ml-[16.6667%] w-5/6 p-3 overflow-auto">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                         <SummaryCard title="Bilangan State Admin" value="48" icon={<FaUsers className="text-[#455185] text-5xl" />} />
                         <SummaryCard title="Bilangan PPD Admin" value="800" icon={<FaUserShield className="text-[#455185] text-5xl" />} />
@@ -184,42 +185,26 @@ export default function Dashboard() {
                     </div>
                 </div>
             </div>
-
-            {/* Footer */}
-            <footer className="text-center py-4 text-gray-600">
-                © 2024 Kementerian Pendidikan Malaysia (KPM)
-            </footer>
         </AuthenticatedLayout>
-    );
-}
-
-function StatusHeader() {
-    return (
-        <div className="flex justify-around text-center mb-4">
-            <div>
-                <h4 className="text-[#455185] font-semibold">Pengguna</h4>
-                <p className="text-[#455185] text-2xl font-bold">1200</p>
-            </div>
-            <div>
-                <h4 className="text-[#455185] font-semibold">Purata Pengguna</h4>
-                <p className="text-[#455185] text-2xl font-bold">400</p>
-            </div>
-            <div>
-                <h4 className="text-[#455185] font-semibold">Purata Aktif Pengguna (minit)</h4>
-                <p className="text-[#455185] text-2xl font-bold">500</p>
-            </div>
-        </div>
     );
 }
 
 function SummaryCard({ title, value, icon }) {
     return (
-        <div className="bg-white p-8 shadow-md flex items-center space-x-4">
+        <div className="flex items-center bg-white p-4 shadow-md rounded-md">
             {icon}
-            <div>
-                <h3 className="text-lg font-semibold text-[#455185]">{title}</h3>
-                <p className="text-2xl font-bold text-[#455185]">{value}</p>
+            <div className="ml-4">
+                <h3 className="text-gray-500 text-sm">{title}</h3>
+                <p className="text-xl font-semibold">{value}</p>
             </div>
+        </div>
+    );
+}
+
+function StatusHeader() {
+    return (
+        <div className="flex items-center justify-between mb-4">
+            <h3 className="text-center text-lg font-semibold text-[#455185]">Status Pengguna Login Minggu Ini</h3>
         </div>
     );
 }
