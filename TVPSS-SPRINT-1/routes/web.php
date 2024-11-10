@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use Illuminate\Foundation\Application;
@@ -17,12 +18,12 @@ Route::get('/', function () {
     ]);
 });
 
-//Route::get('/studentLogin', [StudentController::class, 'studentLogin']);
+Route::get('/studentLogin', [StudentController::class, 'studentLogin']);
 Route::get('/studentLogin', function () {
     return Inertia::render('Students/LoginStudent');
 });
 
-Route::get('/dashboard', function () {
+Route::get('/dashboard', function () {      
     return Inertia::render('1-SuperAdmin/SuperAdminDashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -32,5 +33,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+
+Route::get('/listUser', function () {
+    return Inertia::render('1-SuperAdmin/UserManagement/ListUser');
+});
 
 require __DIR__.'/auth.php';
