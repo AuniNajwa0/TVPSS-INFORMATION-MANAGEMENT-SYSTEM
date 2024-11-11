@@ -1,9 +1,4 @@
-import React from 'react';
-import { FaCog, FaSignOutAlt, FaTh, FaUsers } from 'react-icons/fa';
-
-function SuperAdminSideBar() {
-  return (
-    <div className="fixed top-0 left-0 w-1/16 bg-gray-100 text-gray-800 h-screen p-4 border-r border-gray-300 flex flex-col justify-between">
+<div className="fixed top-0 left-0 w-1/16 bg-gray-100 text-gray-800 h-screen p-4 border-r border-gray-300 flex flex-col">
       {/* Logo Section */}
       <div className="mb-2 text-center">
         <img src="/assets/LogoTVPSS.svg" alt="TVPSS Logo" className="mx-auto w-100 h-100" />
@@ -11,7 +6,7 @@ function SuperAdminSideBar() {
 
       {/* Menu Items */}
       <ul className="space-y-2">
-        <li className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:bg-gray-200 rounded-md text-lg">
+        <li className="flex items-center space-x-2 px-4 py-2 bg-[#455185] text-white rounded-md text-lg">
           <FaTh />
           <span>Dashboard</span>
         </li>
@@ -22,8 +17,8 @@ function SuperAdminSideBar() {
       </ul>
 
       {/* Bottom Items */}
-      <div className="mt-2 space-y-4">
-        <li className="flex items-center space-x-2 px-4 py-2 bg-[#455185] text-white hover:bg-blue-800 rounded-md text-lg">
+      <div className="mt-auto space-y-4">
+        <li className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:bg-gray-200 rounded-md text-lg">
           <FaCog />
           <span>Tetapan</span>
         </li>
@@ -33,7 +28,3 @@ function SuperAdminSideBar() {
         </li>
       </div>
     </div>
-  );
-}
-
-export default SuperAdminSideBar;
