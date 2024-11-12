@@ -1,19 +1,22 @@
 import React from 'react';
-import { FaCheckCircle, FaCog, FaInfoCircle, FaPaperPlane, FaPencilAlt, FaSignOutAlt, FaSortNumericDown, FaTh, FaUsers } from 'react-icons/fa';
+import { FaCheckCircle, FaCog, FaInfoCircle, FaPaperPlane, FaPencilAlt, FaSignOutAlt, FaSortNumericDown, FaTable, FaTh, FaUsers } from 'react-icons/fa';
+import { Link } from '@inertiajs/react';  // Inertia Link
 
 function SchoolAdminSideBar() {
   return (
-    <div className="fixed top-0 left-0 w-1/16 bg-gray-100 text-gray-800 h-screen p-4 border-r border-gray-300 flex flex-col justify-between">
+    <div className="fixed top-0 left-0 w-1/6 bg-gray-100 text-gray-800 h-screen p-4 border-r border-gray-300 flex flex-col">
       {/* Logo Section */}
       <div className="mb-2 text-center">
-        <img src="/assets/LogoTVPSS.svg" alt="TVPSS Logo" className="mx-auto w-100 h-100" />
+        <img src="/assets/LogoTVPSS.svg" alt="TVPSS Logo" className="w-[100] h-[100]" />
       </div>
 
       {/* Menu Items */}
-      <ul className="space-y-2">
-        <li className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:bg-gray-200 rounded-md text-lg">
-          <FaTh />
-          <span>Dashboard</span>
+      <ul className="space-y-2 flex-1">
+        <li className="flex items-center space-x-2 px-4 py-2 bg-[#455185] text-white rounded-md text-lg">
+          <Link href="/dashboardSchool">  {/* Correctly using Inertia Link */}
+            <FaTh />
+            <span>Dashboard</span>
+          </Link>
         </li>
         <li className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:bg-gray-200 rounded-md text-lg">
           <FaPencilAlt />
