@@ -13,7 +13,7 @@ function PPDAdminSideBar() {
       {/* Menu Items */}
       <ul className="space-y-2">
         <li className="flex items-center space-x-2 px-4 py-2 bg-[#455185] text-white rounded-md text-lg">
-          <Link href="/dashboard">  {/* Correctly using Inertia Link */}
+          <Link href="/dashboardPPD">  {/* Correctly using Inertia Link */}
             <FaTh />
             <span>Dashboard </span>
           </Link>
