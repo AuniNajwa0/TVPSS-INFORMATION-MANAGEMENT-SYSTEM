@@ -24,9 +24,7 @@ Route::get('/studentLogin', function () {
 });
 
 // Dashboard
-Route::get('/dashboard', function () {      
-    return Inertia::render('1-SuperAdmin/SuperAdminDashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+
 
 Route::get('/dashboardState', function () {      
     return Inertia::render('2-StateAdmin/StateAdminDashboard');
@@ -62,3 +60,4 @@ Route::middleware('auth')->group(function () {
 
 
 require __DIR__.'/auth.php';
+require __DIR__.'/superAdminRoutes.php'; 
