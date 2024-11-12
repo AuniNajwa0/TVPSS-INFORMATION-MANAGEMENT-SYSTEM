@@ -23,33 +23,6 @@ Route::get('/studentLogin', function () {
     return Inertia::render('5-Students/Auth/Login');
 });
 
-// Dashboard
-
-
-Route::get('/dashboardState', function () {      
-    return Inertia::render('2-StateAdmin/StateAdminDashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::get('/dashboardPPD', function () {      
-    return Inertia::render('3-PPDAdmin/PPDAdminDashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::get('/dashboardSchool', function () {      
-    return Inertia::render('4-SchoolAdmin/SchoolAdminDashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-
-// Super Admin
-Route::get('/listUser', function () {
-    return Inertia::render('1-SuperAdmin/UserManagement/ListUser');
-});
-Route::get('/addUser', function(){
-    return Inertia::render('1-SuperAdmin/UserManagement/AddUser');
-});
-Route::get('/updateUser', function(){
-    return Inertia::render('1-SuperAdmin/UserManagement/UpdateUser');
-});
-
 // profile
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -59,5 +32,8 @@ Route::middleware('auth')->group(function () {
 
 
 
-require __DIR__.'/auth.php';
+require __DIR__.'/auth.php'; 
 require __DIR__.'/superAdminRoutes.php'; 
+require __DIR__.'/stateAdminRoutes.php'; 
+require __DIR__.'/schoolAdminRoutes.php';
+require __DIR__.'/ppdAdminRoutes.php';
