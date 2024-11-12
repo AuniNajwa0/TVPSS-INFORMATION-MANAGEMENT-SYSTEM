@@ -19,9 +19,4 @@ Route::get('/listUser', function () {
     return Inertia::render('1-SuperAdmin/UserManagement/ListUser');
 });
 
-Route::get('/addUser', function(){
-    return Inertia::render('1-SuperAdmin/UserManagement/AddUser');
-});
-Route::get('/updateUser', function(){
-    return Inertia::render('1-SuperAdmin/UserManagement/UpdateUser');
-});
+
