@@ -60,6 +60,15 @@ export default function Dashboard() {
         setCurrentPage(1);  // Reset to first page when role filter changes
     };
 
+    // Delete confirmation handler
+    const handleDelete = (userId) => {
+        const confirmed = window.confirm("Padam Pengguna?");
+        if (confirmed) {
+            console.log(`${userId} Telah dipadamkan`);
+            // Add the delete functionality here, such as making an API call to delete the user.
+        }
+    };
+
     return (
         <AuthenticatedLayout
             header={
@@ -89,7 +98,6 @@ export default function Dashboard() {
                         {/* Search */}
                         <div className="flex items-center mb-4 justify-between">
                             <div className="flex items-center space-x-2 w-full max-w-xs">
-                                {/* Search Icon */}
                                 <FaFilter className="text-gray-500 text-xl" />
                                 <input
                                     type="text"
@@ -153,10 +161,16 @@ export default function Dashboard() {
                                             </span>
                                         </td>
                                         <td className="border-b p-2">
-                                            <button className="mr-4 text-blue-600 hover:text-blue-800">
+                                            <button
+                                                className="mr-4 text-blue-600 hover:text-blue-800"
+                                                onClick={() => console.log(`Edit user with ID ${user.id}`)}
+                                            >
                                                 <FaEdit />
                                             </button>
-                                            <button className="mr-4 text-red-600 hover:text-red-800">
+                                            <button
+                                                className="mr-4 text-red-600 hover:text-red-800"
+                                                onClick={() => handleDelete(user.id)}
+                                            >
                                                 <FaTrash />
                                             </button>
                                         </td>
@@ -167,7 +181,6 @@ export default function Dashboard() {
 
                         {/* Pagination Section */}
                         <div className="flex justify-center items-center mt-6 space-x-4">
-                            {/* Previous Page Button */}
                             <button
                                 onClick={prevPage}
                                 className="p-2 bg-[#455185] text-white rounded-lg shadow-md hover:bg-[#3C4565] transition-colors duration-300 disabled:bg-gray-300 disabled:cursor-not-allowed"
@@ -176,12 +189,10 @@ export default function Dashboard() {
                                 <span className="text-xl">&lt;</span>
                             </button>
 
-                            {/* Current Page Display */}
                             <span className="text-sm text-gray-600 font-semibold">
                                 Halaman {currentPage} daripada {Math.ceil(filteredUsers.length / rowsPerPage)}
                             </span>
 
-                            {/* Next Page Button */}
                             <button
                                 onClick={nextPage}
                                 className="p-2 bg-[#455185] text-white rounded-lg shadow-md hover:bg-[#3C4565] transition-colors duration-300 disabled:bg-gray-300 disabled:cursor-not-allowed"
