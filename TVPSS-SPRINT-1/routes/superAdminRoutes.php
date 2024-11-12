@@ -18,3 +18,7 @@ Route::get('/SuperAdminDashboard', [SuperAdminController::class, 'SuperAdminDash
 Route::get('/listUser', function () {
     return Inertia::render('1-SuperAdmin/UserManagement/ListUser');
 });
+
+Route::get('/addUser', function(){
+    return Inertia::render('1-SuperAdmin/UserManagement/AddUser');
+});
