@@ -139,7 +139,7 @@ export default function Dashboard() {
                 </div>
 
                 <div className="w-5/6 p-4">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 ">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5 ">
                         <SummaryCard title="Bilangan State Admin" value="48" icon={<FaUsers className="text-[#455185] text-5xl" />} />
                         <SummaryCard title="Bilangan PPD Admin" value="800" icon={<FaUserShield className="text-[#455185] text-5xl" />} />
                         <SummaryCard title="Bilangan Sekolah Admin" value="4000" icon={<FaSchool className="text-[#455185] text-5xl" />} />
