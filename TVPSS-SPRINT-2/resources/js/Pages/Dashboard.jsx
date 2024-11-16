@@ -1,6 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
-import SuperAdminSideBar from './SuperAdminSideBar';
+import SuperAdminSideBar from './1-SuperAdmin/UserProfile/SuperAdminSideBar';
 
 export default function Dashboard() {
     return (

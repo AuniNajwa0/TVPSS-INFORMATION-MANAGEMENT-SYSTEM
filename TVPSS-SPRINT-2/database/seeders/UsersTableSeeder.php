@@ -2,41 +2,54 @@
 
 namespace Database\Seeders;
 
+#use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use MongoDB\Client as MongoClient;
+#use MongoDB\Client as MongoClient;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class UsersTableSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
-        // Create a MongoDB client instance
-        $uri = "mongodb+srv://auninajwa:auninajwa@cluster0.s5wms.mongodb.net/";
-        $client = new MongoClient($uri);
+        User::firstOrCreate(
+            [
+                'email' => 'superadmin@moe.gov.my',
+                'name' => 'Super Admin',
+                'password' => Hash::make('password123'),
+                #'role' => 'super_admin',
+                'role' => User::SUPER_ADMIN,
+            ]
+        );
 
-        // Specify your database and collection
-        $collection = $client->tvpssDB->users; // Change 'users' to your actual collection name
+        User::firstOrCreate(
+            [
+                'email' => 'stateadmin@moe.gov.my',
+                'name' => 'State Admin',
+                'password' => Hash::make('password123'),
+                #'role' => 'state_admin',
+                'role' => User::STATE_ADMIN,
+            ]
+        );
 
-        // Example fixed user data
-        $users = [
-            ['email' => 'adminppd@moe.gov.my', 'password' => bcrypt('Admin@123')],
-            ['email' => 'adminschool@moe.gov.my', 'password' => bcrypt('AdminSchool@123')],
-            ['email' => 'adminstate@moe.gov.my', 'password' => bcrypt('AdminState@123')],
-            ['email' => 'superadmin@moe.gov.my', 'password' => bcrypt('SuperAdmin@123')],
-        ];
+        User::firstOrCreate(
+            [
+                'email' => 'ppdadmin@moe.gov.my',
+                'name' => 'PPD Admin',
+                'password' => Hash::make('password123'),
+                #'role' => 'ppd_admin',
+                'role' => User::PPD_ADMIN,
+            ]
+        );
 
-        foreach ($users as $user) {
-            try {
-                // Insert user data
-                $collection->insertOne($user);
-            } catch (\MongoDB\Driver\Exception\Exception $e) {
-                // Handle duplicate key error gracefully
-                if ($e->getCode() === 11000) {
-                    // Skip if it's a duplicate key error
-                } else {
-                    // For other errors, rethrow
-                    throw $e;
-                }
-            }
-        }
+        User::firstOrCreate(
+            [
+                'email' => 'schooladmin@moe.gov.my',
+                'name' => 'School Admin',
+                'password' => Hash::make('password123'),
+                #'role' => 'school_admin',
+                'role' => User::SCHOOL_ADMIN,
+            ]
+        );
     }
 }
