@@ -1,6 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
-import SuperAdminSideBar from './SuperAdminSideBar';
+import SuperAdminSideBar from '../SuperAdminSideBar';
 import { useState } from 'react';
 import { FiUser, FiMail, FiUserCheck, FiMapPin, FiFlag, FiBook } from 'react-icons/fi';
 

@@ -1,7 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import { FaFilter, FaEdit, FaTrash } from 'react-icons/fa';
-import SuperAdminSideBar from './SuperAdminSideBar';
+import SuperAdminSideBar from '../SuperAdminSideBar';
 import { useState } from 'react';
 
 export default function Dashboard() {
@@ -166,7 +166,7 @@ export default function Dashboard() {
                                         <td className="border-b p-2">
                                         <button
                                         className="mr-4 text-blue-600 hover:text-blue-800"
-                                         onClick={() => window.location.href = `/updateUser/${user.id}`} // Or use Inertia.js navigation
+                                         onClick={() => window.location.href = `/updateUser`} // Or use Inertia.js navigation
                                             >
                                         <FaEdit />
                                             </button>
