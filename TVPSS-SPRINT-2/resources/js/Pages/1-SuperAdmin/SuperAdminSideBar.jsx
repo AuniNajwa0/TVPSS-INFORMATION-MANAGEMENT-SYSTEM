@@ -33,12 +33,16 @@ function SuperAdminSideBar() {
       {/* Bottom Items */}
       <div className="mt-auto space-y-6">
         <li className="flex items-center space-x-3 px-4 py-3 text-gray-300 hover:bg-[#1a2130] rounded-lg text-lg transition-all duration-200 ease-in-out">
+        <Link href="/profileSuperAdmin" className="flex items-center space-x-3">
           <FaCog className="text-2xl" />
           <span className="font-medium">Tetapan</span>
+        </Link>
         </li>
         <li className="flex items-center space-x-3 px-4 py-3 text-gray-300 hover:bg-[#1a2130] rounded-lg text-lg transition-all duration-200 ease-in-out">
-          <FaSignOutAlt className="text-2xl" />
+        <Link href={route('logout')}  method="post" className="flex items-center space-x-3">
+         <FaSignOutAlt className="text-2xl" />
           <span className="font-medium">Log Keluar</span>
+        </Link>
         </li>
       </div>
     </div>
