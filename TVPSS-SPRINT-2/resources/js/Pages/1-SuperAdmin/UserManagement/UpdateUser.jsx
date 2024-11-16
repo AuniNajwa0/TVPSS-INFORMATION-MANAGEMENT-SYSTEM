@@ -9,7 +9,10 @@ export default function Dashboard() {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
-        role: ''
+        role: '',
+        state: '',
+        district: '',
+        school: ''
     });
 
     // Handler to update form data
@@ -24,7 +27,6 @@ export default function Dashboard() {
     // Handler for form submission
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Handle form submission logic here (e.g., send to API)
         console.log(formData);
     };
 
@@ -33,7 +35,10 @@ export default function Dashboard() {
         setFormData({
             name: '',
             email: '',
-            role: ''
+            role: '',
+            state: '',
+            district: '',
+            school: ''
         });
     };
 
@@ -61,42 +66,42 @@ export default function Dashboard() {
                         <form onSubmit={handleSubmit}>
                             <div className="space-y-6">
                                 {/* Name Field */}
-                                <div className="flex items-center border border-[#455185] rounded-lg">
-                                    <FiUser className="text-[#455185] ml-4" size={20} />
+                                <div className="flex items-center border border-[#455185] rounded-lg px-4 py-2 focus-within:ring-2 focus-within:ring-blue-500">
+                                    <FiUser className="text-[#455185] mr-3" size={20} />
                                     <input
                                         type="text"
                                         id="name"
                                         name="name"
                                         value={formData.name}
                                         onChange={handleInputChange}
-                                        className="mt-1 block w-full px-4 py-2 border-none focus:ring-2 focus:ring-blue-500 rounded-r-lg"
+                                        className="w-full text-gray-700 placeholder-gray-500 border-none focus:ring-0 focus:outline-none"
                                         placeholder="Masukkan Nama"
                                     />
                                 </div>
 
                                 {/* Email Field */}
-                                <div className="flex items-center border border-[#455185] rounded-lg">
-                                    <FiMail className="text-[#455185] ml-4" size={20} />
+                                <div className="flex items-center border border-[#455185] rounded-lg px-4 py-2 focus-within:ring-2 focus-within:ring-blue-500">
+                                    <FiMail className="text-[#455185] mr-3" size={20} />
                                     <input
                                         type="email"
                                         id="email"
                                         name="email"
                                         value={formData.email}
                                         onChange={handleInputChange}
-                                        className="mt-1 block w-full px-4 py-2 border-none focus:ring-2 focus:ring-blue-500 rounded-r-lg"
+                                        className="w-full text-gray-700 placeholder-gray-500 border-none focus:ring-0 focus:outline-none"
                                         placeholder="Masukkan Email"
                                     />
                                 </div>
 
                                 {/* Role Dropdown */}
-                                <div className="flex items-center border border-[#455185] rounded-lg">
-                                    <FiUserCheck className="text-[#455185] ml-4" size={20} />
+                                <div className="flex items-center border border-[#455185] rounded-lg px-4 py-2 focus-within:ring-2 focus-within:ring-blue-500">
+                                    <FiUserCheck className="text-[#455185] mr-3" size={20} />
                                     <select
                                         id="role"
                                         name="role"
                                         value={formData.role}
                                         onChange={handleInputChange}
-                                        className="mt-1 block w-full px-4 py-2 border-none focus:ring-2 focus:ring-blue-500 rounded-r-lg"
+                                        className="w-full text-gray-700 placeholder-gray-500 border-none focus:ring-0 focus:outline-none"
                                     >
                                         <option value="">Pilih Jenis Pengguna</option>
                                         <option value="SUPER ADMIN">Super Admin</option>
@@ -106,15 +111,15 @@ export default function Dashboard() {
                                     </select>
                                 </div>
 
-                                 {/* State Dropdown */}
-                                 <div className="flex items-center border border-[#455185] rounded-lg">
-                                    <FiFlag className="text-[#455185] ml-4" size={20} />
+                                {/* State Dropdown */}
+                                <div className="flex items-center border border-[#455185] rounded-lg px-4 py-2 focus-within:ring-2 focus-within:ring-blue-500">
+                                    <FiFlag className="text-[#455185] mr-3" size={20} />
                                     <select
-                                        id="role"
-                                        name="role"
-                                        value={formData.role}
+                                        id="state"
+                                        name="state"
+                                        value={formData.state}
                                         onChange={handleInputChange}
-                                        className="mt-1 block w-full px-4 py-2 border-none focus:ring-2 focus:ring-blue-500 rounded-r-lg"
+                                        className="w-full text-gray-700 placeholder-gray-500 border-none focus:ring-0 focus:outline-none"
                                     >
                                         <option value="">Pilih Negeri</option>
                                         <option value="Johor">Johor</option>
@@ -132,14 +137,14 @@ export default function Dashboard() {
                                 </div>
 
                                 {/* District Dropdown */}
-                                <div className="flex items-center border border-[#455185] rounded-lg">
-                                    <FiMapPin className="text-[#455185] ml-4" size={20} />
+                                <div className="flex items-center border border-[#455185] rounded-lg px-4 py-2 focus-within:ring-2 focus-within:ring-blue-500">
+                                    <FiMapPin className="text-[#455185] mr-3" size={20} />
                                     <select
-                                        id="role"
-                                        name="role"
-                                        value={formData.role}
+                                        id="district"
+                                        name="district"
+                                        value={formData.district}
                                         onChange={handleInputChange}
-                                        className="mt-1 block w-full px-4 py-2 border-none focus:ring-2 focus:ring-blue-500 rounded-r-lg"
+                                        className="w-full text-gray-700 placeholder-gray-500 border-none focus:ring-0 focus:outline-none"
                                     >
                                         <option value="">Pilih Daerah</option>
                                         <option value="Johor Bahru">Johor Bahru</option>
@@ -148,37 +153,22 @@ export default function Dashboard() {
                                         <option value="Pontian">Pontian</option>
                                         <option value="Batu Pahat">Batu Pahat</option>
                                         <option value="Muar">Muar</option>
-                                        <option value="Segamat">Segamat</option>
-                                        <option value="Kluang">Kluang</option>
                                     </select>
                                 </div>
 
-                                 {/* School Dropdown */}
-                                 <div className="flex items-center border border-[#455185] rounded-lg">
-                                    <FiBook className="text-[#455185] ml-4" size={20} />
+                                {/* School Dropdown */}
+                                <div className="flex items-center border border-[#455185] rounded-lg px-4 py-2 focus-within:ring-2 focus-within:ring-blue-500">
+                                    <FiBook className="text-[#455185] mr-3" size={20} />
                                     <select
-                                        id="role"
-                                        name="role"
-                                        value={formData.role}
+                                        id="school"
+                                        name="school"
+                                        value={formData.school}
                                         onChange={handleInputChange}
-                                        className="mt-1 block w-full px-4 py-2 border-none focus:ring-2 focus:ring-blue-500 rounded-r-lg"
+                                        className="w-full text-gray-700 placeholder-gray-500 border-none focus:ring-0 focus:outline-none"
                                     >
+                                        <option value="">Pilih Sekolah</option>
                                         <option value="SK Johor Jaya">SK Johor Jaya</option>
-    <option value="SK Bandar Baru Uda">SK Bandar Baru Uda</option>
-    <option value="SK Taman Daya">SK Taman Daya</option>
-    <option value="SK Kluang">SK Kluang</option>
-    <option value="SK Batu Pahat">SK Batu Pahat</option>
-    <option value="SK Skudai">SK Skudai</option>
-    <option value="SK Seri Pantai">SK Seri Pantai</option>
-    <option value="SK Taman Perling">SK Taman Perling</option>
-    <option value="SK Pontian">SK Pontian</option>
-    <option value="SK Muar">SK Muar</option>
-    <option value="SK Segamat">SK Segamat</option>
-    <option value="SK Kahang">SK Kahang</option>
-    <option value="SK Gelang Patah">SK Gelang Patah</option>
-    <option value="SK Kulai">SK Kulai</option>
-    <option value="SK Taman Molek">SK Taman Molek</option>
-    <option value="SK Larkin">SK Larkin</option>
+                                        <option value="SK Bandar Baru Uda">SK Bandar Baru Uda</option>
                                     </select>
                                 </div>
 
