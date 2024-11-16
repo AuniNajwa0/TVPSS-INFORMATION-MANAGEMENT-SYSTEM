@@ -80,10 +80,10 @@ export default function Dashboard() {
             <Head title="Pengurusan Pengguna" />
 
             <div className="flex">
-                {/* Sidebar */}
-                <div className="w-1/6 p-8 text-white min-h-screen">
-                    <SuperAdminSideBar />
+                <div className="w-1/6 p-4 text-white min-h-screen">
+                <SuperAdminSideBar />
                 </div>
+                
 
                 {/* Main Content */}
                 <div className="flex-1 p-6">
