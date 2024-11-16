@@ -20,6 +20,18 @@ Route::get('/updateSchoolTVPSSVersion2', function () {
     return Inertia::render('4-SchoolAdmin/SchoolInformation/UpdateSchoolVersionStatus2');
 });
 
+Route::get('/listEquipment', function () {      
+    return Inertia::render('4-SchoolAdmin/ManageEquipment/ListEquipment');
+});
+
+Route::get('/addEquipment', function () {      
+    return Inertia::render('4-SchoolAdmin/ManageEquipment/AddEquipment');
+});
+
+Route::get('/updateEquipment', function () {      
+    return Inertia::render('4-SchoolAdmin/ManageEquipment/UpdateEquipment');
+});
+
 /*Route::get('/SchoolAdminDashboard', function () {
     return Inertia::render('1-SchoolAdmin/SchoolAdminDashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
