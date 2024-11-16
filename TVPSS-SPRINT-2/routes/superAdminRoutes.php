@@ -24,4 +24,7 @@ Route::get('/SuperAdminDashboard', [SuperAdminController::class, 'SuperAdminDash
     Route::get('/updateUser', function(){
         return Inertia::render('1-SuperAdmin/UserManagement/UpdateUser');
     });
+    Route::get('/profileSuperAdmin', function(){
+        return Inertia::render('1-SuperAdmin/UserProfile/Edit');
+    });
 
