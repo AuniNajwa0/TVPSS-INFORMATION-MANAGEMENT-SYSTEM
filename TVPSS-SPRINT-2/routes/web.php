@@ -33,7 +33,7 @@ Route::middleware('auth')->group(function () {
 
 
 require __DIR__.'/auth.php'; 
-require __DIR__.'/superAdminRoutes.php'; 
-require __DIR__.'/stateAdminRoutes.php'; 
 require __DIR__.'/schoolAdminRoutes.php';
 require __DIR__.'/ppdAdminRoutes.php';
+require __DIR__.'/stateAdminRoutes.php'; 
+require __DIR__.'/superAdminRoutes.php'; 
