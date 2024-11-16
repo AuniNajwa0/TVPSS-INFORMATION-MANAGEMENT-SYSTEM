@@ -69,10 +69,10 @@ function SchoolAdminSideBar() {
         {/* Bilangan Barang */}
         <li
           className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-lg transition-all duration-200 ease-in-out ${
-            url === '/bilanganBarang' ? 'bg-[#1f2a44] text-white' : 'text-gray-300 hover:bg-[#1a2130]'
+            url === '/listEquipment' ? 'bg-[#1f2a44] text-white' : 'text-gray-300 hover:bg-[#1a2130]'
           }`}
         >
-          <Link href="/bilanganBarang" className="flex items-center space-x-3">
+          <Link href="/listEquipment" className="flex items-center space-x-3">
             <FaSortNumericDown className="text-2xl" />
             <span className="font-medium">Bilangan Barang</span>
           </Link>
