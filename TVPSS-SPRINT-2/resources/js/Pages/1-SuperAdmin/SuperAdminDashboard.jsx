@@ -18,7 +18,7 @@ export default function Dashboard() {
         datasets: [
             {
                 label: 'Bilangan Pengguna Mengikut Jenis',
-                data: [48, 800, 4000],
+                data: [548, 800, 4000],
                 backgroundColor: ['#455185', '#008080', '#00BFFF'],
             },
         ],
@@ -38,7 +38,7 @@ export default function Dashboard() {
         datasets: [
             {
                 label: 'Bilangan Peratusan Pengguna Mengikut Jenis',
-                data: [48, 800, 4000],
+                data: [548, 800, 4000],
                 backgroundColor: ['#455185', '#FF6384', '#FFA500'],
                 hoverOffset: 4,
             },
@@ -105,13 +105,13 @@ export default function Dashboard() {
     return (
         <AuthenticatedLayout
             header={
-                <div className="flex items-center justify-between">
+                <div className="flex items-center w-full">
                     <h2 className="text-xl font-semibold leading-tight text-gray-800">
                         Selamat Datang Pengguna
                     </h2>
-                    <div className="flex items-right space-x-4">
+                    <div className="flex justify-end items-center space-x-4 ml-auto">
                         <select
-                            className="border rounded p-2 text-gray-700 min-w-[120px]"
+                            className="border-2 border-[#455185] rounded-lg p-2 text-gray-700 bg-white hover:bg-[#f1f5f9] focus:ring-2 focus:ring-[#3C4565] focus:outline-none transition duration-300 ease-in-out shadow-md w-[150px]"
                             value={timeRange}
                             onChange={(e) => setTimeRange(e.target.value)}
                         >
@@ -121,11 +121,11 @@ export default function Dashboard() {
                         </select>
                         <input
                             type="date"
-                            className="border rounded p-2"
+                            className="border-2 border-[#455185] rounded-lg shadow-md rounded p-2"
                             value={date}
                             onChange={(e) => setDate(e.target.value)}
                         />
-                        <button className="bg-[#455185] hover:bg-[#3C4565] text-white p-2 rounded min-w-[100px]">Export</button>
+                        <button className="bg-[#455185] hover:bg-[#3C4565] text-white p-2 rounded-lg min-w-[100px]">Export</button>
                     </div>
                 </div>
             }
@@ -138,52 +138,114 @@ export default function Dashboard() {
                 <SuperAdminSideBar/>
                 </div>
 
-                <div className="w-5/6 p-3">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <div className="w-5/6 p-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 ">
                         <SummaryCard title="Bilangan State Admin" value="48" icon={<FaUsers className="text-[#455185] text-5xl" />} />
                         <SummaryCard title="Bilangan PPD Admin" value="800" icon={<FaUserShield className="text-[#455185] text-5xl" />} />
                         <SummaryCard title="Bilangan Sekolah Admin" value="4000" icon={<FaSchool className="text-[#455185] text-5xl" />} />
                     </div>
 
+
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        <div className="bg-white p-8 shadow-md col-span-1 md:col-span-2">
-                            <h3 className="text-center text-lg font-semibold text-[#455185] mb-4">Bilangan Pengguna Mengikut Jenis</h3>
-                            <Bar data={barData} options={barOptions} />
-                        </div>
-                        <div className="bg-white p-8 shadow-md">
-                            <h3 className="text-center text-lg font-semibold text-[#455185] mb-4">Bilangan Peratusan Pengguna Mengikut Jenis</h3>
-                            <Doughnut data={doughnutData} />
-                        </div>
-                        <div className="bg-white p-8 shadow-md col-span-1 md:col-span-2">
-                            <StatusHeader />
-                            <Line data={lineData} options={lineOptions} />
-                        </div>
-                        <div className="bg-white p-8 shadow-md">
-                            <h3 className="text-center text-lg font-semibold text-[#455185] mb-4">Pengguna Dalam Tempoh 30 Minit Terakhir</h3>
-                            <select
-                                className="border rounded p-2 text-gray-700 mb-4 w-full"
-                                value={selectedRegion}
-                                onChange={(e) => setSelectedRegion(e.target.value)}
-                            >
-                                <option value="Semua Negeri">Semua Negeri</option>
-                                <option value="Johor">Johor</option>
-                                <option value="Kedah">Kedah</option>
-                                <option value="Kelantan">Kelantan</option>
-                                <option value="Melaka (Malacca)">Melaka (Malacca)</option>
-                                <option value="Negeri Sembilan">Negeri Sembilan</option>
-                                <option value="Pahang">Pahang</option>
-                                <option value="Perak">Perak</option>
-                                <option value="Perlis">Perlis</option>
-                                <option value="Pulau Pinang (Penang)">Pulau Pinang (Penang)</option>
-                                <option value="Sabah">Sabah</option>
-                                <option value="Sarawak">Sarawak</option>
-                                <option value="Selangor">Selangor</option>
-                                <option value="Terengganu">Terengganu</option>
-                            </select>
-                            <Doughnut data={doughnutData30Minutes} />
-                        </div>
-                    </div>
+    {/* Bar Chart Container */}
+    <div className="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out col-span-1 md:col-span-2 flex flex-col justify-center items-center">
+        <h3 className="text-center text-lg font-semibold text-[#455185] mb-6">Bilangan Pengguna Mengikut Jenis</h3>
+        <div className="flex justify-center items-center w-full h-[300px]">
+            <Bar data={barData} options={barOptions} />
+        </div>
+    </div>
+
+    {/* Doughnut Chart Container */}
+    <div className="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out flex flex-col justify-center items-center">
+        <h3 className="text-center text-lg font-semibold text-[#455185] mb-6">Bilangan Peratusan Pengguna Mengikut Jenis</h3>
+        <div className="flex justify-center items-center w-full h-[300px]">
+            <Doughnut 
+                data={doughnutData} 
+                options={{
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(tooltipItem) {
+                                    return `${tooltipItem.label}: ${tooltipItem.raw}%`;
+                                }
+                            }
+                        },
+                        legend: {
+                            labels: {
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                },
+                                color: '#455185'
+                            }
+                        }
+                    }
+                }} 
+            />
+        </div>
+    </div>
+
+    {/* Line Chart Container */}
+    <div className="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out col-span-1 md:col-span-2 flex flex-col justify-center items-center">
+        <StatusHeader />
+        <div className="flex justify-center items-center w-full h-[300px]">
+            <Line data={lineData} options={lineOptions} />
+        </div>
+    </div>
+
+    {/* Doughnut Chart (30 Minutes) */}
+    <div className="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out flex flex-col justify-center items-center">
+        <h3 className="text-center text-lg font-semibold text-[#455185] mb-6">Pengguna Dalam Tempoh 30 Minit Terakhir</h3>
+        <select
+            className="border-2 border-[#455185] rounded-lg p-3 text-gray-700 mb-6 w-full focus:outline-none focus:ring-2 focus:ring-[#3C4565] transition duration-200"
+            value={selectedRegion}
+            onChange={(e) => setSelectedRegion(e.target.value)}
+        >
+            <option value="Semua Negeri">Semua Negeri</option>
+            <option value="Johor">Johor</option>
+            <option value="Kedah">Kedah</option>
+            <option value="Kelantan">Kelantan</option>
+            <option value="Melaka (Malacca)">Melaka (Malacca)</option>
+            <option value="Negeri Sembilan">Negeri Sembilan</option>
+            <option value="Pahang">Pahang</option>
+            <option value="Perak">Perak</option>
+            <option value="Perlis">Perlis</option>
+            <option value="Pulau Pinang (Penang)">Pulau Pinang (Penang)</option>
+            <option value="Sabah">Sabah</option>
+            <option value="Sarawak">Sarawak</option>
+            <option value="Selangor">Selangor</option>
+            <option value="Terengganu">Terengganu</option>
+        </select>
+        <div className="flex justify-center items-center w-full h-[300px]">
+            <Doughnut 
+                data={doughnutData30Minutes} 
+                options={{
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(tooltipItem) {
+                                    return `${tooltipItem.label}: ${tooltipItem.raw}%`;
+                                }
+                            }
+                        },
+                        legend: {
+                            labels: {
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                },
+                                color: '#455185'
+                            }
+                        }
+                    }
+                }} 
+            />
+        </div>
+    </div>
+</div>
+
                 </div>
+                
             </div>
 
             {/* Footer */}
@@ -198,16 +260,16 @@ function StatusHeader() {
     return (
         <div className="flex justify-around text-center mb-4">
             <div>
-                <h4 className="text-[#455185] font-semibold">Pengguna</h4>
+                <h4 className="text-[#455185] font-semibold p-4">Pengguna</h4>
                 <p className="text-[#455185] text-2xl font-bold">1200</p>
             </div>
             <div>
-                <h4 className="text-[#455185] font-semibold">Purata Pengguna</h4>
+                <h4 className="text-[#455185] font-semibold p-4">Purata Pengguna</h4>
                 <p className="text-[#455185] text-2xl font-bold">400</p>
             </div>
             <div>
-                <h4 className="text-[#455185] font-semibold">Purata Aktif Pengguna (minit)</h4>
-                <p className="text-[#455185] text-2xl font-bold">500</p>
+                <h4 className="text-[#455185] font-semibold p-4">Purata Aktif Pengguna (minit)</h4>
+                <p className="text-[#455185] text-2xl font-bold">120</p>
             </div>
         </div>
     );
@@ -215,12 +277,15 @@ function StatusHeader() {
 
 function SummaryCard({ title, value, icon }) {
     return (
-        <div className="bg-white p-8 shadow-md flex items-center space-x-4">
-            {icon}
-            <div>
-                <h3 className="text-lg font-semibold text-[#455185]">{title}</h3>
-                <p className="text-2xl font-bold text-[#455185]">{value}</p>
-            </div>
-        </div>
+        <div className="bg-gradient-to-r from-[#455185] to-[#008080] p-5 rounded-2xl shadow-lg flex items-center hover:scale-105 transform transition duration-300 ease-in-out">
+    <div className="mr-4 p-3 bg-white rounded-full shadow-xl flex items-center justify-center">
+        {icon}
+    </div>
+    <div className="text-white">
+        <h3 className="text-xl font-semibold">{title}</h3>
+        <p className="text-3xl font-bold">{value}</p>
+    </div>
+</div>
+
     );
 }

@@ -4,37 +4,41 @@ import { Link } from '@inertiajs/react';  // Inertia Link
 
 function SuperAdminSideBar() {
   return (
-    <div className="fixed top-0 left-0 w-1/16 bg-gray-100 text-gray-800 h-screen p-4 border-r border-gray-300 flex flex-col">
+    <div className="fixed top-0 left-0 w-[310px] bg-gradient-to-t from-[#1f2a44] to-[#28334a] text-white h-screen p-6 border-r border-gray-300 flex flex-col">
       {/* Logo Section */}
-      <div className="mb-2 text-center">
-        <img src="/assets/LogoTVPSS.svg" alt="TVPSS Logo" className="mx-auto w-100 h-100" />
+      <div className="mb-10">
+        <img
+          src="/assets/LogoTVPSS.svg"
+          alt="TVPSS Logo"
+          className="mx-auto w-24 h-24 transition-transform duration-300 ease-in-out transform hover:scale-110"
+        />
       </div>
 
       {/* Menu Items */}
-      <ul className="space-y-2">
-        <li className="flex items-center space-x-2 px-4 py-2 bg-[#455185] text-white rounded-md text-lg">
-          <Link href="/dashboard">  {/* Correctly using Inertia Link */}
-            <FaTh />
-            <span>Dashboard </span>
+      <ul className="space-y-4">
+        <li className="flex items-center space-x-3 px-4 py-3 bg-[#1f2a44] text-white rounded-lg text-lg hover:bg-[#1a2130] transition-all duration-200 ease-in-out">
+          <Link href="/dashboard" className="flex items-center space-x-3">
+            <FaTh className="text-2xl" />
+            <span className="font-medium">Dashboard</span>
           </Link>
         </li>
-        <li className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:bg-gray-200 rounded-md text-lg">
-          <Link href="/listUser">  {/* Correctly using Inertia Link */}
-            <FaUsers />
-            <span>Pengurusan Pengguna</span>
+        <li className="flex items-center space-x-3 px-4 py-3 text-gray-300 hover:bg-[#1a2130] rounded-lg text-lg transition-all duration-200 ease-in-out">
+          <Link href="/listUser" className="flex items-center space-x-3">
+            <FaUsers className="text-2xl" />
+            <span className="font-medium">Pengurusan Pengguna</span>
           </Link>
         </li>
       </ul>
 
       {/* Bottom Items */}
-      <div className="mt-auto space-y-4">
-        <li className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:bg-gray-200 rounded-md text-lg">
-          <FaCog />
-          <span>Tetapan</span>
+      <div className="mt-auto space-y-6">
+        <li className="flex items-center space-x-3 px-4 py-3 text-gray-300 hover:bg-[#1a2130] rounded-lg text-lg transition-all duration-200 ease-in-out">
+          <FaCog className="text-2xl" />
+          <span className="font-medium">Tetapan</span>
         </li>
-        <li className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:bg-gray-200 rounded-md text-lg">
-          <FaSignOutAlt />
-          <span>Log Keluar</span>
+        <li className="flex items-center space-x-3 px-4 py-3 text-gray-300 hover:bg-[#1a2130] rounded-lg text-lg transition-all duration-200 ease-in-out">
+          <FaSignOutAlt className="text-2xl" />
+          <span className="font-medium">Log Keluar</span>
         </li>
       </div>
     </div>
