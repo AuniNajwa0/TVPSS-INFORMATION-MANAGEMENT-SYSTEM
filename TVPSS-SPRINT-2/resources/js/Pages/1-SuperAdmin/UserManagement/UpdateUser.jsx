@@ -176,7 +176,7 @@ export default function Dashboard() {
                                 <div className="flex space-x-6 mt-8">
                                     <button
                                         type="button"
-                                        onClick={handleCancel}
+                                        onClick={() => window.location.href = '/listUser'}
                                         className="px-6 py-2 bg-gray-500 text-white rounded-md shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 transition"
                                     >
                                         Batal
