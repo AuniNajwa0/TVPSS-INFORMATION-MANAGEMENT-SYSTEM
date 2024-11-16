@@ -8,7 +8,7 @@ export default function AuthenticatedLayout({ header, children, noMaxWidth }) {
         <div className="min-h-screen bg-gray-100">
             {/* Navigation Bar */}
             <nav className="border-b border-gray-100 bg-white">
-                <div className="mx-2">
+                <div className="mx-4">
                     <div className="flex h-16 justify-end items-center px-2 py-2">
                         {/* Notification Button */}
                         <button
