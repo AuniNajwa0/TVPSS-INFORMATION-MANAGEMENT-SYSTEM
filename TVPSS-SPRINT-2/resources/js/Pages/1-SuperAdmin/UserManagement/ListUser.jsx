@@ -89,8 +89,11 @@ export default function Dashboard() {
                 <div className="flex-1 p-6">
                     <div className="flex justify-between items-center mb-4">
                         <h3 className="text-lg font-semibold">Semua Pengguna</h3>
-                        <button className="bg-[#455185] hover:bg-[#3C4565] text-white rounded-md px-4 py-2 shadow-md">
-                            Tambah Pengguna Baharu
+                        <button
+                        className="bg-[#455185] hover:bg-[#3C4565] text-white rounded-md px-4 py-2 shadow-md"
+                         onClick={() => window.location.href = '/addUser'} // Or use Inertia.js navigation
+                            >
+                        Tambah Pengguna Baharu
                         </button>
                     </div>
 
@@ -161,11 +164,11 @@ export default function Dashboard() {
                                             </span>
                                         </td>
                                         <td className="border-b p-2">
-                                            <button
-                                                className="mr-4 text-blue-600 hover:text-blue-800"
-                                                onClick={() => console.log(`Edit user with ID ${user.id}`)}
+                                        <button
+                                        className="mr-4 text-blue-600 hover:text-blue-800"
+                                         onClick={() => window.location.href = `/updateUser/${user.id}`} // Or use Inertia.js navigation
                                             >
-                                                <FaEdit />
+                                        <FaEdit />
                                             </button>
                                             <button
                                                 className="mr-4 text-red-600 hover:text-red-800"
