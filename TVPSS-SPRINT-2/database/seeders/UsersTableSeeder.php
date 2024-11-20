@@ -17,6 +17,7 @@ class UsersTableSeeder extends Seeder
                 'email' => 'superadmin@moe.gov.my',
                 'name' => 'Super Admin',
                 'password' => Hash::make('password123'),
+                'state' => 'Johor',
                 #'role' => 'super_admin',
                 'role' => User::SUPER_ADMIN,
             ]
@@ -28,6 +29,7 @@ class UsersTableSeeder extends Seeder
                 'name' => 'State Admin',
                 'password' => Hash::make('password123'),
                 #'role' => 'state_admin',
+                'state' => 'Johor',
                 'role' => User::STATE_ADMIN,
             ]
         );
@@ -38,6 +40,7 @@ class UsersTableSeeder extends Seeder
                 'name' => 'PPD Admin',
                 'password' => Hash::make('password123'),
                 #'role' => 'ppd_admin',
+                'state' => 'Johor',
                 'role' => User::PPD_ADMIN,
             ]
         );
@@ -48,6 +51,7 @@ class UsersTableSeeder extends Seeder
                 'name' => 'School Admin',
                 'password' => Hash::make('password123'),
                 #'role' => 'school_admin',
+                'state' => 'Johor',
                 'role' => User::SCHOOL_ADMIN,
             ]
         );
