@@ -9,16 +9,24 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 
-Route::get('/', function () {
+/*Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
+});*/
+
+Route::redirect('/','/dashboard');
+
+Route::middleware(['auth','verified'])->group(function(){
+    require __DIR__.'/schoolAdminRoutes.php';
+    require __DIR__.'/ppdAdminRoutes.php';
+    require __DIR__.'/stateAdminRoutes.php'; 
+    require __DIR__.'/superAdminRoutes.php'; 
 });
 
-// Route::get('/studentLogin', [StudentController::class, 'studentLogin']);
 Route::get('/studentLogin', function () {
     return Inertia::render('5-Students/Auth/Login');
 });
@@ -33,7 +41,3 @@ Route::middleware('auth')->group(function () {
 
 
 require __DIR__.'/auth.php'; 
-require __DIR__.'/schoolAdminRoutes.php';
-require __DIR__.'/ppdAdminRoutes.php';
-require __DIR__.'/stateAdminRoutes.php'; 
-require __DIR__.'/superAdminRoutes.php'; 
