@@ -27,6 +27,7 @@ class UpdateUserRequest extends FormRequest
             'name' => 'required|string|max:255', 
             'password' => 'nullable|string|min:8|confirmed', 
             'state' => 'required|string|max:255', 
+            'district' => 'required|string|max:255', 
             'role' => 'required|integer|in:' . User::SUPER_ADMIN . ',' . User::STATE_ADMIN . ',' . User::PPD_ADMIN . ',' . User::SCHOOL_ADMIN,
         ];
     }
