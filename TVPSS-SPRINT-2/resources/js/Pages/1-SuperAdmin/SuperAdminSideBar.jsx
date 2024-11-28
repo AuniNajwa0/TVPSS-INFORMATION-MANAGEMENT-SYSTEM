@@ -1,33 +1,30 @@
 import React from 'react';
-import { FaCog, FaSignOutAlt, FaTaxi, FaTh, FaTransgenderAlt, FaUsers } from 'react-icons/fa';
-import { Link, usePage } from '@inertiajs/react'; // Inertia Link and usePage
+import { FaCog, FaSignOutAlt, FaTh, FaUsers } from 'react-icons/fa';
+import { Link, usePage } from '@inertiajs/react';
 
 function SuperAdminSideBar() {
-  const { url } = usePage(); // Get the current URL from Inertia.js
+  const { currentRouteName } = usePage(); 
 
   return (
-    <div className="fixed top-0 left-0 w-[310px] bg-white text-white h-screen p-6 border-r border-gray-300 flex flex-col">
+    <div className="fixed top-0 left-0 w-[310px] bg-gradient-to-t from-[#1f2a44] to-[#28334a] text-white h-screen p-6 border-r border-gray-300 flex flex-col">
       {/* Logo Section */}
-      <div className="mb-6">
+      <div className="mb-10">
         <img
           src="/assets/LogoTVPSS.svg"
           alt="TVPSS Logo"
-          className="ml-full w-30 h-30 transition-transform duration-300 ease-in-out transform hover:scale-110"
+          className="mx-auto w-24 h-24 transition-transform duration-300 ease-in-out transform hover:scale-110"
         />
       </div>
-
-      {/* Separator Line */}
-      <hr className="border-t border-gray-300 mb-6" /> {/* Add line here */}
 
       {/* Menu Items */}
       <ul className="space-y-4">
         {/* Dashboard */}
         <li
           className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-lg transition-all duration-200 ease-in-out ${
-            url === '/dashboard' ? 'bg-gradient-to-r from-[#455185] to-[#008080] text-white' : 'text-gray-800 hover:bg-gradient-to-r from-[#455185] to-[#008080]'
+            currentRouteName === 'dashboardSP' ? 'bg-[#1f2a44] text-white' : 'text-gray-300 hover:bg-[#1a2130]'
           }`}
         >
-          <Link href="/dashboard" className="flex items-center space-x-3">
+          <Link href="/dashboardSuper" className="flex items-center space-x-3">
             <FaTh className="text-2xl" />
             <span className="font-medium">Dashboard</span>
           </Link>
@@ -36,10 +33,10 @@ function SuperAdminSideBar() {
         {/* Pengurusan Pengguna */}
         <li
           className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-lg transition-all duration-200 ease-in-out ${
-            url === '/listUser' ? 'bg-gradient-to-r from-[#455185] to-[#008080] text-white' : 'text-gray-800 hover:bg-gradient-to-r from-[#455185] to-[#008080]'
+            currentRouteName === '1-SuperAdmin/UserManagement/ListUser' ? 'bg-[#1f2a44] text-white' : 'text-gray-300 hover:bg-[#1a2130]'
           }`}
         >
-          <Link href="/listUser" className="flex items-center space-x-3">
+          <Link href={route("users.index")} className="flex items-center space-x-3">
             <FaUsers className="text-2xl" />
             <span className="font-medium">Pengurusan Pengguna</span>
           </Link>
@@ -51,7 +48,7 @@ function SuperAdminSideBar() {
         {/* Tetapan */}
         <li
           className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-lg transition-all duration-200 ease-in-out ${
-            url === '/profileSuperAdmin' ? 'bg-gradient-to-r from-[#455185] to-[#008080] text-white' : 'text-gray-800 hover:bg-gradient-to-r from-[#455185] to-[#008080]'
+            currentRouteName === 'superadmin.profile' ? 'bg-[#1f2a44] text-white' : 'text-gray-300 hover:bg-[#1a2130]'
           }`}
         >
           <Link href="/profileSuperAdmin" className="flex items-center space-x-3">
@@ -61,7 +58,7 @@ function SuperAdminSideBar() {
         </li>
 
         {/* Log Keluar */}
-        <li className="flex items-center space-x-3 px-4 py-3 text-gray-800 hover:bg-gradient-to-r from-[#455185] to-[#008080] rounded-lg text-lg transition-all duration-200 ease-in-out">
+        <li className="flex items-center space-x-3 px-4 py-3 text-gray-300 hover:bg-[#1a2130] rounded-lg text-lg transition-all duration-200 ease-in-out">
           <Link href={route('logout')} method="post" className="flex items-center space-x-3">
             <FaSignOutAlt className="text-2xl" />
             <span className="font-medium">Log Keluar</span>
