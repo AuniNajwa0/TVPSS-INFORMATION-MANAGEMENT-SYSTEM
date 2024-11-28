@@ -48,6 +48,7 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email',
             'role' => 'required|integer|in:' . User::SUPER_ADMIN . ',' . User::STATE_ADMIN . ',' . User::PPD_ADMIN . ',' . User::SCHOOL_ADMIN,
             'state' => 'required|string|max:255',
+            'district' => 'required|string|max:255',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
@@ -58,6 +59,7 @@ class UserController extends Controller
             'email' => $validated['email'],
             'role' => $role,
             'state' => $validated['state'],
+            'district' => $validated['district'],
             'password' => Hash::make($validated['password']),
         ]);
 
@@ -100,6 +102,7 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email,' . $user->id,
             'role' => 'required|integer|in:' . User::SUPER_ADMIN . ',' . User::STATE_ADMIN . ',' . User::PPD_ADMIN . ',' . User::SCHOOL_ADMIN,
             'state' => 'required|string|max:255',
+            'district' => 'required|string|max:255',
             'password' => 'nullable|string|min:8|confirmed',  // Password is optional
         ]);
 
@@ -112,6 +115,7 @@ class UserController extends Controller
             'email' => $validated['email'],
             'role' => $validated['role'],
             'state' => $validated['state'],
+            'district' => $validated['district'],
             'password' => $validated['password'] ? Hash::make($validated['password']) : $user->password,
         ]);
 
