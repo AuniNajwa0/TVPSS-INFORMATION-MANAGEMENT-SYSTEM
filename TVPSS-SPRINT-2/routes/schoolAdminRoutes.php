@@ -6,7 +6,7 @@ use Inertia\Inertia;
 
 Route::get('/dashboardSchool', function () {      
     return Inertia::render('4-SchoolAdmin/SchoolAdminDashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboardSA');
 
 Route::get('/updateSchool', function () {      
     return Inertia::render('4-SchoolAdmin/SchoolInformation/UpdateSchoolInformation');
