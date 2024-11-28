@@ -128,4 +128,38 @@ class UserController extends Controller
 
         return redirect()->route('users.index')->with('success', 'Pengguna berjaya dipadam.');
     }
+
+    public function getUserRoleCounts()
+    {
+        $stateAdminCount = User::where('role', User::STATE_ADMIN)->count();
+        $ppdAdminCount = User::where('role', User::PPD_ADMIN)->count();
+        $schoolAdminCount = User::where('role', User::SCHOOL_ADMIN)->count();
+
+        return response()->json([
+            'state_admin' => $stateAdminCount,
+            'ppd_admin' => $ppdAdminCount,
+            'school_admin' => $schoolAdminCount,
+        ]);
+    }
+
+    public function getActiveUserCounts30Minutes()
+    {
+        $stateAdminCount = User::where('role', User::STATE_ADMIN)
+            ->where('last_login_at', '>=', now()->subMinutes(30))
+            ->count();
+
+        $ppdAdminCount = User::where('role', User::PPD_ADMIN)
+            ->where('last_login_at', '>=', now()->subMinutes(30))
+            ->count();
+
+        $schoolAdminCount = User::where('role', User::SCHOOL_ADMIN)
+            ->where('last_login_at', '>=', now()->subMinutes(30))
+            ->count();
+
+        return response()->json([
+            'state_admin_30_minutes' => $stateAdminCount,
+            'ppd_admin_30_minutes' => $ppdAdminCount,
+            'school_admin_30_minutes' => $schoolAdminCount,
+        ]);
+    }
 }
