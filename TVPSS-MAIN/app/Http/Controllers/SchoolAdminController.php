@@ -279,14 +279,11 @@ class SchoolAdminController extends Controller
         // If there's an associated schoolVersion, update it; otherwise, create a new one
         $schoolVersion = $schoolInfo->schoolVersion ?? new TVPSSVersion;
 
-        // Update or create the version data
         $schoolVersion->version = $validated['version'] ?? null;
         $schoolVersion->schoolInfo()->associate($schoolInfo); // Ensure the relation is set
 
-        // Save the schoolVersion if necessary
         $schoolVersion->save();
 
-        // Redirect back with a success message
         return redirect()->route('tvpss2')->with('success', 'School information updated successfully!');
     }
 
