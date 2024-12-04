@@ -1,59 +1,58 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
-import SchoolAdminSideBar from '../SchoolAdminSideBar'; 
-import { useState } from 'react';
+import { Head, useForm } from '@inertiajs/react';
+import { useEffect } from 'react';
+import SchoolAdminSideBar from '../SchoolAdminSideBar';
 
-export default function UpdateSchoolInformation() {
-    // State for form data
-    const [formData, setFormData] = useState({
+export default function UpdateSchoolInformation(props) {
+    const { data, setData, post, processing, errors, reset } = useForm({
         schoolName: "",
-        address1: "",
-        address2: "",
+        schoolAddress1: "",
+        schoolAddress2: "",
         postcode: "",
         state: "",
-        phoneNumber: "",
-        email: "",
-        fax: "",
-        logoFile: null,
-        youtubeLink: "",
+        noPhone: "",
+        schoolEmail: "",
+        noFax: "",
+        schoolLogo: null,
+        linkYoutube: "",
     });
 
-    // Handler to update form data
+    // Check if there's existing school info passed from the backend
+    useEffect(() => {
+        if (props.schoolInfo) {
+            setData({
+                schoolName: props.schoolInfo.schoolName || "",
+                schoolAddress1: props.schoolInfo.schoolAddress1 || "",
+                schoolAddress2: props.schoolInfo.schoolAddress2 || "",
+                postcode: props.schoolInfo.postcode || "",
+                state: props.schoolInfo.state || "",
+                noPhone: props.schoolInfo.noPhone || "",
+                schoolEmail: props.schoolInfo.schoolEmail || "",
+                noFax: props.schoolInfo.noFax || "",
+                linkYoutube: props.schoolInfo.linkYoutube || "",
+            });
+        }
+    }, [props.schoolInfo]);
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
+        setData(name, value);
     };
 
     const handleFileChange = (e) => {
         const { name, files } = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: files[0],
-        }));
+        setData(name, files[0]); // Store the selected file
     };
 
-    // Handler for form submission
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(formData);
-    };
-
-    // Handler for cancel action
-    const handleCancel = () => {
-        setFormData({
-            schoolName: '',
-            address1: '',
-            address2: '',
-            postcode: '',
-            state: '',
-            phoneNumber: '',
-            email: '',
-            fax: '',
-            logoFile: null,
-            youtubeLink: '',
+        post(route('school.update'), {
+            onSuccess: () => {
+                console.log('School updated successfully!');
+            },
+            onError: (errors) => {
+                console.error(errors);
+            },
         });
     };
 
@@ -78,85 +77,95 @@ export default function UpdateSchoolInformation() {
                         </h3>
 
                         {/* Form */}
-                        <form onSubmit={handleSubmit}>
+                        <form onSubmit={handleSubmit} encType="multipart/form-data">
                             <div className="grid grid-cols-2 gap-6 mb-6">
                                 {/* School Name */}
                                 <input
                                     type="text"
                                     name="schoolName"
-                                    value={formData.schoolName}
+                                    value={data.schoolName}
                                     onChange={handleInputChange}
                                     className="col-span-2 border-gray-300 rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-blue-500"
                                     placeholder="Nama Sekolah"
                                 />
+                                {errors.schoolName && <div className="text-red-500">{errors.schoolName}</div>}
 
-                                {/* Alamat 1 */}
+                                {/* Address 1 */}
                                 <input
                                     type="text"
-                                    name="address1"
-                                    value={formData.address1}
+                                    name="schoolAddress1"
+                                    value={data.schoolAddress1}
                                     onChange={handleInputChange}
                                     className="col-span-2 border-gray-300 rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-blue-500"
                                     placeholder="Alamat Sekolah 1"
                                 />
+                                {errors.schoolAddress1 && <div className="text-red-500">{errors.schoolAddress1}</div>}
 
-                                {/* Alamat 2 */}
+                                {/* Address 2 */}
                                 <input
                                     type="text"
-                                    name="address2"
-                                    value={formData.address2}
+                                    name="schoolAddress2"
+                                    value={data.schoolAddress2}
                                     onChange={handleInputChange}
                                     className="col-span-2 border-gray-300 rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-blue-500"
                                     placeholder="Alamat Sekolah 2"
                                 />
+                                {errors.schoolAddress2 && <div className="text-red-500">{errors.schoolAddress2}</div>}
 
-                                {/* Poskod */}
+                                {/* Postcode */}
                                 <input
                                     type="text"
                                     name="postcode"
-                                    value={formData.postcode}
+                                    value={data.postcode}
                                     onChange={handleInputChange}
                                     className="col-span-1 border-gray-300 rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-blue-500"
                                     placeholder="Poskod"
                                 />
+                                {errors.postcode && <div className="text-red-500">{errors.postcode}</div>}
 
-                                {/* Negeri */}
+                                {/* State */}
                                 <input
                                     type="text"
                                     name="state"
-                                    value={formData.state}
+                                    value={data.state}
                                     onChange={handleInputChange}
                                     className="col-span-1 border-gray-300 rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-blue-500"
                                     placeholder="Negeri"
                                 />
+                                {errors.state && <div className="text-red-500">{errors.state}</div>}
                             </div>
 
-                            {/* No Telefon, Email, and Fax */}
+                            {/* Phone, Email, Fax */}
                             <div className="grid grid-cols-3 gap-6 mb-6">
                                 <input
                                     type="text"
-                                    name="phoneNumber"
-                                    value={formData.phoneNumber}
+                                    name="noPhone"
+                                    value={data.noPhone}
                                     onChange={handleInputChange}
                                     className="border-gray-300 rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-blue-500"
                                     placeholder="No Telefon"
                                 />
+                                {errors.noPhone && <div className="text-red-500">{errors.noPhone}</div>}
+
                                 <input
                                     type="email"
-                                    name="email"
-                                    value={formData.email}
+                                    name="schoolEmail"
+                                    value={data.schoolEmail}
                                     onChange={handleInputChange}
                                     className="border-gray-300 rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-blue-500"
                                     placeholder="Email"
                                 />
+                                {errors.schoolEmail && <div className="text-red-500">{errors.schoolEmail}</div>}
+
                                 <input
                                     type="text"
-                                    name="fax"
-                                    value={formData.fax}
+                                    name="noFax"
+                                    value={data.noFax}
                                     onChange={handleInputChange}
                                     className="border-gray-300 rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-blue-500"
                                     placeholder="No Fax"
                                 />
+                                {errors.noFax && <div className="text-red-500">{errors.noFax}</div>}
                             </div>
 
                             {/* File Upload */}
@@ -166,39 +175,42 @@ export default function UpdateSchoolInformation() {
                                 </label>
                                 <input
                                     type="file"
-                                    name="logoFile"
+                                    name="schoolLogo"
                                     onChange={handleFileChange}
                                     className="block w-full text-gray-700 border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500"
                                 />
+                                {errors.schoolLogo && <div className="text-red-500">{errors.schoolLogo}</div>}
                             </div>
 
                             {/* YouTube Link */}
                             <div className="mb-6">
                                 <input
                                     type="text"
-                                    name="youtubeLink"
-                                    value={formData.youtubeLink}
+                                    name="linkYoutube"
+                                    value={data.linkYoutube}
                                     onChange={handleInputChange}
                                     className="border-gray-300 rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-blue-500"
                                     placeholder="Link Video (YouTube)"
                                 />
+                                {errors.linkYoutube && <div className="text-red-500">{errors.linkYoutube}</div>}
                             </div>
-                                 {/* Submit Button */}
+
+                            {/* Submit Button */}
                             <div className="flex justify-end space-x-4 mb-6">
                                 <button
                                     type="reset"
-                                    onClick={handleCancel}
+                                    onClick={() => reset()}
                                     className="px-6 py-2 bg-gray-500 text-white rounded-md shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 transition"
                                 >
                                     Batal
                                 </button>
                                 <button
                                     type="submit"
+                                    disabled={processing}
                                     className="px-6 py-2 bg-[#455185] text-white rounded-md shadow-md hover:bg-[#3d4674] focus:outline-none focus:ring-2 focus:ring-[#455185] transition"
                                 >
-                                    Hantar Maklumat Sekolah
+                                    {processing ? 'Menghantar...' : 'Hantar Maklumat Sekolah'}
                                 </button>
-                            
                             </div>
                         </form>
                     </div>

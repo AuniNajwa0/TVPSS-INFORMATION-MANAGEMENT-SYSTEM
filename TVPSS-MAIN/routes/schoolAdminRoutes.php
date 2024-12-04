@@ -21,3 +21,13 @@ Route::get('equipment/{id}/edit', [SchoolAdminController::class, 'equipmentEdit'
 Route::put('equipment/{id}', [SchoolAdminController::class, 'equipmentUpdate'])->name('equipment.equipmentUpdate');
 Route::delete('equipment/{id}', [SchoolAdminController::class, 'equipmentDestroy'])->name('equipment.equipmentDestroy');
 Route::get('/status-options', [SchoolAdminController::class, 'getStatusOptions']);
+
+//School Information
+Route::get('/updateSchool', [SchoolAdminController::class, 'editSchool'])->name('school.edit');
+Route::post('/update-school', [SchoolAdminController::class, 'updateSchool'])->name('school.update');
+
+//TVPSS Version
+Route::get('/updateSchoolTVPSSVersion', [SchoolAdminController::class, 'updateTVPSSVer1'])->name('tvpss1');
+Route::post('/updateEditSchoolTVPSSVersion', [SchoolAdminController::class, 'editTVPSSVer1'])->name('tvpss1Edit');
+Route::get('/updateSchoolTVPSSVersion2',[SchoolAdminController::class, 'updateTVPSSVer2'])->name('tvpss2');
+Route::post('/updateEditSchoolTVPSSVersion2', [SchoolAdminController::class, 'editTVPSSVer2'])->name('tvpss2Edit');

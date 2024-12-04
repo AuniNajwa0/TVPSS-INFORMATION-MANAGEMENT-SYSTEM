@@ -1,27 +1,29 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react'; // Import Link for navigation
+import { useForm } from '@inertiajs/inertia-react'; // Import useForm for form handling
 import SchoolAdminSideBar from '../SchoolAdminSideBar';
-import { useState } from 'react';
+import { router } from '@inertiajs/react';
 
-export default function UpdateSchoolVersionStatus() {
-    // State for form data
-    const [formData, setFormData] = useState({
-        schoolName: "",
-        address1: "",
-        address2: "",
-        postcode: "",
-        state: "",
-        phoneNumber: "",
-        email: "",
-        fax: "",
-        logoFile: null,
-        youtubeLink: "",
+
+export default function UpdateSchoolVersionStatus({ schoolInfo }) {
+    // Initialize form using useForm
+    const { data, setData, post, reset } = useForm({
+        schoolName: schoolInfo?.schoolName || "",
+        schoolAddress1: schoolInfo?.schoolAddress1 || "",
+        schoolAddress2: schoolInfo?.schoolAddress2 || "",
+        postcode: schoolInfo?.postcode || "",
+        state: schoolInfo?.state || "",
+        noPhone: schoolInfo?.noPhone || "",
+        schoolEmail: schoolInfo?.schoolEmail || "",
+        noFax: schoolInfo?.noFax || "",
+        schoolLogo: null,
+        linkYoutube: schoolInfo?.linkYoutube || "",
     });
 
-    // Handler to update form data
+    // Handler for form data change
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData((prevData) => ({
+        setData((prevData) => ({
             ...prevData,
             [name]: value,
         }));
@@ -29,25 +31,29 @@ export default function UpdateSchoolVersionStatus() {
 
     const handleFileChange = (e) => {
         const { name, files } = e.target;
-        setFormData((prevData) => ({
+        setData((prevData) => ({
             ...prevData,
             [name]: files[0],
         }));
     };
 
-    // Handler for cancel action
+    // Handler for form reset
     const handleCancel = () => {
-        setFormData({
-            schoolName: '',
-            address1: '',
-            address2: '',
-            postcode: '',
-            state: '',
-            phoneNumber: '',
-            email: '',
-            fax: '',
-            logoFile: null,
-            youtubeLink: '',
+        reset();
+    };
+
+    // Handle form submission
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        // Send POST request to update the school data
+        post(route('tvpss1Edit'), {
+            onSuccess: () => {
+                router.visit(route('tvpss2'));
+            },
+            onError: (errors) => {
+                console.log(errors); // Handle errors if needed
+            },
         });
     };
 
@@ -72,13 +78,13 @@ export default function UpdateSchoolVersionStatus() {
                         </h3>
 
                         {/* Form */}
-                        <form>
+                        <form onSubmit={handleSubmit}>
                             <div className="grid grid-cols-2 gap-6 mb-6">
                                 {/* School Name */}
                                 <input
                                     type="text"
                                     name="schoolName"
-                                    value={formData.schoolName}
+                                    value={data.schoolName}
                                     onChange={handleInputChange}
                                     className="col-span-2 border-gray-300 rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-blue-500"
                                     placeholder="Nama Sekolah"
@@ -87,8 +93,8 @@ export default function UpdateSchoolVersionStatus() {
                                 {/* Alamat 1 */}
                                 <input
                                     type="text"
-                                    name="address1"
-                                    value={formData.address1}
+                                    name="schoolAddress1"
+                                    value={data.schoolAddress1}
                                     onChange={handleInputChange}
                                     className="col-span-2 border-gray-300 rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-blue-500"
                                     placeholder="Alamat Sekolah 1"
@@ -97,8 +103,8 @@ export default function UpdateSchoolVersionStatus() {
                                 {/* Alamat 2 */}
                                 <input
                                     type="text"
-                                    name="address2"
-                                    value={formData.address2}
+                                    name="schoolAddress2"
+                                    value={data.schoolAddress2}
                                     onChange={handleInputChange}
                                     className="col-span-2 border-gray-300 rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-blue-500"
                                     placeholder="Alamat Sekolah 2"
@@ -108,7 +114,7 @@ export default function UpdateSchoolVersionStatus() {
                                 <input
                                     type="text"
                                     name="postcode"
-                                    value={formData.postcode}
+                                    value={data.postcode}
                                     onChange={handleInputChange}
                                     className="col-span-1 border-gray-300 rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-blue-500"
                                     placeholder="Poskod"
@@ -118,7 +124,7 @@ export default function UpdateSchoolVersionStatus() {
                                 <input
                                     type="text"
                                     name="state"
-                                    value={formData.state}
+                                    value={data.state}
                                     onChange={handleInputChange}
                                     className="col-span-1 border-gray-300 rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-blue-500"
                                     placeholder="Negeri"
@@ -129,24 +135,24 @@ export default function UpdateSchoolVersionStatus() {
                             <div className="grid grid-cols-3 gap-6 mb-6">
                                 <input
                                     type="text"
-                                    name="phoneNumber"
-                                    value={formData.phoneNumber}
+                                    name="noPhone"
+                                    value={data.noPhone}
                                     onChange={handleInputChange}
                                     className="border-gray-300 rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-blue-500"
                                     placeholder="No Telefon"
                                 />
                                 <input
                                     type="email"
-                                    name="email"
-                                    value={formData.email}
+                                    name="schoolEmail"
+                                    value={data.schoolEmail}
                                     onChange={handleInputChange}
                                     className="border-gray-300 rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-blue-500"
                                     placeholder="Email"
                                 />
                                 <input
                                     type="text"
-                                    name="fax"
-                                    value={formData.fax}
+                                    name="noFax"
+                                    value={data.noFax}
                                     onChange={handleInputChange}
                                     className="border-gray-300 rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-blue-500"
                                     placeholder="No Fax"
@@ -158,9 +164,17 @@ export default function UpdateSchoolVersionStatus() {
                                 <label className="block mb-2 text-gray-700">
                                     Muat naik Logo Sekolah
                                 </label>
+                                {schoolInfo?.schoolLogo && (
+                                    <div className="mb-4 text-center">
+                                        <img
+                                            src={`/storage/${schoolInfo.schoolLogo}`}
+                                            className="mx-auto mb-2 h-32 w-auto" // Adjust size as needed
+                                        />
+                                    </div>
+                                )}
                                 <input
                                     type="file"
-                                    name="logoFile"
+                                    name="schoolLogo"
                                     onChange={handleFileChange}
                                     className="block w-full text-gray-700 border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500"
                                 />
@@ -170,8 +184,8 @@ export default function UpdateSchoolVersionStatus() {
                             <div className="mb-6">
                                 <input
                                     type="text"
-                                    name="youtubeLink"
-                                    value={formData.youtubeLink}
+                                    name="linkYoutube"
+                                    value={data.linkYoutube}
                                     onChange={handleInputChange}
                                     className="border-gray-300 rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-blue-500"
                                     placeholder="Link Video (YouTube)"
@@ -187,12 +201,12 @@ export default function UpdateSchoolVersionStatus() {
                                 >
                                     Batal
                                 </button>
-                                <Link
-                                    href="/updateSchoolTVPSSVersion2"
+                                <button
+                                    type="submit"
                                     className="px-6 py-2 bg-[#455185] text-white rounded-md shadow-md hover:bg-[#3d4674] focus:outline-none focus:ring-2 focus:ring-[#455185] transition"
                                 >
                                     Seterusnya
-                                </Link>
+                                </button>
                             </div>
                         </form>
                     </div>

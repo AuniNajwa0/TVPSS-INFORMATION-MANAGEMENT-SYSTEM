@@ -50,7 +50,7 @@ class UsersTableSeeder extends Seeder
                 'email' => 'schooladmin@moe.gov.my',
                 'name' => 'School Admin',
                 'password' => Hash::make('password123'),
-                #'role' => 'school_admin',
+                #'role' => 'school_admin',n
                 'state' => 'Johor',
                 'role' => User::SCHOOL_ADMIN,
             ]

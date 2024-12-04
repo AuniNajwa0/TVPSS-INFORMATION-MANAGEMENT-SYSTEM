@@ -1,23 +1,39 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import SchoolAdminSideBar from '../SchoolAdminSideBar';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-export default function UpdateSchoolVersionInfo() {
-    const [formData, setFormData] = useState({
-        agency1Name: "",
-        agency1Manager: "",
-        agency2Name: "",
-        agency2Manager: "",
-        phoneNumber: "Ada",
-        recordingEquipment: "Ada",
+export default function UpdateSchoolVersionInfo({ schoolInfo, schoolVersion }) {
+    const { data, setData, post, errors } = useForm({
+        agency1_name: "",
+        agency1Manager_name: "",
+        agency2_name: "",
+        agency2Manager_name: "",
+        noPhone: "Ada",
+        recordEquipment: "Ada",
         greenScreen: "Ada",
-        logoFile: null,
+        schoolLogo: null,
     });
+
+    useEffect(() => {
+        if (schoolInfo && schoolVersion) {
+            setData({
+                agency1_name: schoolInfo.agency1_name || "",
+                agency1Manager_name: schoolInfo.agency1Manager_name || "",
+                agency2_name: schoolInfo.agency2_name || "",
+                agency2Manager_name: schoolInfo.agency2Manager_name || "",
+                state: schoolInfo.state || "",
+                noPhone: schoolInfo.noPhone || "",
+                recordEquipment: schoolInfo.recordEquipment || "",
+                greenScreen: schoolInfo.greenScreen || "",
+                schoolLogo: "", 
+            });
+        }
+    }, [schoolInfo, schoolVersion]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData((prevData) => ({
+        setData((prevData) => ({
             ...prevData,
             [name]: value,
         }));
@@ -25,15 +41,22 @@ export default function UpdateSchoolVersionInfo() {
 
     const handleFileChange = (e) => {
         const { files } = e.target;
-        setFormData((prevData) => ({
+        setData((prevData) => ({
             ...prevData,
-            logoFile: files[0],
+            schoolLogo: files[0],
         }));
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("Form data:", formData);
+        post(route('tvpss2Edit'), {
+            onSuccess: () => {
+                console.log('School TVPSS Version updated successfully!');
+            },
+            onError: (errors) => {
+                console.error(errors);
+            },
+        });
     };
 
     return (
@@ -62,8 +85,8 @@ export default function UpdateSchoolVersionInfo() {
                                     </label>
                                     <input
                                         type="text"
-                                        name="agency1Name"
-                                        value={formData.agency1Name}
+                                        name="agency1_name"
+                                        value={data.agency1_name}
                                         onChange={handleInputChange}
                                         className="border-gray-300 rounded-md px-4 py-3 w-full focus:ring-2 focus:ring-blue-500"
                                         placeholder="Nama Agensi I"
@@ -75,8 +98,8 @@ export default function UpdateSchoolVersionInfo() {
                                     </label>
                                     <input
                                         type="text"
-                                        name="agency1Manager"
-                                        value={formData.agency1Manager}
+                                        name="agency1Manager_name"
+                                        value={data.agency1Manager_name}
                                         onChange={handleInputChange}
                                         className="border-gray-300 rounded-md px-4 py-3 w-full focus:ring-2 focus:ring-blue-500"
                                         placeholder="Nama Pengurus I"
@@ -88,8 +111,8 @@ export default function UpdateSchoolVersionInfo() {
                                     </label>
                                     <input
                                         type="text"
-                                        name="agency2Name"
-                                        value={formData.agency2Name}
+                                        name="agency2_name"
+                                        value={data.agency2_name}
                                         onChange={handleInputChange}
                                         className="border-gray-300 rounded-md px-4 py-3 w-full focus:ring-2 focus:ring-blue-500"
                                         placeholder="Nama Agensi II"
@@ -101,8 +124,8 @@ export default function UpdateSchoolVersionInfo() {
                                     </label>
                                     <input
                                         type="text"
-                                        name="agency2Manager"
-                                        value={formData.agency2Manager}
+                                        name="agency2Manager_name"
+                                        value={data.agency2Manager_name}
                                         onChange={handleInputChange}
                                         className="border-gray-300 rounded-md px-4 py-3 w-full focus:ring-2 focus:ring-blue-500"
                                         placeholder="Nama Pengurus II"
@@ -118,8 +141,8 @@ export default function UpdateSchoolVersionInfo() {
                                         No Telefon
                                     </label>
                                     <select
-                                        name="phoneNumber"
-                                        value={formData.phoneNumber}
+                                        name="noPhone"
+                                        value={data.noPhone}
                                         onChange={handleInputChange}
                                         className="border-gray-300 rounded-md px-4 py-3 w-full focus:ring-2 focus:ring-blue-500"
                                     >
@@ -134,8 +157,8 @@ export default function UpdateSchoolVersionInfo() {
                                         Peralatan Rakaman
                                     </label>
                                     <select
-                                        name="recordingEquipment"
-                                        value={formData.recordingEquipment}
+                                        name="recordEquipment"
+                                        value={data.recordEquipment}
                                         onChange={handleInputChange}
                                         className="border-gray-300 rounded-md px-4 py-3 w-full focus:ring-2 focus:ring-blue-500"
                                     >
@@ -151,7 +174,7 @@ export default function UpdateSchoolVersionInfo() {
                                     </label>
                                     <select
                                         name="greenScreen"
-                                        value={formData.greenScreen}
+                                        value={data.greenScreen}
                                         onChange={handleInputChange}
                                         className="border-gray-300 rounded-md px-4 py-3 w-full focus:ring-2 focus:ring-blue-500"
                                     >
