@@ -176,7 +176,7 @@ export default function Dashboard() {
                             value={date}
                             onChange={(e) => setDate(e.target.value)}
                         />
-                        <button className="bg-[#455185] hover:bg-[#3C4565] text-white p-2 rounded-lg min-w-[100px]">Export</button>
+                        <button className="bg-[#455185] hover:bg-[#3C4565] text-white p-2 rounded-lg min-w-[100px]">Exportt</button>
                     </div>
                 </div>
             }
