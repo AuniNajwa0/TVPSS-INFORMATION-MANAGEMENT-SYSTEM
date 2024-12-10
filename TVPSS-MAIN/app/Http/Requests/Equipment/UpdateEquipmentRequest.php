@@ -20,13 +20,12 @@ class UpdateEquipmentRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules()
+    public function rules() : array
     {
         return [
             'name' => 'required|string|max:255',
             'type' => 'required|string|max:255',
             'location' => 'required|string|max:255',
-            //'acquired_date' => 'required|date',
             'acquired_date' => 'required|date_format:Y-m-d',
             'status' => ['required', 'string', 'in:' . implode(',', StatusEnum::getValues())], 
         ];
