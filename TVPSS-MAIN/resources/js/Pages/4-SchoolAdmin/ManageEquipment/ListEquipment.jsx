@@ -11,7 +11,7 @@ export default function ListEquipment({ equipment }) {
     const currentPage = equipment.current_page;
     const totalItems = equipment.total;
 
-    const currentEquipment = equipment.data;  
+    const currentEquipment = equipment.data;
 
     const nextPage = () => {
         if (currentPage < equipment.last_page) {
@@ -28,7 +28,10 @@ export default function ListEquipment({ equipment }) {
     const handleDeleteSelected = () => {
         const confirmed = window.confirm("Padam barang yang dipilih?");
         if (confirmed) {
-            setSelectedItems([]);
+            // Send DELETE request to delete the selected equipment
+            Inertia.delete(route('equipment.deleteSelected'), {
+                ids: selectedItems,  // Send the selected IDs to the server
+            });
         }
     };
 
@@ -122,7 +125,7 @@ export default function ListEquipment({ equipment }) {
                                                 onClick={() => {
                                                     const confirmed = window.confirm("Padam barang?");
                                                     if (confirmed) {
-                                                        setSelectedItems(selectedItems.filter(id => id !== item.id));
+                                                        Inertia.delete(`/equipment/${item.id}`);  // Delete a single item
                                                     }
                                                 }}
                                             >

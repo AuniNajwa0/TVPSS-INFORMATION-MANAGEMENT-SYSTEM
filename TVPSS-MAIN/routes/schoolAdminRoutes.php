@@ -21,6 +21,7 @@ Route::get('equipment/{id}', [SchoolAdminController::class, 'equipmentShow'])->n
 Route::get('/equipment/{equipment}/edit', [SchoolAdminController::class, 'equipmentEdit'])->name('equipment.edit');
 Route::put('equipment/{id}', [SchoolAdminController::class, 'equipmentUpdate'])->name('equipment.equipmentUpdate');
 Route::delete('equipment/{equipment}', [SchoolAdminController::class, 'equipmentDestroy'])->name('equipment.equipmentDestroy');
+Route::delete('equipment/delete', [SchoolAdminController::class, 'deleteSelected'])->name('equipment.deleteSelected');
 Route::get('/status-options', [SchoolAdminController::class, 'getStatusOptions']);
 
 //School Information
