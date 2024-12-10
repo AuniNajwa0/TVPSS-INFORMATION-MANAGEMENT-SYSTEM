@@ -90,26 +90,21 @@ class UserController extends Controller
 
     public function update(UpdateUserRequest $request, $userId)
     {
-        // Find the user by ID
         $user = User::findOrFail($userId);
 
-        // Log the incoming data
         Log::info('Updating user:', $request->all());
 
-        // Validate incoming data
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
             'role' => 'required|integer|in:' . User::SUPER_ADMIN . ',' . User::STATE_ADMIN . ',' . User::PPD_ADMIN . ',' . User::SCHOOL_ADMIN,
             'state' => 'required|string|max:255',
             'district' => 'required|string|max:255',
-            'password' => 'nullable|string|min:8|confirmed',  // Password is optional
+            'password' => 'nullable|string|min:8|confirmed', 
         ]);
 
-        // Check if role is valid
         Log::info('Validated data:', $validated);
 
-        // Update the user data
         $user->update([
             'name' => $validated['name'],
             'email' => $validated['email'],
@@ -119,10 +114,8 @@ class UserController extends Controller
             'password' => $validated['password'] ? Hash::make($validated['password']) : $user->password,
         ]);
 
-        // Log after update
         Log::info('User updated:', $user->toArray());
 
-        // Return a success message
         return redirect()->route('users.index')->with('success', 'Pengguna berjaya dikemaskini.');
     }
 
