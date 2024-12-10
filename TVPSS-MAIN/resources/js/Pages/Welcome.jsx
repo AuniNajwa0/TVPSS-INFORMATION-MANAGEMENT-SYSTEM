@@ -64,7 +64,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
 
     return (
         <>
-            <Head title="TV Pusat Sumber Sekolah" />
+            <Head title="TVPSS | Welcome" />
             <div className="min-h-screen bg-gradient-to-b from-indigo-100 to-white">
                 {/* Header */}
                 <header className="bg-white shadow-md">

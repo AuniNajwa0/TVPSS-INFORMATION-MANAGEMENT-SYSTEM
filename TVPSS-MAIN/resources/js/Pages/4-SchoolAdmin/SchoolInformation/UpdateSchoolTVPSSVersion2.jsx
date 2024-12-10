@@ -67,7 +67,7 @@ export default function UpdateSchoolVersionInfo({ schoolInfo, schoolVersion }) {
                 </h2>
             }
         >
-            <Head title="Kemaskini Versi TVPSS" />
+            <Head title="TVPSS | Kemaskini Versi TVPSS" />
             <div className="flex min-h-screen bg-gray-100">
                 <SchoolAdminSideBar />
 

@@ -4,6 +4,15 @@ import { usePage } from '@inertiajs/react';
 export default function AuthenticatedLayout({ header, children, noMaxWidth }) {
     const user = usePage().props.auth.user;
 
+    const roleMap = {
+        0: 'Super Admin',
+        1: 'State Admin',
+        2: 'PPD Admin',
+        3: 'School Admin'
+    };
+
+    const role = roleMap[user.role] || 'Unknown Role';  
+
     return (
         <div className="min-h-screen bg-gray-100">
             {/* Navigation Bar */}
@@ -49,7 +58,7 @@ export default function AuthenticatedLayout({ header, children, noMaxWidth }) {
                                             {/* Name and Role */}
                                             <div className="flex flex-col items-start">
                                                 <span className="font-bold text-gray-800">{user.name}</span>
-                                                <span className="text-xs text-gray-500">{user.role || 'Super Admin'}</span>
+                                                <span className="text-xs text-gray-500">{role}</span>
                                             </div>
 
                                             {/* Arrow Icon */}

@@ -65,7 +65,7 @@ export default function UpdateSchoolVersionStatus({ schoolInfo }) {
                 </h2>
             }
         >
-            <Head title="Informasi Sekolah" />
+            <Head title="TVPSS | Informasi Sekolah" />
             <div className="flex min-h-screen bg-gray-100">
                 {/* Sidebar */}
                 <SchoolAdminSideBar />

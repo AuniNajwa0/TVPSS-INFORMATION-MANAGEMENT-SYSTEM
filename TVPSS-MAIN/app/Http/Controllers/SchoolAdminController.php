@@ -90,10 +90,30 @@ class SchoolAdminController extends Controller
         return redirect()->route('equipment.equipmentIndex')->with('success', 'Barang berjaya dipadam!');
     }*/
 
-    public function equipmentDestroy(Equipment $equipment){
+    /*public function equipmentDestroy(Equipment $equipment){
         $equipment->delete();
 
         return redirect()->route('equipment.equipmentIndex')->with('success', 'Barang berjaya dipadam!');
+    }*/
+
+    public function equipmentDestroy(Equipment $equipment)
+    {
+        $equipment->delete();
+
+        return redirect()->route('equipment.equipmentIndex')->with('success', 'Barang berjaya dipadam!');
+    }
+
+    public function deleteSelected(Request $request)
+    {
+        try {
+            $ids = $request->input('ids');
+
+            Equipment::whereIn('id', $ids)->delete();
+
+            return redirect()->route('equipment.equipmentIndex')->with('success', 'Barang berjaya dipadam!');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Ralat berlaku, sila cuba lagi.');
+        }
     }
 
     public function getStatusOptions()
