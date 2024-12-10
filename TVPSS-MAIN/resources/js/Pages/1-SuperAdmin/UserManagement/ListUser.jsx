@@ -51,13 +51,11 @@ export default function ListUser({ auth, users, pagination, selectedRole }) {
         }
     };
 
-    // Handle rows per page change
     const handleRowsPerPageChange = (e) => {
         setRowsPerPage(Number(e.target.value));
-        setCurrentPage(1);  // Reset to first page when rows per page changes
+        setCurrentPage(1);  
     };
 
-    // Handle role filter change
     const handleRoleChange = (e) => {
         setSelectedRole(e.target.value);
         setCurrentPage(1);  // Reset to first page when role filter changes
