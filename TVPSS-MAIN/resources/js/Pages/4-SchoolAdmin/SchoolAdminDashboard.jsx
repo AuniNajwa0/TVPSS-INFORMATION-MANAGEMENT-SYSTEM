@@ -120,7 +120,7 @@ export default function Dashboard() {
             }
             noMaxWidth={true}
         >
-            <Head title="Dashboard" />
+            <Head title="TVPSS | Dashboard" />
 
             <div className="flex">
                 <div className="w-1/6 p-4 text-white min-h-screen">

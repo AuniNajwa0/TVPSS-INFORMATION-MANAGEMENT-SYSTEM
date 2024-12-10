@@ -119,7 +119,7 @@ export default function AddUser() {
                 </h2>
             }
         >
-            <Head title="Pengguna Baharu" />
+            <Head title="TVPSS | Pengguna Baharu" />
             <div className="flex">
                 {/* Sidebar */}
                 <div className="w-1/6 p-8 text-white min-h-screen">

@@ -9,6 +9,7 @@ export default function AddEquipment() {
     const [formData, setFormData] = useState({
         name: '',
         type: '',
+        otherType: '', // Store custom type for "Other"
         location: '',
         acquired_date: '', 
         status: ''
@@ -38,17 +39,6 @@ export default function AddEquipment() {
         }));
     };
 
-    /*const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        const formattedData = {
-            ...formData,
-            acquired_date: formData.acquired_date
-        };
-
-        Inertia.post('/equipment', formattedData); // Post the correctly formatted data
-    };*/
-
     const handleSubmit = async (e) => {
         e.preventDefault();
     
@@ -72,7 +62,7 @@ export default function AddEquipment() {
         <AuthenticatedLayout
             header={<h2 className="text-xl font-semibold leading-tight text-gray-800">Tambah Barang</h2>}
         >
-            <Head title="Tambah Barang" />
+            <Head title="TVPSS | Tambah Barang" />
             <div className="flex">
                 {/* Sidebar */}
                 <div className="w-1/6 p-8 text-white min-h-screen">
@@ -101,19 +91,44 @@ export default function AddEquipment() {
                                     />
                                 </div>
 
-                                {/* Jenis */}
+                                {/* Jenis (Type) */}
                                 <div className="flex items-center border border-gray-300 rounded-lg focus-within:border-blue-500">
                                     <FiLayers className="text-gray-500 ml-3" size={20} />
-                                    <input
-                                        type="text"
+                                    <select
                                         id="type"
                                         name="type"
                                         value={formData.type}
                                         onChange={handleInputChange}
-                                        className="block w-full px-4 py-2 text-gray-700 placeholder-gray-400 bg-white border-0 focus:ring-0 rounded-lg"
-                                        placeholder="Masukkan Jenis"
-                                    />
+                                        className="block w-full px-4 py-2 text-gray-700 bg-white border-0 focus:ring-0 rounded-lg"
+                                    >
+                                        <option value="">Pilih Jenis</option>
+                                        <option value="Phone">Phone</option>
+                                        <option value="Tablet">Tablet</option>
+                                        <option value="Laptop">Laptop</option>
+                                        <option value="PC">PC</option>
+                                        <option value="Microphone">Mic</option>
+                                        <option value="Barang Sukan">Barang Sukan</option>
+                                        <option value="Perabot">Perabot</option>
+                                        <option value="Kenderaan">Kenderaan</option>
+                                        <option value="other">Other (Please Specify)</option>
+                                    </select>
                                 </div>
+
+                                {/* Show the additional "Other" field if "Other" is selected */}
+                                {formData.type === 'other' && (
+                                    <div className="flex items-center border border-gray-300 rounded-lg focus-within:border-blue-500">
+                                        <FiLayers className="text-gray-500 ml-3" size={20} />
+                                        <input
+                                            type="text"
+                                            id="otherType"
+                                            name="otherType"
+                                            value={formData.otherType}
+                                            onChange={handleInputChange}
+                                            className="block w-full px-4 py-2 text-gray-700 placeholder-gray-400 bg-white border-0 focus:ring-0 rounded-lg"
+                                            placeholder="Sila masukkan jenis peralatan lain"
+                                        />
+                                    </div>
+                                )}
 
                                 {/* Lokasi */}
                                 <div className="flex items-center border border-gray-300 rounded-lg focus-within:border-blue-500">
@@ -135,8 +150,8 @@ export default function AddEquipment() {
                                     <input
                                         type="date"
                                         id="acquired_date"
-                                        name="acquired_date" // Ensure this matches the controller field name
-                                        value={formData.acquired_date} // Ensure this is in the correct format (YYYY-MM-DD)
+                                        name="acquired_date"
+                                        value={formData.acquired_date}
                                         onChange={handleInputChange}
                                         className="block w-full px-4 py-2 text-gray-700 bg-white border-0 focus:ring-0 rounded-lg"
                                     />

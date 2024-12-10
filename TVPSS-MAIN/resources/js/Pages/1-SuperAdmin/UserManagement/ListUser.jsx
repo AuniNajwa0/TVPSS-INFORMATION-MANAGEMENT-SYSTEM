@@ -77,7 +77,7 @@ export default function ListUser({ auth, users, pagination, selectedRole }) {
                 </h2>
             }
         >
-            <Head title="Pengurusan Pengguna" />
+            <Head title="TVPSS | Pengurusan Pengguna" />
 
             <div className="flex">
                 <div className="w-1/6 p-4 text-white min-h-screen">

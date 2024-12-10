@@ -2,13 +2,15 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
 import { FiClipboard, FiLayers, FiMapPin, FiCalendar, FiSettings } from 'react-icons/fi';
-import SchoolAdminSideBar from '../SchoolAdminSideBar';  // Make sure this is correctly imported
+import SchoolAdminSideBar from '../SchoolAdminSideBar';
 import { Inertia } from '@inertiajs/inertia';
 
 export default function UpdateEquipment({ equipment }) {
+    // Initialize the form data with the equipment data
     const [formData, setFormData] = useState({
         name: equipment?.name || '',
         type: equipment?.type || '',
+        otherType: equipment?.type === 'other' ? equipment?.otherType : '',  // Preload the custom type if available
         location: equipment?.location || '',
         acquired_date: equipment?.acquired_date || '',
         status: equipment?.status || ''
@@ -17,7 +19,7 @@ export default function UpdateEquipment({ equipment }) {
     const [statusOptions, setStatusOptions] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState({});
-    const [message, setMessage] = useState('');  
+    const [message, setMessage] = useState('');
 
     useEffect(() => {
         const fetchStatusOptions = async () => {
@@ -31,12 +33,13 @@ export default function UpdateEquipment({ equipment }) {
         };
 
         fetchStatusOptions();
-    }, []);  
+    }, []);
 
     useEffect(() => {
         setFormData({
             name: equipment?.name || '',
             type: equipment?.type || '',
+            otherType: equipment?.type === 'other' ? equipment?.otherType : '',
             location: equipment?.location || '',
             acquired_date: equipment?.acquired_date || '',
             status: equipment?.status || ''
@@ -53,7 +56,7 @@ export default function UpdateEquipment({ equipment }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setErrors({});  // Clear previous errors
+        setErrors({});  // Clear any previous errors
 
         const newErrors = {};
         if (!formData.name) newErrors.name = 'Nama Barang diperlukan!';
@@ -68,10 +71,15 @@ export default function UpdateEquipment({ equipment }) {
         }
 
         setIsLoading(true);
-        setMessage('');  // Clear previous success/error message
+        setMessage('');  // Clear any previous message
 
         try {
-            await Inertia.put(`/equipment/${equipment.id}`, formData);  // Use Inertia to send the PUT request
+            // If 'other' is selected, use the 'otherType' field for the custom input
+            if (formData.type === 'other' && formData.otherType) {
+                formData.type = formData.otherType;  // Set the custom 'otherType' as the 'type'
+            }
+
+            await Inertia.put(`/equipment/${equipment.id}`, formData);
             setMessage('Barang berjaya dikemaskini!');
         } catch (error) {
             setMessage('Ralat berlaku, sila cuba lagi.');
@@ -122,17 +130,42 @@ export default function UpdateEquipment({ equipment }) {
                                 {/* Jenis */}
                                 <div className="flex items-center border border-gray-300 rounded-lg focus-within:border-blue-500">
                                     <FiLayers className="text-gray-500 ml-3" size={20} />
-                                    <input
-                                        type="text"
+                                    <select
                                         id="type"
                                         name="type"
                                         value={formData.type}
                                         onChange={handleInputChange}
-                                        className="block w-full px-4 py-2 text-gray-700 placeholder-gray-400 bg-white border-0 focus:ring-0 rounded-lg"
-                                        placeholder="Masukkan Jenis"
-                                    />
+                                        className="block w-full px-4 py-2 text-gray-700 bg-white border-0 focus:ring-0 rounded-lg"
+                                    >
+                                        <option value="">Pilih Jenis</option>
+                                        <option value="Phone">Phone</option>
+                                        <option value="Tablet">Tablet</option>
+                                        <option value="Laptop">Laptop</option>
+                                        <option value="PC">PC</option>
+                                        <option value="Microphone">Mic</option>
+                                        <option value="Barang Sukan">Barang Sukan</option>
+                                        <option value="Perabot">Perabot</option>
+                                        <option value="Kenderaan">Kenderaan</option>
+                                        <option value="other">Other (Please Specify)</option>
+                                    </select>
                                 </div>
                                 {errors.type && <div className="text-red-500 text-sm">{errors.type}</div>}
+
+                                {/* Show the additional "Other" field if "Other" is selected */}
+                                {formData.type === 'other' && (
+                                    <div className="flex items-center border border-gray-300 rounded-lg focus-within:border-blue-500">
+                                        <FiLayers className="text-gray-500 ml-3" size={20} />
+                                        <input
+                                            type="text"
+                                            id="otherType"
+                                            name="otherType"
+                                            value={formData.otherType}
+                                            onChange={handleInputChange}
+                                            className="block w-full px-4 py-2 text-gray-700 placeholder-gray-400 bg-white border-0 focus:ring-0 rounded-lg"
+                                            placeholder="Sila masukkan jenis peralatan lain"
+                                        />
+                                    </div>
+                                )}
 
                                 {/* Lokasi */}
                                 <div className="flex items-center border border-gray-300 rounded-lg focus-within:border-blue-500">

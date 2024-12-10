@@ -111,7 +111,7 @@ export default function UpdateUser({ user, roles }) {
                 </h2>
             }
         >
-            <Head title="Kemas Kini Pengguna" />
+            <Head title="TVPSS | Kemas Kini Pengguna" />
             <div className="flex">
                 <div className="w-1/6 p-8 text-white min-h-screen">
                     <SuperAdminSideBar />

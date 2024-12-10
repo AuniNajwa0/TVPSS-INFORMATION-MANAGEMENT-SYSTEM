@@ -40,7 +40,7 @@ export default function ListEquipment({ equipment }) {
 
     return (
         <AuthenticatedLayout header={<h2 className="text-xl font-semibold leading-tight text-gray-800">Pengurusan Bilangan Barang</h2>}>
-            <Head title="Pengurusan Bilangan Barang" />
+            <Head title="TVPSS | Pengurusan Bilangan Barang" />
             
             <div className="flex">
                 <div className="w-1/6 p-4 text-white min-h-screen">
