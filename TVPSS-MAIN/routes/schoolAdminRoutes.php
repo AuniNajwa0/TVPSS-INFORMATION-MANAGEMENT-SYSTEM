@@ -12,14 +12,15 @@ Route::get('/dashboardSchool', fn() => Inertia::render('4-SchoolAdmin/SchoolAdmi
     ->name('dashboardSA');
 
 // Equipment Management
-Route::resource('equipment', SchoolAdminController::class);
+//Route::resource('equipment', SchoolAdminController::class);
 Route::get('/listEquipment', [SchoolAdminController::class, 'equipmentIndex'])->name('equipment.equipmentIndex');
 Route::get('equipment/create', [SchoolAdminController::class, 'equipmentCreate'])->name('equipment.equipmentCreate');
 Route::post('equipment', [SchoolAdminController::class, 'equipmentStore'])->name('equipment.equipmentStore');
 Route::get('equipment/{id}', [SchoolAdminController::class, 'equipmentShow'])->name('equipment.equipmentShow');
-Route::get('equipment/{id}/edit', [SchoolAdminController::class, 'equipmentEdit'])->name('equipment.equipmentEdit');
+//Route::get('equipment/{id}/edit', [SchoolAdminController::class, 'equipmentEdit'])->name('equipment.equipmentEdit');
+Route::get('/equipment/{equipment}/edit', [SchoolAdminController::class, 'equipmentEdit'])->name('equipment.edit');
 Route::put('equipment/{id}', [SchoolAdminController::class, 'equipmentUpdate'])->name('equipment.equipmentUpdate');
-Route::delete('equipment/{id}', [SchoolAdminController::class, 'equipmentDestroy'])->name('equipment.equipmentDestroy');
+Route::delete('equipment/{equipment}', [SchoolAdminController::class, 'equipmentDestroy'])->name('equipment.equipmentDestroy');
 Route::get('/status-options', [SchoolAdminController::class, 'getStatusOptions']);
 
 //School Information

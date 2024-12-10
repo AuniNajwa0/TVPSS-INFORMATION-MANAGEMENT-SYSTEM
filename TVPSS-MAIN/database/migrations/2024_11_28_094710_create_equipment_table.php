@@ -16,9 +16,9 @@ return new class extends Migration
             $table->string('equipName'); 
             $table->string('equipType');
             $table->string('location'); 
-            //$table->date('acquired_date'); 
+            $table->date('acquired_date'); 
             //$table->date('acquired_date')->change();
-            $table->timestamps('acquired_date');
+            //$table->timestamps('acquired_date');
             $table->enum('status', ['Berfungsi', 'Tidak Berfungsi', 'Penyelenggaraan']); 
             $table->timestamps();
         });

@@ -3,6 +3,7 @@ import { FaEdit, FaTrash } from 'react-icons/fa';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import SchoolAdminSideBar from '../SchoolAdminSideBar';
+import { Inertia } from '@inertiajs/inertia';
 
 export default function ListEquipment({ equipment }) {
     const [selectedItems, setSelectedItems] = useState([]);
@@ -10,19 +11,16 @@ export default function ListEquipment({ equipment }) {
     const currentPage = equipment.current_page;
     const totalItems = equipment.total;
 
-    const currentEquipment = equipment.data;  // Access the actual data array
+    const currentEquipment = equipment.data;  
 
-    // Pagination Logic
     const nextPage = () => {
         if (currentPage < equipment.last_page) {
-            // Manually change the page (you can integrate this with Inertia.js to visit the next page)
             window.location.href = `/equipment?page=${currentPage + 1}`;
         }
     };
 
     const prevPage = () => {
         if (currentPage > 1) {
-            // Manually change the page (you can integrate this with Inertia.js to visit the previous page)
             window.location.href = `/equipment?page=${currentPage - 1}`;
         }
     };
@@ -30,8 +28,6 @@ export default function ListEquipment({ equipment }) {
     const handleDeleteSelected = () => {
         const confirmed = window.confirm("Padam barang yang dipilih?");
         if (confirmed) {
-            // Delete selected items (you should implement the delete functionality)
-            // Update the state or call an API to remove items
             setSelectedItems([]);
         }
     };
@@ -117,7 +113,7 @@ export default function ListEquipment({ equipment }) {
                                         <td className="border-b p-4">
                                             <button
                                                 className="mr-2 text-blue-600 hover:text-blue-800"
-                                                onClick={() => window.location.href = `/equipment/${item.id}/edit`}
+                                                onClick={() => Inertia.get(`/equipment/${item.id}/edit`)}
                                             >
                                                 <FaEdit />
                                             </button>

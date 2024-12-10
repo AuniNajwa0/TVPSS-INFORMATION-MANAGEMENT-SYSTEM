@@ -11,8 +11,8 @@ export default function UpdateUser({ user, roles }) {
         email: user.email || '',
         role: user.role || '',
         state: user.state || '',
-        district: user.district || '', // Added district field
-        password: '',
+        district: user.district || '', 
+        password: user.password || '',
         password_confirmation: '',
     });
 
@@ -20,7 +20,6 @@ export default function UpdateUser({ user, roles }) {
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState({});
 
-    // List of Malaysian states
     const states = [
         'Johor', 'Melaka', 'Pahang', 'Wilayah Persekutuan Kuala Lumpur', 'Selangor', 
         'Negeri Sembilan', 'Perak', 'Kedah', 'Pulau Pinang', 'Perlis', 'Kelantan', 
@@ -43,7 +42,6 @@ export default function UpdateUser({ user, roles }) {
         Sarawak: ['Kuching', 'Sibu', 'Miri', 'Bintulu', 'Sri Aman', 'Mukah', 'Betong', 'Limbang'],
     };
 
-    // Handler to update form data
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({
@@ -68,7 +66,7 @@ export default function UpdateUser({ user, roles }) {
         }
         if (!formData.role) newErrors.role = 'Peranan diperlukan!';
         if (!formData.state) newErrors.state = 'Negeri diperlukan!';
-        if (!formData.district) newErrors.district = 'Daerah diperlukan!'; // Added district validation
+        if (!formData.district) newErrors.district = 'Daerah diperlukan!'; 
         if (!/\S+@\S+\.\S+/.test(formData.email)) {
             newErrors.email = 'Sila masukkan alamat emel yang sah.';
         }
@@ -92,16 +90,17 @@ export default function UpdateUser({ user, roles }) {
     };
 
     const handleCancel = () => {
-        setFormData({
+        /*setFormData({
             name: user.name,
             email: user.email,
             role: user.role,
             state: user.state,
-            district: user.district,  // Reset district
-            password: '',
+            district: user.district,  
+            password: user.password,
             password_confirmation: '',
-        });
-        setMessage('');
+        });*/
+        Inertia.get('/listUsers'); 
+        //setMessage('');
     };
 
     return (

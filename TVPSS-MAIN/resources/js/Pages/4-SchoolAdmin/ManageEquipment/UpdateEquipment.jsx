@@ -1,21 +1,48 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
-import { Inertia } from '@inertiajs/inertia'; // Import Inertia for navigation
-import SchoolAdminSideBar from '../SchoolAdminSideBar';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FiClipboard, FiLayers, FiMapPin, FiCalendar, FiSettings } from 'react-icons/fi';
+import SchoolAdminSideBar from '../SchoolAdminSideBar';  // Make sure this is correctly imported
+import { Inertia } from '@inertiajs/inertia';
 
-export default function Dashboard() {
-    // State for form data
+export default function UpdateEquipment({ equipment }) {
     const [formData, setFormData] = useState({
-        name: '',
-        type: '',
-        location: '',
-        acquiredDate: '',
-        status: ''
+        name: equipment?.name || '',
+        type: equipment?.type || '',
+        location: equipment?.location || '',
+        acquired_date: equipment?.acquired_date || '',
+        status: equipment?.status || ''
     });
 
-    // Handler to update form data
+    const [statusOptions, setStatusOptions] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [errors, setErrors] = useState({});
+    const [message, setMessage] = useState('');  
+
+    useEffect(() => {
+        const fetchStatusOptions = async () => {
+            try {
+                const response = await fetch('/status-options');
+                const data = await response.json();
+                setStatusOptions(data.status);
+            } catch (error) {
+                console.error('Error fetching status options:', error);
+            }
+        };
+
+        fetchStatusOptions();
+    }, []);  
+
+    useEffect(() => {
+        setFormData({
+            name: equipment?.name || '',
+            type: equipment?.type || '',
+            location: equipment?.location || '',
+            acquired_date: equipment?.acquired_date || '',
+            status: equipment?.status || ''
+        });
+    }, [equipment]);
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({
@@ -24,38 +51,56 @@ export default function Dashboard() {
         }));
     };
 
-    // Handler for form submission
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Handle form submission logic here (e.g., send to API)
-        console.log(formData);
-    };
+        setErrors({});  // Clear previous errors
 
-    // Handler for cancel action with route navigation
-    const handleCancel = () => {
-        Inertia.get('/dashboard'); // Navigate to the desired route
+        const newErrors = {};
+        if (!formData.name) newErrors.name = 'Nama Barang diperlukan!';
+        if (!formData.type) newErrors.type = 'Jenis diperlukan!';
+        if (!formData.location) newErrors.location = 'Lokasi diperlukan!';
+        if (!formData.acquired_date) newErrors.acquired_date = 'Tarikh Diperolehi diperlukan!';
+        if (!formData.status) newErrors.status = 'Status diperlukan!';
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+
+        setIsLoading(true);
+        setMessage('');  // Clear previous success/error message
+
+        try {
+            await Inertia.put(`/equipment/${equipment.id}`, formData);  // Use Inertia to send the PUT request
+            setMessage('Barang berjaya dikemaskini!');
+        } catch (error) {
+            setMessage('Ralat berlaku, sila cuba lagi.');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
         <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Kemaskini Barang
-                </h2>
-            }
+            header={<h2 className="text-xl font-semibold leading-tight text-gray-800">Kemaskini Barang</h2>}
         >
-            <Head title="Tambah Barang" />
+            <Head title="Kemaskini Barang" />
             <div className="flex">
-                {/* Sidebar */}
                 <div className="w-1/6 p-8 text-white min-h-screen">
                     <SchoolAdminSideBar />
                 </div>
 
-                {/* Main Content */}
                 <div className="flex-1 p-6">
                     <div className="max-w-3xl mx-auto p-8 bg-white rounded-lg shadow-md border border-gray-200">
                         <h3 className="text-2xl font-semibold text-gray-800 mb-6">Kemaskini Barang</h3>
-                        
+
+                        {/* Feedback message */}
+                        {message && (
+                            <div className={`text-${message.includes('berjaya') ? 'green' : 'red'}-500 mb-4`}>
+                                {message}
+                            </div>
+                        )}
+
                         {/* Form */}
                         <form onSubmit={handleSubmit}>
                             <div className="space-y-6">
@@ -72,6 +117,7 @@ export default function Dashboard() {
                                         placeholder="Masukkan Nama Barang"
                                     />
                                 </div>
+                                {errors.name && <div className="text-red-500 text-sm">{errors.name}</div>}
 
                                 {/* Jenis */}
                                 <div className="flex items-center border border-gray-300 rounded-lg focus-within:border-blue-500">
@@ -86,6 +132,7 @@ export default function Dashboard() {
                                         placeholder="Masukkan Jenis"
                                     />
                                 </div>
+                                {errors.type && <div className="text-red-500 text-sm">{errors.type}</div>}
 
                                 {/* Lokasi */}
                                 <div className="flex items-center border border-gray-300 rounded-lg focus-within:border-blue-500">
@@ -100,19 +147,21 @@ export default function Dashboard() {
                                         placeholder="Masukkan Lokasi"
                                     />
                                 </div>
+                                {errors.location && <div className="text-red-500 text-sm">{errors.location}</div>}
 
                                 {/* Tarikh Diperolehi */}
                                 <div className="flex items-center border border-gray-300 rounded-lg focus-within:border-blue-500">
                                     <FiCalendar className="text-gray-500 ml-3" size={20} />
                                     <input
                                         type="date"
-                                        id="acquiredDate"
-                                        name="acquiredDate"
-                                        value={formData.acquiredDate}
+                                        id="acquired_date"
+                                        name="acquired_date"
+                                        value={formData.acquired_date}
                                         onChange={handleInputChange}
                                         className="block w-full px-4 py-2 text-gray-700 bg-white border-0 focus:ring-0 rounded-lg"
                                     />
                                 </div>
+                                {errors.acquired_date && <div className="text-red-500 text-sm">{errors.acquired_date}</div>}
 
                                 {/* Status */}
                                 <div className="flex items-center border border-gray-300 rounded-lg focus-within:border-blue-500">
@@ -125,18 +174,20 @@ export default function Dashboard() {
                                         className="block w-full px-4 py-2 text-gray-700 bg-white border-0 focus:ring-0 rounded-lg"
                                     >
                                         <option value="">Pilih Status</option>
-                                        <option value="Berfungsi">Berfungsi</option>
-                                        <option value="Tidak Berfungsi">Tidak Berfungsi</option>
-                                        <option value="Penyelenggaraan">Penyelenggaraan</option>
-                                        <option value="Boleh Diguna">Boleh Diguna</option>
+                                        {statusOptions.map((status) => (
+                                            <option key={status} value={status}>
+                                                {status}
+                                            </option>
+                                        ))}
                                     </select>
                                 </div>
+                                {errors.status && <div className="text-red-500 text-sm">{errors.status}</div>}
 
                                 {/* Buttons */}
                                 <div className="flex justify-end space-x-4">
                                     <button
                                         type="button"
-                                        onClick={() => window.location.href = '/listEquipment'}
+                                        onClick={() => Inertia.get('/listEquipment')}
                                         className="px-6 py-2 bg-gray-500 text-white font-semibold rounded-lg shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 transition duration-200"
                                     >
                                         Batal
@@ -145,7 +196,7 @@ export default function Dashboard() {
                                         type="submit"
                                         className="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
                                     >
-                                        Hantar
+                                        {isLoading ? 'Mengemaskini...' : 'Kemaskini'}
                                     </button>
                                 </div>
                             </div>
