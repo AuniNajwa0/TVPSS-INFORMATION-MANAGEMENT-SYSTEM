@@ -10,3 +10,6 @@ use Inertia\Inertia;
 
 Route::get('/dashboardState', fn() => Inertia::render('2-StateAdmin/StateAdminDashboard'))
     ->name('dashboardST');
+
+//TVPSS SCHOOL INFORMATION
+Route::get('/listSchool', [StateAdminController::class, 'schoolInfoIndex'])->name('schoolInfo.schoolInfoIndex');
