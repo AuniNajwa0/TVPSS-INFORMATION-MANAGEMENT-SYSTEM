@@ -13,7 +13,7 @@ export default function Edit({ mustVerifyEmail, status }) {
                 </h2>
             }
         >
-            <Head title="Profile" />
+            <Head title="TVPSS | Profile" />
 
             
 

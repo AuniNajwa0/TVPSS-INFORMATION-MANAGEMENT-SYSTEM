@@ -6,6 +6,7 @@ export default function ListSchool() {
   const [searchQuery, setSearchQuery] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedSchools, setSelectedSchools] = useState([]);
 
   const schoolData = [
     { id: 'JEA9012', name: 'SJK (C) Kuo Kuang 2', officer: 'Mr. Tan Ah Kow', version: 3, status: 'Aktif' },
@@ -46,6 +47,12 @@ export default function ListSchool() {
     }
   };
 
+  const handleCheckboxChange = (id) => {
+    setSelectedSchools((prev) =>
+      prev.includes(id) ? prev.filter((schoolId) => schoolId !== id) : [...prev, id]
+    );
+  };
+
   const paginatedData = filteredData.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
@@ -76,6 +83,13 @@ export default function ListSchool() {
           </div>
 
           <div className="flex items-center space-x-4">
+            <button className="px-4 py-2 bg-green-500 text-white rounded-md shadow hover:bg-green-600">
+              Eksport
+            </button>
+            <button className="px-4 py-2 bg-red-500 text-white rounded-md shadow hover:bg-red-600">
+              Hapus Data Dipilih
+            </button>
+
             <label htmlFor="rowsPerPage" className="text-sm font-medium">Bilangan Data:</label>
             <select
               id="rowsPerPage"
@@ -94,16 +108,39 @@ export default function ListSchool() {
         <table className="w-full bg-white shadow-md rounded">
           <thead>
             <tr className="bg-gray-100 border-b">
+              <th className="p-4">
+                <input
+                  type="checkbox"
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setSelectedSchools(filteredData.map((school) => school.id));
+                    } else {
+                      setSelectedSchools([]);
+                    }
+                  }}
+                  checked={
+                    selectedSchools.length === filteredData.length && filteredData.length > 0
+                  }
+                />
+              </th>
               <th className="text-left p-4">Kod Sekolah</th>
               <th className="text-left p-4">Nama Sekolah</th>
               <th className="text-left p-4">Nama Pengawai Sekolah</th>
               <th className="text-left p-4">Versi</th>
               <th className="text-left p-4">Status</th>
+              <th className="text-left p-4">Aksi</th>
             </tr>
           </thead>
           <tbody>
-            {paginatedData.map((school, index) => (
-              <tr key={index} className="hover:bg-gray-50 border-b">
+            {paginatedData.map((school) => (
+              <tr key={school.id} className="hover:bg-gray-50 border-b">
+                <td className="p-4">
+                  <input
+                    type="checkbox"
+                    checked={selectedSchools.includes(school.id)}
+                    onChange={() => handleCheckboxChange(school.id)}
+                  />
+                </td>
                 <td className="p-4">{school.id}</td>
                 <td className="p-4">{school.name}</td>
                 <td className="p-4">{school.officer}</td>
@@ -117,11 +154,16 @@ export default function ListSchool() {
                     {school.status}
                   </span>
                 </td>
+                <td className="p-4">
+                  <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                    Lihat
+                  </button>
+                </td>
               </tr>
             ))}
             {paginatedData.length === 0 && (
               <tr>
-                <td colSpan="5" className="text-center py-4">
+                <td colSpan="7" className="text-center py-4">
                   Tiada Data Ditemui
                 </td>
               </tr>
