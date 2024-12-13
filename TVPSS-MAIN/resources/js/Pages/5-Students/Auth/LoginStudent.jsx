@@ -8,7 +8,7 @@ import { Inertia } from '@inertiajs/inertia';
 import { Head, Link, useForm } from "@inertiajs/react";
 import { useState } from "react";
 
-export default function Login({ status, canResetPassword }) {
+export default function studentLogin({ status, canResetPassword }) {
   const { data, setData, post, processing, errors, reset } = useForm({
     email: "",
     password: "",
@@ -26,8 +26,8 @@ export default function Login({ status, canResetPassword }) {
       return;
     }
 
-    if (!data.email.endsWith("@moe.gov.my")) {
-      setError("Format email mesti @moe.gov.my.");
+    if (!data.email.endsWith("@moe.edu.my")) {
+      setError("Format email mesti @moe.edu.my.");
       return;
     }
 

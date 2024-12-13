@@ -12,6 +12,7 @@ class SchoolInfo extends Model
     protected $table = 'schoolinfo';
 
     protected $fillable = [
+        'schoolCode',
         'schoolName',
         'schoolEmail',
         'schoolAddress1',
@@ -24,6 +25,7 @@ class SchoolInfo extends Model
         'linkYoutube',
     ];
 
+    // point 2
     public function schoolVersion()
     {
         return $this->hasOne(TVPSSVersion::class, 'school_info_id');

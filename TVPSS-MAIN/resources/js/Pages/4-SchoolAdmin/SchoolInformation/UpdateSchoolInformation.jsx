@@ -1,10 +1,13 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm } from '@inertiajs/react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import SchoolAdminSideBar from '../SchoolAdminSideBar';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
 
 export default function UpdateSchoolInformation(props) {
     const { data, setData, post, processing, errors, reset } = useForm({
+        schoolCode: "",
         schoolName: "",
         schoolAddress1: "",
         schoolAddress2: "",
@@ -17,10 +20,13 @@ export default function UpdateSchoolInformation(props) {
         linkYoutube: "",
     });
 
-    // Check if there's existing school info passed from the backend
+    // State to hold the image preview
+    const [imagePreview, setImagePreview] = useState(null);
+
     useEffect(() => {
         if (props.schoolInfo) {
             setData({
+                schoolCode: props.schoolInfo.schoolCode || "",
                 schoolName: props.schoolInfo.schoolName || "",
                 schoolAddress1: props.schoolInfo.schoolAddress1 || "",
                 schoolAddress2: props.schoolInfo.schoolAddress2 || "",
@@ -30,7 +36,13 @@ export default function UpdateSchoolInformation(props) {
                 schoolEmail: props.schoolInfo.schoolEmail || "",
                 noFax: props.schoolInfo.noFax || "",
                 linkYoutube: props.schoolInfo.linkYoutube || "",
+                schoolLogo: props.schoolInfo.schoolLogo || null, // Existing image link if available
             });
+
+            // Set image preview if schoolLogo exists
+            if (props.schoolInfo.schoolLogo) {
+                setImagePreview(props.schoolInfo.schoolLogo);
+            }
         }
     }, [props.schoolInfo]);
 
@@ -41,7 +53,17 @@ export default function UpdateSchoolInformation(props) {
 
     const handleFileChange = (e) => {
         const { name, files } = e.target;
-        setData(name, files[0]); // Store the selected file
+        setData(name, files[0]);
+
+        // Set the preview image
+        const file = files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result); // Set preview to file content
+            };
+            reader.readAsDataURL(file); // Read the file as base64 URL
+        }
     };
 
     const handleSubmit = (e) => {
@@ -79,93 +101,131 @@ export default function UpdateSchoolInformation(props) {
                         {/* Form */}
                         <form onSubmit={handleSubmit} encType="multipart/form-data">
                             <div className="grid grid-cols-2 gap-6 mb-6">
+                                {/* School Code */}
+                                <Box className="col-span-2">
+                                    <TextField
+                                        label="Kod Sekolah"
+                                        variant="outlined"
+                                        fullWidth
+                                        name="schoolCode"
+                                        value={data.schoolCode}
+                                        onChange={handleInputChange}
+                                        error={!!errors.schoolCode}
+                                        helperText={errors.schoolCode}
+                                    />
+                                </Box>
+
                                 {/* School Name */}
-                                <input
-                                    type="text"
-                                    name="schoolName"
-                                    value={data.schoolName}
-                                    onChange={handleInputChange}
-                                    className="col-span-2 border-gray-300 rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-blue-500"
-                                    placeholder="Nama Sekolah"
-                                />
-                                {errors.schoolName && <div className="text-red-500">{errors.schoolName}</div>}
+                                <Box className="col-span-2">
+                                    <TextField
+                                        label="Nama Sekolah"
+                                        variant="outlined"
+                                        fullWidth
+                                        name="schoolName"
+                                        value={data.schoolName}
+                                        onChange={handleInputChange}
+                                        error={!!errors.schoolName}
+                                        helperText={errors.schoolName}
+                                    />
+                                </Box>
 
                                 {/* Address 1 */}
-                                <input
-                                    type="text"
-                                    name="schoolAddress1"
-                                    value={data.schoolAddress1}
-                                    onChange={handleInputChange}
-                                    className="col-span-2 border-gray-300 rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-blue-500"
-                                    placeholder="Alamat Sekolah 1"
-                                />
-                                {errors.schoolAddress1 && <div className="text-red-500">{errors.schoolAddress1}</div>}
-
-                                {/* Address 2 */}
-                                <input
-                                    type="text"
-                                    name="schoolAddress2"
-                                    value={data.schoolAddress2}
-                                    onChange={handleInputChange}
-                                    className="col-span-2 border-gray-300 rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-blue-500"
-                                    placeholder="Alamat Sekolah 2"
-                                />
-                                {errors.schoolAddress2 && <div className="text-red-500">{errors.schoolAddress2}</div>}
+                                <Box className="col-span-1">
+                                    <TextField
+                                        label="Alamat Sekolah 1"
+                                        variant="outlined"
+                                        fullWidth
+                                        name="schoolAddress1"
+                                        value={data.schoolAddress1}
+                                        onChange={handleInputChange}
+                                        error={!!errors.schoolAddress1}
+                                        helperText={errors.schoolAddress1}
+                                    />
+                                </Box>
 
                                 {/* Postcode */}
-                                <input
-                                    type="text"
-                                    name="postcode"
-                                    value={data.postcode}
-                                    onChange={handleInputChange}
-                                    className="col-span-1 border-gray-300 rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-blue-500"
-                                    placeholder="Poskod"
-                                />
-                                {errors.postcode && <div className="text-red-500">{errors.postcode}</div>}
+                                <Box className="col-span-1">
+                                    <TextField
+                                        label="Poskod"
+                                        variant="outlined"
+                                        fullWidth
+                                        name="postcode"
+                                        value={data.postcode}
+                                        onChange={handleInputChange}
+                                        error={!!errors.postcode}
+                                        helperText={errors.postcode}
+                                    />
+                                </Box>
+
+                                {/* Address 2 */}
+                                <Box className="col-span-1">
+                                    <TextField
+                                        label="Alamat Sekolah 2"
+                                        variant="outlined"
+                                        fullWidth
+                                        name="schoolAddress2"
+                                        value={data.schoolAddress2}
+                                        onChange={handleInputChange}
+                                        error={!!errors.schoolAddress2}
+                                        helperText={errors.schoolAddress2}
+                                    />
+                                </Box>
 
                                 {/* State */}
-                                <input
-                                    type="text"
-                                    name="state"
-                                    value={data.state}
-                                    onChange={handleInputChange}
-                                    className="col-span-1 border-gray-300 rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-blue-500"
-                                    placeholder="Negeri"
-                                />
-                                {errors.state && <div className="text-red-500">{errors.state}</div>}
+                                <Box className="col-span-1">
+                                    <TextField
+                                        label="Negeri"
+                                        variant="outlined"
+                                        fullWidth
+                                        name="state"
+                                        value={data.state}
+                                        onChange={handleInputChange}
+                                        error={!!errors.state}
+                                        helperText={errors.state}
+                                    />
+                                </Box>
                             </div>
 
                             {/* Phone, Email, Fax */}
                             <div className="grid grid-cols-3 gap-6 mb-6">
-                                <input
-                                    type="text"
-                                    name="noPhone"
-                                    value={data.noPhone}
-                                    onChange={handleInputChange}
-                                    className="border-gray-300 rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-blue-500"
-                                    placeholder="No Telefon"
-                                />
-                                {errors.noPhone && <div className="text-red-500">{errors.noPhone}</div>}
+                                <Box>
+                                    <TextField
+                                        label="No Telefon"
+                                        variant="outlined"
+                                        fullWidth
+                                        name="noPhone"
+                                        value={data.noPhone}
+                                        onChange={handleInputChange}
+                                        error={!!errors.noPhone}
+                                        helperText={errors.noPhone}
+                                    />
+                                </Box>
 
-                                <input
-                                    type="email"
-                                    name="schoolEmail"
-                                    value={data.schoolEmail}
-                                    onChange={handleInputChange}
-                                    className="border-gray-300 rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-blue-500"
-                                    placeholder="Email"
-                                />
-                                {errors.schoolEmail && <div className="text-red-500">{errors.schoolEmail}</div>}
+                                <Box>
+                                    <TextField
+                                        label="Email"
+                                        variant="outlined"
+                                        fullWidth
+                                        name="schoolEmail"
+                                        value={data.schoolEmail}
+                                        onChange={handleInputChange}
+                                        error={!!errors.schoolEmail}
+                                        helperText={errors.schoolEmail}
+                                    />
+                                </Box>
 
-                                <input
-                                    type="text"
-                                    name="noFax"
-                                    value={data.noFax}
-                                    onChange={handleInputChange}
-                                    className="border-gray-300 rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-blue-500"
-                                    placeholder="No Fax"
-                                />
-                                {errors.noFax && <div className="text-red-500">{errors.noFax}</div>}
+                                <Box>
+                                    <TextField
+                                        label="No Fax"
+                                        variant="outlined"
+                                        fullWidth
+                                        name="noFax"
+                                        value={data.noFax}
+                                        onChange={handleInputChange}
+                                        error={!!errors.noFax}
+                                        helperText={errors.noFax}
+                                    />
+                                </Box>
                             </div>
 
                             {/* File Upload */}
@@ -179,20 +239,31 @@ export default function UpdateSchoolInformation(props) {
                                     onChange={handleFileChange}
                                     className="block w-full text-gray-700 border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500"
                                 />
+                                {/* Display the image preview */}
+                                {imagePreview && (
+                                    <div className="mt-2">
+                                        <img
+                                            src={imagePreview}
+                                            alt="Logo Sekolah Preview"
+                                            className="w-20 h-20 object-cover"
+                                        />
+                                    </div>
+                                )}
                                 {errors.schoolLogo && <div className="text-red-500">{errors.schoolLogo}</div>}
                             </div>
 
                             {/* YouTube Link */}
                             <div className="mb-6">
-                                <input
-                                    type="text"
+                                <TextField
+                                    label="Link Video (YouTube)"
+                                    variant="outlined"
+                                    fullWidth
                                     name="linkYoutube"
                                     value={data.linkYoutube}
                                     onChange={handleInputChange}
-                                    className="border-gray-300 rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-blue-500"
-                                    placeholder="Link Video (YouTube)"
+                                    error={!!errors.linkYoutube}
+                                    helperText={errors.linkYoutube}
                                 />
-                                {errors.linkYoutube && <div className="text-red-500">{errors.linkYoutube}</div>}
                             </div>
 
                             {/* Submit Button */}

@@ -5,13 +5,13 @@ import { FiClipboard, FiLayers, FiMapPin, FiCalendar, FiSettings } from 'react-i
 import SchoolAdminSideBar from '../SchoolAdminSideBar';
 import { Inertia } from '@inertiajs/inertia';
 
-export default function UpdateEquipment({ equipment }) {
+export default function UpdateEquipment({ equipment, eqLocation }) {
     // Initialize the form data with the equipment data
     const [formData, setFormData] = useState({
         name: equipment?.name || '',
         type: equipment?.type || '',
         otherType: equipment?.type === 'other' ? equipment?.otherType : '',  // Preload the custom type if available
-        location: equipment?.location || '',
+        location: equipment?.location || '',  // Assuming location is stored as eqLocName
         acquired_date: equipment?.acquired_date || '',
         status: equipment?.status || ''
     });
@@ -71,12 +71,11 @@ export default function UpdateEquipment({ equipment }) {
         }
 
         setIsLoading(true);
-        setMessage('');  // Clear any previous message
+        setMessage(''); 
 
         try {
-            // If 'other' is selected, use the 'otherType' field for the custom input
             if (formData.type === 'other' && formData.otherType) {
-                formData.type = formData.otherType;  // Set the custom 'otherType' as the 'type'
+                formData.type = formData.otherType;
             }
 
             await Inertia.put(`/equipment/${equipment.id}`, formData);
@@ -170,15 +169,20 @@ export default function UpdateEquipment({ equipment }) {
                                 {/* Lokasi */}
                                 <div className="flex items-center border border-gray-300 rounded-lg focus-within:border-blue-500">
                                     <FiMapPin className="text-gray-500 ml-3" size={20} />
-                                    <input
-                                        type="text"
+                                    <select
                                         id="location"
                                         name="location"
                                         value={formData.location}
                                         onChange={handleInputChange}
-                                        className="block w-full px-4 py-2 text-gray-700 placeholder-gray-400 bg-white border-0 focus:ring-0 rounded-lg"
-                                        placeholder="Masukkan Lokasi"
-                                    />
+                                        className="block w-full px-4 py-2 text-gray-700 bg-white border-0 focus:ring-0 rounded-lg"
+                                    >
+                                        <option value="">Pilih Lokasi</option>
+                                        {eqLocation.map((location) => (
+                                            <option key={location.id} value={location.eqLocName}>
+                                                {location.eqLocName}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
                                 {errors.location && <div className="text-red-500 text-sm">{errors.location}</div>}
 

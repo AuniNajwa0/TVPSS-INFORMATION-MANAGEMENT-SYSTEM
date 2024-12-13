@@ -8,6 +8,7 @@ use App\Http\Requests\Equipment\StoreEquipmentRequest;
 use App\Http\Requests\Equipment\UpdateEquipmentRequest;
 use Inertia\Inertia;
 use App\Models\Equipment;
+use App\Models\EqLocation;
 use App\Models\SchoolInfo;
 use App\Models\TVPSSVersion;
 use App\Enums\StatusEnum;
@@ -20,9 +21,11 @@ class SchoolAdminController extends Controller
     public function equipmentIndex()
     {
         $equipment = Equipment::paginate(10);
+        $eqLocation = EqLocation::all();
         
         return Inertia::render('4-SchoolAdmin/ManageEquipment/ListEquipment', [
             'equipment' => $equipment, 
+            'eqLocation' => $eqLocation,
         ]);
     }
 
@@ -59,8 +62,10 @@ class SchoolAdminController extends Controller
 
     public function equipmentEdit(Equipment $equipment)
     {
+        $eqLocation = EqLocation::all();
         return Inertia::render('4-SchoolAdmin/ManageEquipment/UpdateEquipment', [
             'equipment' => $equipment,
+            'eqLocation' => $eqLocation,
         ]);
     }
 
@@ -134,44 +139,45 @@ class SchoolAdminController extends Controller
 
     public function updateSchool(Request $request)
     {
-    $validated = $request->validate([
-        'schoolName'    => 'required|string|max:255',
-        'schoolEmail'   => 'required|email|max:255',
-        'schoolAddress1'=> 'nullable|string|max:255',
-        'schoolAddress2'=> 'nullable|string|max:255',
-        'postcode'      => 'required|string|max:10',
-        'state'         => 'required|string|max:100',
-        'noPhone'       => 'required|string|max:20',
-        'noFax'         => 'nullable|string|max:20',
-        'linkYoutube'   => 'nullable|url|max:255',
-        'schoolLogo'    => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
-    ]);
+        $validated = $request->validate([
+            'schoolCode'    => 'required|string|max:255',
+            'schoolName'    => 'required|string|max:255',
+            'schoolEmail'   => 'required|email|max:255',
+            'schoolAddress1'=> 'nullable|string|max:255',
+            'schoolAddress2'=> 'nullable|string|max:255',
+            'postcode'      => 'required|string|max:10',
+            'state'         => 'required|string|max:100',
+            'noPhone'       => 'required|string|max:20',
+            'noFax'         => 'nullable|string|max:20',
+            'linkYoutube'   => 'nullable|url|max:255',
+            'schoolLogo'    => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+        ]);
 
-    $schoolInfo = SchoolInfo::first();
+        $schoolInfo = SchoolInfo::first();
 
-    if (!$schoolInfo) {
-        $schoolInfo = new SchoolInfo();
-    }
+        if (!$schoolInfo) {
+            $schoolInfo = new SchoolInfo();
+        }
 
-    // Update the school information
-    $schoolInfo->schoolName = $validated['schoolName'];
-    $schoolInfo->schoolEmail = $validated['schoolEmail'];
-    $schoolInfo->schoolAddress1 = $validated['schoolAddress1'] ?? null;
-    $schoolInfo->schoolAddress2 = $validated['schoolAddress2'] ?? null;
-    $schoolInfo->postcode = $validated['postcode'];
-    $schoolInfo->state = $validated['state'];
-    $schoolInfo->noPhone = $validated['noPhone'];
-    $schoolInfo->noFax = $validated['noFax'] ?? null;
-    $schoolInfo->linkYoutube = $validated['linkYoutube'] ?? null;
+        $schoolInfo->schoolCode = $validated['schoolCode'];
+        $schoolInfo->schoolName = $validated['schoolName'];
+        $schoolInfo->schoolEmail = $validated['schoolEmail'];
+        $schoolInfo->schoolAddress1 = $validated['schoolAddress1'] ?? null;
+        $schoolInfo->schoolAddress2 = $validated['schoolAddress2'] ?? null;
+        $schoolInfo->postcode = $validated['postcode'];
+        $schoolInfo->state = $validated['state'];
+        $schoolInfo->noPhone = $validated['noPhone'];
+        $schoolInfo->noFax = $validated['noFax'] ?? null;
+        $schoolInfo->linkYoutube = $validated['linkYoutube'] ?? null;
 
-    if ($request->hasFile('schoolLogo')) {
-        $path = $request->file('schoolLogo')->store('school_logos', 'public');
-        $schoolInfo->schoolLogo = $path;
-    }
+        if ($request->hasFile('schoolLogo')) {
+            $path = $request->file('schoolLogo')->store('school_logos', 'public');
+            $schoolInfo->schoolLogo = $path;
+        }
 
-    $schoolInfo->save();
+        $schoolInfo->save();
 
-    return back()->with('success', 'School information updated successfully!');
+        return back()->with('success', 'School information updated successfully!');
     }
 
     public function updateTVPSSVer1()
@@ -192,6 +198,7 @@ class SchoolAdminController extends Controller
     public function editTVPSSVer1(Request $request)
     {
         $validated = $request->validate([
+            'schoolCode'    => 'required|string|max:255',
             'schoolName'    => 'required|string|max:255',
             'schoolEmail'   => 'required|email|max:255',
             'schoolAddress1'=> 'nullable|string|max:255',
@@ -210,6 +217,7 @@ class SchoolAdminController extends Controller
             $schoolInfo = new SchoolInfo();
         }
 
+        $schoolInfo->schoolName = $validated['schoolCode'];
         $schoolInfo->schoolName = $validated['schoolName'];
         $schoolInfo->schoolEmail = $validated['schoolEmail'];
         $schoolInfo->schoolAddress1 = $validated['schoolAddress1'] ?? null;
@@ -285,6 +293,71 @@ class SchoolAdminController extends Controller
         $schoolVersion->save();
 
         return redirect()->route('tvpss2')->with('success', 'School information updated successfully!');
+    }
+
+    public function eqLocCreate(){
+        return Inertia::render('4-SchoolAdmin/ManageEquipment/AddEqLoc');
+    }
+
+    public function eqLocStore(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'eqLocName'    => 'required|string|max:255',
+                'eqLocType'    => 'required|string|max:255',
+            ]);
+
+            EqLocation::create([
+                'eqLocName' => $request->eqLocName,
+                'eqLocType' => $request->eqLocType,
+            ]);
+
+            return redirect()->route('equipment.equipmentIndex')->with('success', 'Lokasi berjaya ditambah!');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Ralat berlaku, sila cuba lagi.');
+        }
+    }
+
+    public function eqLocShow(EqLocation $eqLocation)
+    {
+        return Inertia::render('4-SchoolAdmin/ManageEquipment/UpdateEqLoc', [
+            'eqLocation' => $eqLocation,
+        ]);
+    }
+
+    public function eqLocEdit(EqLocation $eqLocation)
+    {
+        return Inertia::render('4-SchoolAdmin/ManageEquipment/UpdateEqLoc', [
+            'eqLocation' => $eqLocation,
+        ]);
+    }
+
+    public function eqLocUpdate(Request $request, $id)
+    {
+        $eqLocation = EqLocation::findOrFail($id);
+        
+        try {
+            $validated = $request->validate([
+                'eqLocName'    => 'required|string|max:255',
+                'eqLocType'    => 'required|string|max:255',
+            ]);
+
+            $eqLocation->update([
+                'eqLocName' => $request->eqLocName,
+                'eqLocType' => $request->eqLocType,
+            ]);
+
+            return redirect()->route('equipment.equipmentIndex')->with('success', 'Lokasi berjaya dikemaskini!');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Ralat berlaku, sila cuba lagi.');
+        }
+    }
+
+    public function eqLocDestroy(EqLocation $eqLocation)
+    {
+        $eqLocation->delete();
+
+        return redirect()->route('equipment.equipmentIndex')->with('success', 'Barang berjaya dipadam!');
     }
 
 }

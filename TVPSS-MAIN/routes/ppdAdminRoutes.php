@@ -10,3 +10,6 @@ use Inertia\Inertia;
 
 Route::get('/dashboardPPD', fn() => Inertia::render('3-PPDAdmin/PPDAdminDashboard'))
     ->name('dashboardPP');
+
+// TVPSS VERSION (LIST OF SCHOOL)
+Route::get('/tvpssInfo', [PPDAdminController::class, 'tvpssInfoIndex'])->name('schoolInfo.tvpssInfoIndex');

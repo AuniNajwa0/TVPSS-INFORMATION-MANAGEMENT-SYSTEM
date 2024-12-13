@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('schoolinfo', function (Blueprint $table) {
             $table->id();
+            $table->string('schoolCode');
             $table->string('schoolName');
             $table->string('schoolEmail');
             $table->string('schoolAddress1');

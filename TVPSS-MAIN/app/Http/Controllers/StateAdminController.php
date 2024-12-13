@@ -25,7 +25,7 @@ class StateAdminController extends Controller
     {
         return Inertia::render('2-StateAdmin/StudentCertificate/CertificateTemplateForm');
     }
-    
+
     public function uploadTemplate(Request $request)
     {
         $request->validate([
