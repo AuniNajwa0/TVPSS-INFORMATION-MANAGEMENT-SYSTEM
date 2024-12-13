@@ -87,7 +87,7 @@ function SchoolAdminSideBar() {
         >
           <Link href="/listEquipment" className="flex items-center space-x-3">
             <FaSortNumericDown className="text-2xl" />
-            <span className="font-medium">Bilangan Barang</span>
+            <span className="font-medium">Pengurusan Barang</span>
           </Link>
         </li>
 
