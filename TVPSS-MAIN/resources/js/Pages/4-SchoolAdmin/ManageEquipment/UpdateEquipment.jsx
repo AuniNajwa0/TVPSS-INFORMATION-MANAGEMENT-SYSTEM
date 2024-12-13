@@ -71,12 +71,11 @@ export default function UpdateEquipment({ equipment }) {
         }
 
         setIsLoading(true);
-        setMessage('');  // Clear any previous message
+        setMessage(''); 
 
         try {
-            // If 'other' is selected, use the 'otherType' field for the custom input
             if (formData.type === 'other' && formData.otherType) {
-                formData.type = formData.otherType;  // Set the custom 'otherType' as the 'type'
+                formData.type = formData.otherType;
             }
 
             await Inertia.put(`/equipment/${equipment.id}`, formData);
