@@ -19,7 +19,7 @@ function StateAdminSideBar() {
           </Link>
         </li>
         <li className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:bg-gray-200 rounded-md text-lg">
-          <Link href="/generateCertificates"> {/* Using Inertia Link */}
+          <Link href="/certificate-Template-List"> {/* Using Inertia Link */}
             <FaPrint />
             <span>Jana Sijil Pelajar</span>
           </Link>

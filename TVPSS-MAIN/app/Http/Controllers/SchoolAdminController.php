@@ -17,7 +17,6 @@ use App\Enums\recordEquipmentEnum;
 
 class SchoolAdminController extends Controller
 {
-    //Manage Equipment Starts
     public function equipmentIndex()
     {
         $equipment = Equipment::paginate(10);
