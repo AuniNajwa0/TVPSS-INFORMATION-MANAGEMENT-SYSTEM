@@ -4,21 +4,18 @@ use App\Http\Controllers\StateAdminController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-/*Route::get('/dashboardState', function () {      
+/*Route::get('/dashboardState', function () {
     return Inertia::render('2-StateAdmin/StateAdminDashboard');
 })->middleware(['auth', 'verified'])->name('dashboardST');*/
 
 Route::get('/dashboardState', fn() => Inertia::render('2-StateAdmin/StateAdminDashboard'))
     ->name('dashboardST');
 
-// TVPSS VERSION (LIST OF SCHOOL)
-Route::get('/listSchool', [StateAdminController::class, 'schoolInfoIndex'])->name('schoolInfo.schoolInfoIndex');
-
-// STUDENT CERTIFICATE MANAGEMENT
+// CERTIFICATE MANAGEMENT
 Route::get('/certificate-Template-List', [StateAdminController::class, 'certList'])->name('certList');
 Route::get('/certificateTemplateUploadForm', [StateAdminController::class, 'uploadCertForm'])->name('uploadCertForm');
 Route::post('/certificate-templates', [StateAdminController::class, 'uploadTemplate'])->name('uploadTemplate');
 Route::get('/certificate-templates', [StateAdminController::class, 'getTemplates']);
 Route::get('/certificate-templates/{id}', [StateAdminController::class, 'getTemplate']);
 Route::put('/certificate-templates/{id}', [StateAdminController::class, 'updateTemplate']);
-
+Route::get('/certificate-templates/{id}/edit', [StateAdminController::class, 'editTemplate'])->name('certificate-templates.edit');

@@ -6,8 +6,7 @@ export default function CertificateTemplateList(props) {
     const { templates } = props; // Assuming templates are passed as props
 
     const handleDelete = (id) => {
-        if (confirm("Adakah anda pasti untuk membuang templat ini?")) {
-            // Call the delete route
+        if (confirm(" Adakah anda pasti untuk membuang templat ini?")) {
             Inertia.delete(route('certificate-templates.destroy', id), {
                 onSuccess: () => {
                     console.log('Templat berjaya dihapuskan!');
@@ -55,7 +54,7 @@ export default function CertificateTemplateList(props) {
                                     <tr key={template.id}>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{template.name}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            <Link href={`/CertificateTemplateUploadForm/${template.id}`} className="text-blue-600 hover:text-blue-900 mr-4">
+                                        <Link href={route('certificate-templates.edit', template.id)} className="text-blue-600 hover:text-blue-900 mr-4">
                                                 Sunting
                                             </Link>
                                             <button onClick={() => handleDelete(template.id)} className="text-red-600 hover:text-red-900">

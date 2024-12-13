@@ -7,23 +7,15 @@ use App\Models\CertificateTemplate;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-use App\Models\SchoolInfo;
 
 class StateAdminController extends Controller
 {
-    public function schoolInfoIndex()
-    {
-        $schoolInfo = SchoolInfo::first(); 
-        
-        return Inertia::render('2-StateAdmin/SchoolVersionStatus/listSchool', [
-            'schoolInfo' => $schoolInfo, 
-        ]);
-    }
-
     public function certList()
     {
+        // Fetch all certificate templates
         $templates = CertificateTemplate::all();
 
+        // Render the Inertia view and pass the templates
         return Inertia::render('2-StateAdmin/StudentCertificate/CertificateTemplateList', [
             'templates' => $templates,
         ]);
@@ -33,7 +25,7 @@ class StateAdminController extends Controller
     {
         return Inertia::render('2-StateAdmin/StudentCertificate/CertificateTemplateForm');
     }
-    
+
     public function uploadTemplate(Request $request)
     {
         $request->validate([
@@ -55,12 +47,14 @@ class StateAdminController extends Controller
         }
     }
 
+    // Method to retrieve all certificate templates
     public function getTemplates()
     {
         $templates = CertificateTemplate::all();
         return response()->json($templates);
     }
 
+    // Method to retrieve a specific certificate template
     public function getTemplate($id)
     {
         $template = CertificateTemplate::find($id);
@@ -70,6 +64,7 @@ class StateAdminController extends Controller
         return response()->json($template);
     }
 
+    // Method to update a specific certificate template
     public function updateTemplate(Request $request, $id)
     {
         $template = CertificateTemplate::find($id);
@@ -79,11 +74,12 @@ class StateAdminController extends Controller
 
         $request->validate([
             'name' => 'sometimes|required|string|max:255',
-            'file' => 'sometimes|file|mimes:pdf,jpg,png', 
+            'file' => 'sometimes|file|mimes:pdf,jpg,png', // Adjust based on your needs
         ]);
 
         try {
             if ($request->hasFile('file')) {
+                // Delete the old file if it exists
                 if ($template->file_path) {
                     Storage::delete($template->file_path);
                 }
@@ -102,5 +98,15 @@ class StateAdminController extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => 'Update failed.'], 500);
         }
+    }
+    public function editTemplate($id)
+    {
+        $template = CertificateTemplate::find($id);
+        if (!$template) {
+            return response()->json(['error' => 'Template not found.'], 404);
+        }
+        return Inertia::render('2-StateAdmin/StudentCertificate/CertificateTemplateEdit', [
+            'template' => $template,
+        ]);
     }
 }
