@@ -6,7 +6,7 @@ function SchoolAdminSideBar() {
   const { url } = usePage(); // Get the current URL from Inertia.js
 
   return (
-    <div className="fixed top-0 left-0 w-[310px] bg-white text-white h-screen p-6 border-r border-gray-300 flex flex-col">
+    <div className="fixed top-0 left-0 w-[310px] bg-white text-gray-800 h-screen p-6 border-r border-gray-300 flex flex-col">
       {/* Logo Section */}
       <div className="mb-6">
         <img
@@ -24,7 +24,9 @@ function SchoolAdminSideBar() {
         {/* Dashboard */}
         <li
           className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-lg transition-all duration-200 ease-in-out ${
-            url === '/dashboardSchool' ? 'bg-gradient-to-r from-[#455185] to-[#008080] text-white' : 'text-gray-800 hover:bg-gradient-to-r from-[#455185] to-[#008080]'
+            url === '/dashboardSchool'
+              ? 'bg-gradient-to-r from-[#455185] to-[#008080] text-white'
+              : 'text-gray-800 hover:bg-gradient-to-r from-[#455185] to-[#008080] hover:text-white'
           }`}
         >
           <Link href="/dashboardSchool" className="flex items-center space-x-3">
@@ -36,7 +38,9 @@ function SchoolAdminSideBar() {
         {/* Permohonan Krew */}
         <li
           className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-lg transition-all duration-200 ease-in-out ${
-            url === '/permohonanKrew' ? 'bg-gradient-to-r from-[#455185] to-[#008080] text-white' : 'text-gray-800 hover:bg-gradient-to-r from-[#455185] to-[#008080]'
+            url === '/permohonanKrew'
+              ? 'bg-gradient-to-r from-[#455185] to-[#008080] text-white'
+              : 'text-gray-800 hover:bg-gradient-to-r from-[#455185] to-[#008080] hover:text-white'
           }`}
         >
           <Link href="/permohonanKrew" className="flex items-center space-x-3">
@@ -48,7 +52,9 @@ function SchoolAdminSideBar() {
         {/* Pencapaian Pelajar */}
         <li
           className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-lg transition-all duration-200 ease-in-out ${
-            url === '/pencapaianPelajar' ? 'bg-gradient-to-r from-[#455185] to-[#008080] text-white' : 'text-gray-800 hover:bg-gradient-to-r from-[#455185] to-[#008080]'
+            url === '/pencapaianPelajar'
+              ? 'bg-gradient-to-r from-[#455185] to-[#008080] text-white'
+              : 'text-gray-800 hover:bg-gradient-to-r from-[#455185] to-[#008080] hover:text-white'
           }`}
         >
           <Link href="/pencapaianPelajar" className="flex items-center space-x-3">
@@ -60,7 +66,9 @@ function SchoolAdminSideBar() {
         {/* Informasi Sekolah */}
         <li
           className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-lg transition-all duration-200 ease-in-out ${
-            url === '/informasiSekolah' ? 'bg-gradient-to-r from-[#455185] to-[#008080] text-white' : 'text-gray-800 hover:bg-gradient-to-r from-[#455185] to-[#008080]'
+            url === '/informasiSekolah'
+              ? 'bg-gradient-to-r from-[#455185] to-[#008080] text-white'
+              : 'text-gray-800 hover:bg-gradient-to-r from-[#455185] to-[#008080] hover:text-white'
           }`}
         >
           <Link href="/updateSchool" className="flex items-center space-x-3">
@@ -72,7 +80,9 @@ function SchoolAdminSideBar() {
         {/* Bilangan Barang */}
         <li
           className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-lg transition-all duration-200 ease-in-out ${
-            url === '/listEquipment' ? 'bg-gradient-to-r from-[#455185] to-[#008080] text-white' : 'text-gray-800 hover:bg-gradient-to-r from-[#455185] to-[#008080]'
+            url === '/listEquipment'
+              ? 'bg-gradient-to-r from-[#455185] to-[#008080] text-white'
+              : 'text-gray-800 hover:bg-gradient-to-r from-[#455185] to-[#008080] hover:text-white'
           }`}
         >
           <Link href="/listEquipment" className="flex items-center space-x-3">
@@ -84,7 +94,9 @@ function SchoolAdminSideBar() {
         {/* Submit Versi TVPSS */}
         <li
           className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-lg transition-all duration-200 ease-in-out ${
-            url === '/submitVersiTVPSS' ? 'bg-gradient-to-r from-[#455185] to-[#008080] text-white' : 'text-gray-800 hover:bg-gradient-to-r from-[#455185] to-[#008080]'
+            url === '/submitVersiTVPSS'
+              ? 'bg-gradient-to-r from-[#455185] to-[#008080] text-white'
+              : 'text-gray-800 hover:bg-gradient-to-r from-[#455185] to-[#008080] hover:text-white'
           }`}
         >
           <Link href="/updateSchoolTVPSSVersion" className="flex items-center space-x-3">
@@ -99,7 +111,9 @@ function SchoolAdminSideBar() {
         {/* Tetapan */}
         <li
           className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-lg transition-all duration-200 ease-in-out ${
-            url === '/settingsSchoolAdmin' ? 'bg-gradient-to-r from-[#455185] to-[#008080] text-white' : 'text-gray-800 hover:bg-gradient-to-r from-[#455185] to-[#008080]'
+            url === '/settingsSchoolAdmin'
+              ? 'bg-gradient-to-r from-[#455185] to-[#008080] text-white'
+              : 'text-gray-800 hover:bg-gradient-to-r from-[#455185] to-[#008080] hover:text-white'
           }`}
         >
           <Link href="/settingsSchoolAdmin" className="flex items-center space-x-3">
@@ -109,7 +123,9 @@ function SchoolAdminSideBar() {
         </li>
 
         {/* Log Keluar */}
-        <li className="flex items-center space-x-3 px-4 py-3 text-gray-800 hover:bg-gradient-to-r from-[#455185] to-[#008080] rounded-lg text-lg transition-all duration-200 ease-in-out">
+        <li
+          className="flex items-center space-x-3 px-4 py-3 text-gray-800 hover:bg-gradient-to-r from-[#455185] to-[#008080] hover:text-white rounded-lg text-lg transition-all duration-200 ease-in-out"
+        >
           <Link href={route('logout')} method="post" className="flex items-center space-x-3">
             <FaSignOutAlt className="text-2xl" />
             <span className="font-medium">Log Keluar</span>

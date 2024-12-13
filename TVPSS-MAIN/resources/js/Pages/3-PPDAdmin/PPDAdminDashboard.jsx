@@ -8,7 +8,7 @@ import PPDAdminSideBar from './PPDAdminSideBar';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, ArcElement, Tooltip, Legend, PointElement, LineElement);
 
-export default function Dashboard() {
+export default function PPDAdminDashboard() {
     const [timeRange, setTimeRange] = useState("Mingguan");
     const [date, setDate] = useState("2024-07-02");
     const [selectedRegion, setSelectedRegion] = useState("Semua Negeri");
@@ -122,7 +122,7 @@ export default function Dashboard() {
             }
             noMaxWidth={true}
         >
-            <Head title="Dashboard" />
+            <Head title="TVPSS | Dashboard" />
 
             <div className="flex">
                 <div className="w-1/6 p-4 text-white min-h-screen">
