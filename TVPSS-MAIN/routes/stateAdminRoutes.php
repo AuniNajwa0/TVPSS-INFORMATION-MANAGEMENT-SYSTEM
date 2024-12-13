@@ -11,5 +11,12 @@ use Inertia\Inertia;
 Route::get('/dashboardState', fn() => Inertia::render('2-StateAdmin/StateAdminDashboard'))
     ->name('dashboardST');
 
-//TVPSS SCHOOL INFORMATION
-Route::get('/listSchool', [StateAdminController::class, 'schoolInfoIndex'])->name('schoolInfo.schoolInfoIndex');
+Route::get('/certificate-Template-List', [StateAdminController::class, 'certList'])->name('certList');
+
+Route::get('/certificateTemplateUploadForm', [StateAdminController::class, 'uploadCertForm'])->name('uploadCertForm');
+
+Route::post('/certificate-templates', [StateAdminController::class, 'uploadTemplate'])->name('uploadTemplate');
+Route::get('/certificate-templates', [StateAdminController::class, 'getTemplates']);
+Route::get('/certificate-templates/{id}', [StateAdminController::class, 'getTemplate']);
+Route::put('/certificate-templates/{id}', [StateAdminController::class, 'updateTemplate']);
+

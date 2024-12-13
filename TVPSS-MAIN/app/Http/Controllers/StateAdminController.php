@@ -3,68 +3,101 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\CertificateTemplate;
 use Inertia\Inertia;
-use App\Models\SchoolInfo;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class StateAdminController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function schoolInfoIndex()
+    public function certList()
     {
-        $schoolInfo = SchoolInfo::first(); 
-        
-        return Inertia::render('2-StateAdmin/SchoolVersionStatus/listSchool', [
-            'schoolInfo' => $schoolInfo, 
+        // Fetch all certificate templates
+        $templates = CertificateTemplate::all();
+
+        // Render the Inertia view and pass the templates
+        return Inertia::render('2-StateAdmin/StudentCertificate/CertificateTemplateList', [
+            'templates' => $templates,
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function uploadCertForm()
     {
-        //
+        return Inertia::render('2-StateAdmin/StudentCertificate/CertificateTemplateForm');
+    }
+    
+    public function uploadTemplate(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'file' => 'required|file|mimes:pdf,jpg,png',
+        ]);
+
+        try {
+            $path = $request->file('file')->store('cert_templates','public');
+
+            $template = CertificateTemplate::create([
+                'name' => $request->name,
+                'file_path' => $path,
+            ]);
+
+            return redirect()->route('certList')->with('success', 'Templat sijil berjaya disimpan!');
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'File upload failed.'], 500);
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+
+    // Method to retrieve all certificate templates
+    public function getTemplates()
     {
-        //
+        $templates = CertificateTemplate::all();
+        return response()->json($templates);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    // Method to retrieve a specific certificate template
+    public function getTemplate($id)
     {
-        //
+        $template = CertificateTemplate::find($id);
+        if (!$template) {
+            return response()->json(['error' => 'Template not found.'], 404);
+        }
+        return response()->json($template);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    // Method to update a specific certificate template
+    public function updateTemplate(Request $request, $id)
     {
-        //
-    }
+        $template = CertificateTemplate::find($id);
+        if (!$template) {
+            return response()->json(['error' => 'Template not found.'], 404);
+        }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+        $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'file' => 'sometimes|file|mimes:pdf,jpg,png', // Adjust based on your needs
+        ]);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        try {
+            if ($request->hasFile('file')) {
+                // Delete the old file if it exists
+                if ($template->file_path) {
+                    Storage::delete($template->file_path);
+                }
+
+                $path = $request->file('file')->store('certificates');
+                $template->file_path = $path;
+            }
+
+            if ($request->has('name')) {
+                $template->name = $request->name;
+            }
+
+            $template->save();
+
+            return response()->json($template);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Update failed.'], 500);
+        }
     }
 }
