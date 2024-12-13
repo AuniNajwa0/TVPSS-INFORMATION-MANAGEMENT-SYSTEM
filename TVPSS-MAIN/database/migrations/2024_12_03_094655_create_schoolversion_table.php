@@ -23,6 +23,7 @@ return new class extends Migration
             $table->enum('greenScreen', ['Ada', 'Tiada']);
             $table->timestamps();
 
+            //point 1
             $table->foreign('school_info_id')->references('id')->on('schoolinfo')->onDelete('cascade');
         });
     }
