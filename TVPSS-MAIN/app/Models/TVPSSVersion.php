@@ -36,6 +36,7 @@ class TVPSSVersion extends Model
         'noPhone' => noPhoneEnum::class,
     ];
 
+    //point 3
     public function schoolInfo()
     {
         return $this->belongsTo(SchoolInfo::class, 'school_info_id');
