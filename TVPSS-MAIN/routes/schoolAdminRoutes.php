@@ -11,6 +11,7 @@ use Inertia\Inertia;
 Route::get('/dashboardSchool', fn() => Inertia::render('4-SchoolAdmin/SchoolAdminDashboard'))
     ->name('dashboardSA');
 
+
 // Equipment Management
 //Route::resource('equipment', SchoolAdminController::class);
 Route::get('/listEquipment', [SchoolAdminController::class, 'equipmentIndex'])->name('equipment.equipmentIndex');
@@ -23,6 +24,15 @@ Route::put('equipment/{id}', [SchoolAdminController::class, 'equipmentUpdate'])-
 Route::delete('equipment/{equipment}', [SchoolAdminController::class, 'equipmentDestroy'])->name('equipment.equipmentDestroy');
 Route::delete('equipment/delete', [SchoolAdminController::class, 'deleteSelected'])->name('equipment.deleteSelected');
 Route::get('/status-options', [SchoolAdminController::class, 'getStatusOptions']);
+
+//Equipment Location
+Route::get('eqLoc/create', [SchoolAdminController::class, 'eqLocCreate'])->name('eqLoc.eqLocCreate');
+Route::post('eqLoc', [SchoolAdminController::class, 'eqLocStore'])->name('eqLoc.eqLocStore');
+Route::get('eqLoc/{eqLocation}', [SchoolAdminController::class, 'eqLocShow'])->name('eqLoc.eqLocShow');
+Route::get('/eqLoc/{eqLocation}/edit', [SchoolAdminController::class, 'eqLocEdit'])->name('eqLoc.eqLocEdit');
+Route::put('eqLoc/{eqLocation}', [SchoolAdminController::class, 'eqLocUpdate'])->name('eqLoc.eqLocUpdate');
+Route::delete('eqLoc/{eqLocation}', [SchoolAdminController::class, 'eqLocDestroy'])->name('eqLoc.eqLocDestroy');
+
 
 //School Information
 Route::get('/updateSchool', [SchoolAdminController::class, 'editSchool'])->name('school.edit');
