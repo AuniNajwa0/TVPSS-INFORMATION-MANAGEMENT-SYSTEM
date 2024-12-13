@@ -4,7 +4,7 @@ use App\Http\Controllers\StateAdminController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-/*Route::get('/dashboardState', function () {      
+/*Route::get('/dashboardState', function () {
     return Inertia::render('2-StateAdmin/StateAdminDashboard');
 })->middleware(['auth', 'verified'])->name('dashboardST');*/
 
@@ -19,4 +19,5 @@ Route::post('/certificate-templates', [StateAdminController::class, 'uploadTempl
 Route::get('/certificate-templates', [StateAdminController::class, 'getTemplates']);
 Route::get('/certificate-templates/{id}', [StateAdminController::class, 'getTemplate']);
 Route::put('/certificate-templates/{id}', [StateAdminController::class, 'updateTemplate']);
+Route::get('/certificate-templates/{id}/edit', [StateAdminController::class, 'editTemplate'])->name('certificate-templates.edit');
 

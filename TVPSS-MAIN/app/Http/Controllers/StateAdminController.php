@@ -47,7 +47,6 @@ class StateAdminController extends Controller
         }
     }
 
-
     // Method to retrieve all certificate templates
     public function getTemplates()
     {
@@ -99,5 +98,17 @@ class StateAdminController extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => 'Update failed.'], 500);
         }
+    }
+
+    public function editTemplate($id)
+    {
+        $template = CertificateTemplate::find($id);
+        if (!$template) {
+            return response()->json(['error' => 'Template not found.'], 404);
+        }
+
+        return Inertia::render('2-StateAdmin/StudentCertificate/CertificateTemplateEdit', [
+            'template' => $template,
+        ]);
     }
 }
