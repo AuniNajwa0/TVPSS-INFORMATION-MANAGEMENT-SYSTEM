@@ -55,7 +55,7 @@ export default function Login({ status, canResetPassword }) {
   return (
     <>
       {/* Set the title dynamically */}
-      <Head title="TVPSS | Login" />
+      <Head title="TVPSS | Login Pentadbir" />
 
       <div className="flex h-screen relative">
         <div className="w-2/3 bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center relative overflow-hidden">
