@@ -1,6 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
-import { ArrowRight, Play, Users, BookOpen, Award } from 'lucide-react';
+import { ArrowRight, Play, Users, BookOpen, Award, Lock, UserPlus } from 'lucide-react';
 
 export default function Welcome({ auth, laravelVersion, phpVersion }) {
     const [currentSlide, setCurrentSlide] = useState(0);
@@ -9,7 +9,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
     const slides = [
         '/assets/tvpss-pic-1.jpeg',
         'https://erp-image.sgliteasset.com/_next/image?url=https%3A%2F%2Fcdn1.sgliteasset.com%2FBigbigStudioEnterprise%2Fimages%2Fblog%2F66b0886594b1e.png&w=3840&q=75',
-        'https://www.youtube.com/watch?v=DKtVLq8t3Aw&pp=ygUFdHZwc3M%3D',
+        'https://media.istockphoto.com/id/1184113284/photo/group-of-student-in-front-classroom.jpg?s=612x612&w=0&k=20&c=uE5gMVO8rbvGc1-iLtsyXO971hQ8lyMI8xyTVd5PeYY=',
     ];
 
     useEffect(() => {
@@ -93,15 +93,17 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                 <>
                                     <Link
                                         href={route('login')}
-                                        className="text-blue-600 hover:text-blue-800 font-semibold"
+                                        className="flex items-center text-blue-600 hover:text-blue-800 font-semibold"
                                     >
-                                        Log Masuk
+                                        <Lock className="mr-2 h-5 w-5" />
+                                        Log Masuk Sebagai Pelajar
                                     </Link>
                                     <Link
-                                        href={route('register')}
-                                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300"
+                                        href={route('login')}
+                                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300 flex items-center"
                                     >
-                                        Daftar Sekarang
+                                        <Lock className="mr-2 h-5 w-5" />
+                                        Log Masuk Sebagai Pentadbir
                                     </Link>
                                 </>
                             )}
@@ -120,13 +122,21 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                 Sertai kami dalam mengayakan kandungan media yang menarik dan kreatif. 
                                 Platform untuk kongsi, Geharga, dan berkongsi cerita di platform sekolah!
                             </p>
-                            <Link
-                                href={route('register')}
-                                className="inline-flex items-center px-6 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition duration-300"
-                            >
-                                Mula Sekarang
-                                <ArrowRight className="ml-2 h-5 w-5" />
-                            </Link>
+                            <div className="flex space-x-4">
+                                {/* New Single Button for Scrolling to Features Section */}
+                                <button
+                                    onClick={() => {
+                                        const featuresSection = document.getElementById('features-section');
+                                        if (featuresSection) {
+                                            featuresSection.scrollIntoView({ behavior: 'smooth' });
+                                        }
+                                    }}
+                                    className="inline-flex items-center px-6 py-3 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition duration-300"
+                                >
+                                    Mengenai TVPSS
+                                    <ArrowRight className="ml-2 h-5 w-5" />
+                                </button>
+                            </div>
                         </div>
                         <div className="relative h-96 rounded-2xl overflow-hidden shadow-2xl">
                             {slides[currentSlide].endsWith('.mp4') ? (
@@ -149,7 +159,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                 </section>
 
                 {/* Features Section */}
-                <section className="bg-white py-16">
+                <section id="features-section" className="bg-white py-16">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <h2 className="text-3xl font-bold text-center text-blue-900 mb-12">
                             Kenapa Pilih TVPSS?
