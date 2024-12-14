@@ -8,6 +8,7 @@ import Button from '@mui/material/Button';
 
 export default function UpdateSchoolTVPSSVersion({ schoolInfo }) {
     const { data, setData, post, processing, errors, reset } = useForm({
+        schoolCode: schoolInfo?.schoolCode || "", // Included schoolCode
         schoolName: schoolInfo?.schoolName || "",
         schoolAddress1: schoolInfo?.schoolAddress1 || "",
         schoolAddress2: schoolInfo?.schoolAddress2 || "",
@@ -16,7 +17,7 @@ export default function UpdateSchoolTVPSSVersion({ schoolInfo }) {
         noPhone: schoolInfo?.noPhone || "",
         schoolEmail: schoolInfo?.schoolEmail || "",
         noFax: schoolInfo?.noFax || "",
-        schoolLogo: null, 
+        schoolLogo: null, // Default for file input
         linkYoutube: schoolInfo?.linkYoutube || "",
     });
 
@@ -37,7 +38,6 @@ export default function UpdateSchoolTVPSSVersion({ schoolInfo }) {
         const { files } = e.target;
         setData("schoolLogo", files[0]);
 
-        // Generate preview
         if (files[0]) {
             const reader = new FileReader();
             reader.onloadend = () => setImagePreview(reader.result);
@@ -50,6 +50,7 @@ export default function UpdateSchoolTVPSSVersion({ schoolInfo }) {
         post(route('tvpss1Edit'), {
             onSuccess: () => {
                 console.log("School version information updated!");
+                window.location.href = route('schoolInfo.updateTVPSSVer2'); // Redirect to next page
             },
             onError: (errors) => {
                 console.error(errors);
@@ -72,17 +73,12 @@ export default function UpdateSchoolTVPSSVersion({ schoolInfo }) {
         >
             <Head title="TVPSS | Kemaskini Versi Sekolah" />
             <div className="flex min-h-screen bg-gray-100">
-                {/* Sidebar */}
                 <SchoolAdminSideBar />
-
-                {/* Main Content */}
                 <div className="flex-1 p-8">
                     <div className="max-w-5xl mx-auto bg-white shadow-md rounded-md border border-gray-200 p-8">
                         <h3 className="text-2xl font-semibold text-gray-800 mb-6">
                             Maklumat Versi Sekolah
                         </h3>
-
-                        {/* Form */}
                         <form onSubmit={handleSubmit} encType="multipart/form-data">
                             {/* Logo Upload Section */}
                             <div className="mb-8 text-center">
@@ -109,8 +105,6 @@ export default function UpdateSchoolTVPSSVersion({ schoolInfo }) {
                                             Klik untuk Muat Naik Logo
                                         </div>
                                     )}
-
-                                    {/* Upload Icon Overlay */}
                                     <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-30 opacity-0 hover:opacity-100 transition-opacity">
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -132,9 +126,22 @@ export default function UpdateSchoolTVPSSVersion({ schoolInfo }) {
                                     <div className="text-red-500 mt-2">{errors.schoolLogo}</div>
                                 )}
                             </div>
-
                             {/* Form Fields */}
                             <div className="grid grid-cols-2 gap-6 mb-6">
+                                {/* School Code */}
+                                <Box className="col-span-2">
+                                    <TextField
+                                        label="Kod Sekolah"
+                                        variant="outlined"
+                                        fullWidth
+                                        name="schoolCode"
+                                        value={data.schoolCode}
+                                        onChange={handleInputChange}
+                                        error={!!errors.schoolCode}
+                                        helperText={errors.schoolCode}
+                                    />
+                                </Box>
+                                {/* Other Fields */}
                                 <Box className="col-span-2">
                                     <TextField
                                         label="Nama Sekolah"
@@ -196,8 +203,6 @@ export default function UpdateSchoolTVPSSVersion({ schoolInfo }) {
                                     />
                                 </Box>
                             </div>
-
-                            {/* Contact Fields */}
                             <div className="grid grid-cols-3 gap-6 mb-6">
                                 <Box>
                                     <TextField
@@ -236,8 +241,6 @@ export default function UpdateSchoolTVPSSVersion({ schoolInfo }) {
                                     />
                                 </Box>
                             </div>
-
-                            {/* YouTube Link */}
                             <div className="mb-6">
                                 <TextField
                                     label="Link Video (YouTube)"
@@ -250,7 +253,6 @@ export default function UpdateSchoolTVPSSVersion({ schoolInfo }) {
                                     helperText={errors.linkYoutube}
                                 />
                             </div>
-
                             {/* Buttons */}
                             <div className="flex justify-end space-x-4">
                                 <button
