@@ -157,10 +157,10 @@ class SchoolAdminController extends Controller
 
         if ($request->hasFile('schoolLogo')) {
             $file = $request->file('schoolLogo');
-            $destinationPath = public_path('images'); 
-            $fileName = time() . '_' . $file->getClientOriginalName(); 
-            $file->move($destinationPath, $fileName); 
-            $schoolInfo->schoolLogo = 'images/' . $fileName; 
+            $destinationPath = public_path('images/schoolLogo');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $file->move($destinationPath, $fileName);
+            $schoolInfo->schoolLogo = 'images/schoolLogo/' . $fileName; 
         }
 
         $schoolInfo->save();
@@ -214,10 +214,10 @@ class SchoolAdminController extends Controller
 
         if ($request->hasFile('schoolLogo')) {
             $file = $request->file('schoolLogo');
-            $destinationPath = public_path('images'); 
-            $fileName = time() . '_' . $file->getClientOriginalName(); 
+            $destinationPath = public_path('images/schoolLogo'); 
+            $fileName = time() . '_' . $file->getClientOriginalName();
             $file->move($destinationPath, $fileName);
-            $schoolInfo->schoolLogo = 'images/' . $fileName;
+            $schoolInfo->schoolLogo = 'images/schoolLogo/' . $fileName; 
         }
 
         $schoolInfo->save();
@@ -238,15 +238,15 @@ class SchoolAdminController extends Controller
     public function editTVPSSVer2(Request $request)
     {
         $validated = $request->validate([
-            'version'    => 'nullable|string|max:255',
-            'agency1_name'   => 'required|string|max:255',
-            'agency1Manager_name'=> 'nullable|string|max:255',
-            'agency2_name'=> 'nullable|string|max:255',
-            'agency2Manager_name'=> 'required|string|max:10',
+            'version' => 'nullable|string|max:255',
+            'agency1_name' => 'required|string|max:255',
+            'agency1Manager_name' => 'nullable|string|max:255',
+            'agency2_name' => 'nullable|string|max:255',
+            'agency2Manager_name' => 'required|string|max:10',
             'recordEquipment' => 'required|string|max:100',
             'noPhone' => 'required|string|max:20',
             'greenScreen' => 'nullable|string|max:20',
-            'schoolLogo'    => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+            'tvpssLogo' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         $schoolInfo = SchoolInfo::first() ?? new SchoolInfo();
@@ -259,23 +259,23 @@ class SchoolAdminController extends Controller
         $schoolInfo->noPhone = $validated['noPhone'];
         $schoolInfo->greenScreen = $validated['greenScreen'];
 
-        if ($request->hasFile('schoolLogo')) {
-            $file = $request->file('schoolLogo');
-            $destinationPath = public_path('images'); 
-            $fileName = time() . '_' . $file->getClientOriginalName(); 
-
-            $file->move($destinationPath, $fileName);
-
-            $schoolInfo->schoolLogo = 'images/' . $fileName;
-        } elseif ($validated['schoolLogo'] === null) {
-            $schoolInfo->schoolLogo = null;
-        }
-
         $schoolInfo->save();
 
         $schoolVersion = $schoolInfo->schoolVersion ?? new TVPSSVersion();
         $schoolVersion->version = $validated['version'] ?? null;
         $schoolVersion->schoolInfo()->associate($schoolInfo);
+
+        if ($request->hasFile('tvpssLogo')) {
+            $tvpssLogo = $request->file('tvpssLogo');
+
+            $destinationPath = 'images/tvpssLogo';
+            $fileName = time() . '_' . $tvpssLogo->getClientOriginalName();
+
+            $tvpssLogo->move(public_path($destinationPath), $fileName);
+
+            $schoolVersion->tvpssLogo = $destinationPath . '/' . $fileName;
+        }
+
         $schoolVersion->save();
 
         return redirect()->route('tvpss2')->with('success', 'School information updated successfully!');
