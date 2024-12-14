@@ -7,6 +7,7 @@ import TextField from '@mui/material/TextField';
 
 export default function UpdateSchoolTVPSSVersion(props) {
     const { data, setData, post, processing, errors, reset } = useForm({
+        schoolCode: "", // Added schoolCode
         schoolName: "",
         schoolAddress1: "",
         schoolAddress2: "",
@@ -19,12 +20,12 @@ export default function UpdateSchoolTVPSSVersion(props) {
         linkYoutube: "",
     });
 
-    // State for logo preview
     const [imagePreview, setImagePreview] = useState(null);
 
     useEffect(() => {
         if (props.schoolInfo) {
             setData({
+                schoolCode: props.schoolInfo.schoolCode || "",
                 schoolName: props.schoolInfo.schoolName || "",
                 schoolAddress1: props.schoolInfo.schoolAddress1 || "",
                 schoolAddress2: props.schoolInfo.schoolAddress2 || "",
@@ -34,10 +35,9 @@ export default function UpdateSchoolTVPSSVersion(props) {
                 schoolEmail: props.schoolInfo.schoolEmail || "",
                 noFax: props.schoolInfo.noFax || "",
                 linkYoutube: props.schoolInfo.linkYoutube || "",
-                schoolLogo: props.schoolInfo.schoolLogo || null, // Load existing logo path
+                schoolLogo: props.schoolInfo.schoolLogo || null,
             });
 
-            // Set preview if the logo exists
             if (props.schoolInfo.schoolLogo) {
                 setImagePreview(props.schoolInfo.schoolLogo);
             }
@@ -50,17 +50,15 @@ export default function UpdateSchoolTVPSSVersion(props) {
     };
 
     const handleFileChange = (e) => {
-        const { name, files } = e.target;
-        setData(name, files[0]);
+        const { files } = e.target;
+        setData("schoolLogo", files[0]);
 
-        // Generate preview
-        const file = files[0];
-        if (file) {
+        if (files[0]) {
             const reader = new FileReader();
             reader.onloadend = () => {
-                setImagePreview(reader.result); // Set preview content
+                setImagePreview(reader.result);
             };
-            reader.readAsDataURL(file); // Read file
+            reader.readAsDataURL(files[0]);
         }
     };
 
@@ -69,6 +67,7 @@ export default function UpdateSchoolTVPSSVersion(props) {
         post(route('tvpss1Edit'), {
             onSuccess: () => {
                 console.log("School version information updated!");
+                window.location.href = route('schoolInfo.updateTVPSSVer2'); // Redirect to the next page
             },
             onError: (errors) => {
                 console.error(errors);
@@ -86,19 +85,14 @@ export default function UpdateSchoolTVPSSVersion(props) {
         >
             <Head title="TVPSS | Kemaskini Versi Sekolah" />
             <div className="flex min-h-screen bg-gray-100">
-                {/* Sidebar */}
                 <SchoolAdminSideBar />
-
-                {/* Main Content */}
                 <div className="flex-1 p-8">
                     <div className="max-w-5xl mx-auto bg-white shadow-md rounded-md border border-gray-200 p-8">
                         <h3 className="text-2xl font-semibold text-gray-800 mb-6">
                             Maklumat Versi Sekolah
                         </h3>
 
-                        {/* Form */}
                         <form onSubmit={handleSubmit} encType="multipart/form-data">
-                            {/* Image Upload Section */}
                             <div className="mb-8 text-center">
                                 <input
                                     type="file"
@@ -126,7 +120,6 @@ export default function UpdateSchoolTVPSSVersion(props) {
                                         </div>
                                     )}
 
-                                    {/* Upload Icon Overlay */}
                                     <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-30 opacity-0 hover:opacity-100 transition-opacity">
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -149,8 +142,19 @@ export default function UpdateSchoolTVPSSVersion(props) {
                                 )}
                             </div>
 
-                            {/* Form Fields */}
                             <div className="grid grid-cols-2 gap-6 mb-6">
+                                <Box className="col-span-2">
+                                    <TextField
+                                        label="Kod Sekolah"
+                                        variant="outlined"
+                                        fullWidth
+                                        name="schoolCode"
+                                        value={data.schoolCode}
+                                        onChange={handleInputChange}
+                                        error={!!errors.schoolCode}
+                                        helperText={errors.schoolCode}
+                                    />
+                                </Box>
                                 <Box className="col-span-2">
                                     <TextField
                                         label="Nama Sekolah"
@@ -213,7 +217,6 @@ export default function UpdateSchoolTVPSSVersion(props) {
                                 </Box>
                             </div>
 
-                            {/* Contact Fields */}
                             <div className="grid grid-cols-3 gap-6 mb-6">
                                 <Box>
                                     <TextField
@@ -253,7 +256,6 @@ export default function UpdateSchoolTVPSSVersion(props) {
                                 </Box>
                             </div>
 
-                            {/* YouTube Link */}
                             <div className="mb-6">
                                 <TextField
                                     label="Link Video (YouTube)"
@@ -267,7 +269,6 @@ export default function UpdateSchoolTVPSSVersion(props) {
                                 />
                             </div>
 
-                            {/* Buttons */}
                             <div className="flex justify-end space-x-4">
                                 <button
                                     type="reset"
@@ -281,7 +282,7 @@ export default function UpdateSchoolTVPSSVersion(props) {
                                     disabled={processing}
                                     className="px-6 py-2 bg-[#455185] text-white rounded-md shadow-md hover:bg-[#3d4674] focus:outline-none focus:ring-2 focus:ring-[#455185] transition"
                                 >
-                                    {processing ? "Menghantar..." : "Hantar Maklumat Versi"}
+                                    {processing ? "Menghantar..." : "Seterusnya"}
                                 </button>
                             </div>
                         </form>
