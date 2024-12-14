@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import SchoolAdminSideBar from '../SchoolAdminSideBar';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import MenuItem from '@mui/material/MenuItem'; // Import for dropdown
+import MenuItem from '@mui/material/MenuItem'; 
 
 export default function UpdateSchoolInformation(props) {
     const malaysianStates = [
