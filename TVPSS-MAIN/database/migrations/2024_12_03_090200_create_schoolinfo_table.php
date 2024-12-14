@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('noPhone');
             $table->string('noFax')->nullable();
             $table->string('schoolLogo')->nullable();
+            //$table->string('schoolLogo')->nullable()->default('images/');
             $table->string('linkYoutube')->nullable();
         });
     }
