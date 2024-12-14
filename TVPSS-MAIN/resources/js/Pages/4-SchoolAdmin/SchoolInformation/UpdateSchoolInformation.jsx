@@ -4,10 +4,30 @@ import { useEffect, useState } from 'react';
 import SchoolAdminSideBar from '../SchoolAdminSideBar';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
+import MenuItem from '@mui/material/MenuItem'; // Import for dropdown
 
-export default function UpdateSchoolTVPSSVersion(props) {
+export default function UpdateSchoolInformation(props) {
+    const malaysianStates = [
+        "Johor",
+        "Kedah",
+        "Kelantan",
+        "Melaka",
+        "Negeri Sembilan",
+        "Pahang",
+        "Penang",
+        "Perak",
+        "Perlis",
+        "Sabah",
+        "Sarawak",
+        "Selangor",
+        "Terengganu",
+        "Kuala Lumpur",
+        "Labuan",
+        "Putrajaya",
+    ];
+
     const { data, setData, post, processing, errors, reset } = useForm({
-        schoolCode: "", // Added schoolCode
+        schoolCode: "",
         schoolName: "",
         schoolAddress1: "",
         schoolAddress2: "",
@@ -51,23 +71,23 @@ export default function UpdateSchoolTVPSSVersion(props) {
 
     const handleFileChange = (e) => {
         const { files } = e.target;
-        setData("schoolLogo", files[0]);
-
-        if (files[0]) {
+        if (files.length > 0) {
+            setData("schoolLogo", files[0]); 
+    
             const reader = new FileReader();
-            reader.onloadend = () => {
-                setImagePreview(reader.result);
-            };
+            reader.onloadend = () => setImagePreview(reader.result); 
             reader.readAsDataURL(files[0]);
+        } else {
+            setData("schoolLogo", null); 
+            setImagePreview(null); 
         }
-    };
+    };    
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        post(route('tvpss1Edit'), {
+        post(route('school.update'), {
             onSuccess: () => {
-                console.log("School version information updated!");
-                window.location.href = route('schoolInfo.updateTVPSSVer2'); // Redirect to the next page
+                console.log("School information updated!");
             },
             onError: (errors) => {
                 console.error(errors);
@@ -205,6 +225,7 @@ export default function UpdateSchoolTVPSSVersion(props) {
                                 </Box>
                                 <Box className="col-span-1">
                                     <TextField
+                                        select
                                         label="Negeri"
                                         variant="outlined"
                                         fullWidth
@@ -213,7 +234,13 @@ export default function UpdateSchoolTVPSSVersion(props) {
                                         onChange={handleInputChange}
                                         error={!!errors.state}
                                         helperText={errors.state}
-                                    />
+                                    >
+                                        {malaysianStates.map((state) => (
+                                            <MenuItem key={state} value={state}>
+                                                {state}
+                                            </MenuItem>
+                                        ))}
+                                    </TextField>
                                 </Box>
                             </div>
 
@@ -282,7 +309,7 @@ export default function UpdateSchoolTVPSSVersion(props) {
                                     disabled={processing}
                                     className="px-6 py-2 bg-[#455185] text-white rounded-md shadow-md hover:bg-[#3d4674] focus:outline-none focus:ring-2 focus:ring-[#455185] transition"
                                 >
-                                    {processing ? "Menghantar..." : "Seterusnya"}
+                                    {processing ? "Menghantar..." : "Kemaskini"}
                                 </button>
                             </div>
                         </form>
