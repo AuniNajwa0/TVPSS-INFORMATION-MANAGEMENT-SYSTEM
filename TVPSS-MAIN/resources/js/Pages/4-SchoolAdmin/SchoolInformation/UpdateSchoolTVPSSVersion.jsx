@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 
-export default function UpdateSchoolTVPSSVersion({ schoolInfo }) { // Ensure 'schoolInfo' is passed as a prop
+export default function UpdateSchoolTVPSSVersion({ schoolInfo }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         schoolName: schoolInfo?.schoolName || "",
         schoolAddress1: schoolInfo?.schoolAddress1 || "",
