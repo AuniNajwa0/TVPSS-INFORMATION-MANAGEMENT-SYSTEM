@@ -28,6 +28,7 @@ class TVPSSVersion extends Model
         'noPhone',
         'recordEquipment',
         'greenScreen',
+        'tvpssLogo'
     ];
 
     protected $casts = [
@@ -47,5 +48,8 @@ class TVPSSVersion extends Model
         return $this->schoolInfo->schoolLogo ?? null;
     }
 
-
+    public function tvpssLogo()
+    {
+        return $this->tvpssLogo ?? null;
+    }
 }

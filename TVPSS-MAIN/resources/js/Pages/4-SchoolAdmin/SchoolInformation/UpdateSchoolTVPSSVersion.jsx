@@ -4,11 +4,31 @@ import { useEffect, useState } from 'react';
 import SchoolAdminSideBar from '../SchoolAdminSideBar';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
+import MenuItem from '@mui/material/MenuItem'; // Import for dropdown
 import Button from '@mui/material/Button';
 
 export default function UpdateSchoolTVPSSVersion({ schoolInfo }) {
+    const malaysianStates = [
+        "Johor",
+        "Kedah",
+        "Kelantan",
+        "Melaka",
+        "Negeri Sembilan",
+        "Pahang",
+        "Pulau Pinang",
+        "Perak",
+        "Perlis",
+        "Sabah",
+        "Sarawak",
+        "Selangor",
+        "Terengganu",
+        "Wilayah Persekutuan Kuala Lumpur",
+        "Wilayah Persekutuan Labuan",
+        "Wilayah Persekutuan Putrajaya",
+    ];
+
     const { data, setData, post, processing, errors, reset } = useForm({
-        schoolCode: schoolInfo?.schoolCode || "", // Included schoolCode
+        schoolCode: schoolInfo?.schoolCode || "", 
         schoolName: schoolInfo?.schoolName || "",
         schoolAddress1: schoolInfo?.schoolAddress1 || "",
         schoolAddress2: schoolInfo?.schoolAddress2 || "",
@@ -17,7 +37,7 @@ export default function UpdateSchoolTVPSSVersion({ schoolInfo }) {
         noPhone: schoolInfo?.noPhone || "",
         schoolEmail: schoolInfo?.schoolEmail || "",
         noFax: schoolInfo?.noFax || "",
-        schoolLogo: null, // Default for file input
+        schoolLogo: null,
         linkYoutube: schoolInfo?.linkYoutube || "",
     });
 
@@ -36,21 +56,24 @@ export default function UpdateSchoolTVPSSVersion({ schoolInfo }) {
 
     const handleFileChange = (e) => {
         const { files } = e.target;
-        setData("schoolLogo", files[0]);
-
-        if (files[0]) {
+        if (files.length > 0) {
+            setData("schoolLogo", files[0]); 
+    
             const reader = new FileReader();
-            reader.onloadend = () => setImagePreview(reader.result);
+            reader.onloadend = () => setImagePreview(reader.result); 
             reader.readAsDataURL(files[0]);
+        } else {
+            setData("schoolLogo", null); 
+            setImagePreview(null);
         }
-    };
+    };    
 
     const handleSubmit = (e) => {
         e.preventDefault();
         post(route('tvpss1Edit'), {
             onSuccess: () => {
                 console.log("School version information updated!");
-                window.location.href = route('schoolInfo.updateTVPSSVer2'); // Redirect to next page
+                window.location.href = route('schoolInfo.updateTVPSSVer2');
             },
             onError: (errors) => {
                 console.error(errors);
@@ -128,7 +151,6 @@ export default function UpdateSchoolTVPSSVersion({ schoolInfo }) {
                             </div>
                             {/* Form Fields */}
                             <div className="grid grid-cols-2 gap-6 mb-6">
-                                {/* School Code */}
                                 <Box className="col-span-2">
                                     <TextField
                                         label="Kod Sekolah"
@@ -141,7 +163,6 @@ export default function UpdateSchoolTVPSSVersion({ schoolInfo }) {
                                         helperText={errors.schoolCode}
                                     />
                                 </Box>
-                                {/* Other Fields */}
                                 <Box className="col-span-2">
                                     <TextField
                                         label="Nama Sekolah"
@@ -192,6 +213,7 @@ export default function UpdateSchoolTVPSSVersion({ schoolInfo }) {
                                 </Box>
                                 <Box className="col-span-1">
                                     <TextField
+                                        select
                                         label="Negeri"
                                         variant="outlined"
                                         fullWidth
@@ -200,7 +222,13 @@ export default function UpdateSchoolTVPSSVersion({ schoolInfo }) {
                                         onChange={handleInputChange}
                                         error={!!errors.state}
                                         helperText={errors.state}
-                                    />
+                                    >
+                                        {malaysianStates.map((state) => (
+                                            <MenuItem key={state} value={state}>
+                                                {state}
+                                            </MenuItem>
+                                        ))}
+                                    </TextField>
                                 </Box>
                             </div>
                             <div className="grid grid-cols-3 gap-6 mb-6">
