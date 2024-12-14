@@ -16,26 +16,23 @@ export default function UpdateSchoolTVPSSVersion({ schoolInfo }) {
         noPhone: schoolInfo?.noPhone || "",
         schoolEmail: schoolInfo?.schoolEmail || "",
         noFax: schoolInfo?.noFax || "",
-        schoolLogo: null, // Default for file input
+        schoolLogo: null, 
         linkYoutube: schoolInfo?.linkYoutube || "",
     });
 
     const [imagePreview, setImagePreview] = useState(null);
 
-    // Populate existing school info and preview
     useEffect(() => {
         if (schoolInfo?.schoolLogo) {
             setImagePreview(`/${schoolInfo.schoolLogo}`);
         }
     }, [schoolInfo]);
 
-    // Handle input field changes
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setData(name, value);
     };
 
-    // Handle file upload changes and preview
     const handleFileChange = (e) => {
         const { files } = e.target;
         setData("schoolLogo", files[0]);
@@ -48,7 +45,6 @@ export default function UpdateSchoolTVPSSVersion({ schoolInfo }) {
         }
     };
 
-    // Handle form submission
     const handleSubmit = (e) => {
         e.preventDefault();
         post(route('tvpss1Edit'), {
@@ -61,7 +57,6 @@ export default function UpdateSchoolTVPSSVersion({ schoolInfo }) {
         });
     };
 
-    // Reset form and preview
     const handleCancel = () => {
         reset();
         setImagePreview(schoolInfo?.schoolLogo ? `/images/${schoolInfo.schoolLogo}` : null);

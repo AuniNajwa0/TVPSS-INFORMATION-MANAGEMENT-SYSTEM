@@ -157,10 +157,10 @@ class SchoolAdminController extends Controller
 
         if ($request->hasFile('schoolLogo')) {
             $file = $request->file('schoolLogo');
-            $destinationPath = public_path('images'); // Path to 'public/images'
-            $fileName = time() . '_' . $file->getClientOriginalName(); // Generate a unique filename
-            $file->move($destinationPath, $fileName); // Move the file
-            $schoolInfo->schoolLogo = 'images/' . $fileName; // Save relative path to the database
+            $destinationPath = public_path('images'); 
+            $fileName = time() . '_' . $file->getClientOriginalName(); 
+            $file->move($destinationPath, $fileName); 
+            $schoolInfo->schoolLogo = 'images/' . $fileName; 
         }
 
         $schoolInfo->save();
@@ -199,7 +199,6 @@ class SchoolAdminController extends Controller
             'schoolLogo'    => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        // Retrieve or create school information
         $schoolInfo = SchoolInfo::first() ?? new SchoolInfo();
 
         $schoolInfo->schoolCode = $validated['schoolCode'];
@@ -215,15 +214,15 @@ class SchoolAdminController extends Controller
 
         if ($request->hasFile('schoolLogo')) {
             $file = $request->file('schoolLogo');
-            $destinationPath = public_path('images'); // Path to 'public/images'
-            $fileName = time() . '_' . $file->getClientOriginalName(); // Generate unique filename
+            $destinationPath = public_path('images'); 
+            $fileName = time() . '_' . $file->getClientOriginalName(); 
             $file->move($destinationPath, $fileName);
             $schoolInfo->schoolLogo = 'images/' . $fileName;
         }
 
         $schoolInfo->save();
 
-        return redirect()->route('tvpss1')->with('success', 'School information updated successfully!');
+        return redirect()->route('tvpss2')->with('success', 'School information updated successfully!');
     }
 
     public function updateTVPSSVer2()
@@ -252,7 +251,6 @@ class SchoolAdminController extends Controller
 
         $schoolInfo = SchoolInfo::first() ?? new SchoolInfo();
 
-        // Update school information fields
         $schoolInfo->agency1_name = $validated['agency1_name'];
         $schoolInfo->agency1Manager_name = $validated['agency1Manager_name'];
         $schoolInfo->agency2_name = $validated['agency2_name'];
@@ -261,25 +259,20 @@ class SchoolAdminController extends Controller
         $schoolInfo->noPhone = $validated['noPhone'];
         $schoolInfo->greenScreen = $validated['greenScreen'];
 
-        // Handle file upload for schoolLogo
         if ($request->hasFile('schoolLogo')) {
             $file = $request->file('schoolLogo');
-            $destinationPath = public_path('images'); // Specify custom directory
-            $fileName = time() . '_' . $file->getClientOriginalName(); // Generate unique filename
+            $destinationPath = public_path('images'); 
+            $fileName = time() . '_' . $file->getClientOriginalName(); 
 
-            // Move the uploaded file to the custom directory
             $file->move($destinationPath, $fileName);
 
-            // Save the relative path to the database
             $schoolInfo->schoolLogo = 'images/' . $fileName;
         } elseif ($validated['schoolLogo'] === null) {
-            // Clear the schoolLogo field if no file is uploaded and field is null
             $schoolInfo->schoolLogo = null;
         }
 
         $schoolInfo->save();
 
-        // Update or create the schoolVersion relationship
         $schoolVersion = $schoolInfo->schoolVersion ?? new TVPSSVersion();
         $schoolVersion->version = $validated['version'] ?? null;
         $schoolVersion->schoolInfo()->associate($schoolInfo);
