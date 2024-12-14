@@ -86,21 +86,6 @@ class SchoolAdminController extends Controller
         return redirect()->route('equipment.equipmentIndex')->with('success', 'Barang berjaya dikemaskini!');
     }
 
-    /*public function equipmentDestroy(string $id)
-    {
-        $equipment = Equipment::findOrFail($id);
-
-        $equipment->delete();
-
-        return redirect()->route('equipment.equipmentIndex')->with('success', 'Barang berjaya dipadam!');
-    }*/
-
-    /*public function equipmentDestroy(Equipment $equipment){
-        $equipment->delete();
-
-        return redirect()->route('equipment.equipmentIndex')->with('success', 'Barang berjaya dipadam!');
-    }*/
-
     public function equipmentDestroy(Equipment $equipment)
     {
         $equipment->delete();
@@ -171,8 +156,11 @@ class SchoolAdminController extends Controller
         $schoolInfo->linkYoutube = $validated['linkYoutube'] ?? null;
 
         if ($request->hasFile('schoolLogo')) {
-            $path = $request->file('schoolLogo')->store('school_logos', 'public');
-            $schoolInfo->schoolLogo = $path;
+            $file = $request->file('schoolLogo');
+            $destinationPath = public_path('images'); // Path to 'public/images'
+            $fileName = time() . '_' . $file->getClientOriginalName(); // Generate a unique filename
+            $file->move($destinationPath, $fileName); // Move the file
+            $schoolInfo->schoolLogo = 'images/' . $fileName; // Save relative path to the database
         }
 
         $schoolInfo->save();
@@ -211,13 +199,10 @@ class SchoolAdminController extends Controller
             'schoolLogo'    => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        $schoolInfo = SchoolInfo::first(); 
+        // Retrieve or create school information
+        $schoolInfo = SchoolInfo::first() ?? new SchoolInfo();
 
-        if (!$schoolInfo) {
-            $schoolInfo = new SchoolInfo();
-        }
-
-        $schoolInfo->schoolName = $validated['schoolCode'];
+        $schoolInfo->schoolCode = $validated['schoolCode'];
         $schoolInfo->schoolName = $validated['schoolName'];
         $schoolInfo->schoolEmail = $validated['schoolEmail'];
         $schoolInfo->schoolAddress1 = $validated['schoolAddress1'] ?? null;
@@ -229,8 +214,11 @@ class SchoolAdminController extends Controller
         $schoolInfo->linkYoutube = $validated['linkYoutube'] ?? null;
 
         if ($request->hasFile('schoolLogo')) {
-            $path = $request->file('schoolLogo')->store('school_logos', 'public');
-            $schoolInfo->schoolLogo = $path;
+            $file = $request->file('schoolLogo');
+            $destinationPath = public_path('images'); // Path to 'public/images'
+            $fileName = time() . '_' . $file->getClientOriginalName(); // Generate unique filename
+            $file->move($destinationPath, $fileName);
+            $schoolInfo->schoolLogo = 'images/' . $fileName;
         }
 
         $schoolInfo->save();
@@ -262,12 +250,9 @@ class SchoolAdminController extends Controller
             'schoolLogo'    => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        $schoolInfo = SchoolInfo::first(); 
+        $schoolInfo = SchoolInfo::first() ?? new SchoolInfo();
 
-        if (!$schoolInfo) {
-            $schoolInfo = new SchoolInfo(); 
-        }
-
+        // Update school information fields
         $schoolInfo->agency1_name = $validated['agency1_name'];
         $schoolInfo->agency1Manager_name = $validated['agency1Manager_name'];
         $schoolInfo->agency2_name = $validated['agency2_name'];
@@ -276,20 +261,28 @@ class SchoolAdminController extends Controller
         $schoolInfo->noPhone = $validated['noPhone'];
         $schoolInfo->greenScreen = $validated['greenScreen'];
 
+        // Handle file upload for schoolLogo
         if ($request->hasFile('schoolLogo')) {
-            $path = $request->file('schoolLogo')->store('school_logos', 'public');
-            $schoolInfo->schoolLogo = $path;
+            $file = $request->file('schoolLogo');
+            $destinationPath = public_path('images'); // Specify custom directory
+            $fileName = time() . '_' . $file->getClientOriginalName(); // Generate unique filename
+
+            // Move the uploaded file to the custom directory
+            $file->move($destinationPath, $fileName);
+
+            // Save the relative path to the database
+            $schoolInfo->schoolLogo = 'images/' . $fileName;
         } elseif ($validated['schoolLogo'] === null) {
-            $schoolInfo->schoolLogo = null; 
+            // Clear the schoolLogo field if no file is uploaded and field is null
+            $schoolInfo->schoolLogo = null;
         }
 
         $schoolInfo->save();
 
-        $schoolVersion = $schoolInfo->schoolVersion ?? new TVPSSVersion;
-
+        // Update or create the schoolVersion relationship
+        $schoolVersion = $schoolInfo->schoolVersion ?? new TVPSSVersion();
         $schoolVersion->version = $validated['version'] ?? null;
-        $schoolVersion->schoolInfo()->associate($schoolInfo); 
-
+        $schoolVersion->schoolInfo()->associate($schoolInfo);
         $schoolVersion->save();
 
         return redirect()->route('tvpss2')->with('success', 'School information updated successfully!');
