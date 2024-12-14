@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 
-export default function UpdateSchoolTVPSSVersion({ schoolInfo }) { // Ensure 'schoolInfo' is passed as a prop
+export default function UpdateSchoolTVPSSVersion({ schoolInfo }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         schoolName: schoolInfo?.schoolName || "",
         schoolAddress1: schoolInfo?.schoolAddress1 || "",
@@ -16,26 +16,23 @@ export default function UpdateSchoolTVPSSVersion({ schoolInfo }) { // Ensure 'sc
         noPhone: schoolInfo?.noPhone || "",
         schoolEmail: schoolInfo?.schoolEmail || "",
         noFax: schoolInfo?.noFax || "",
-        schoolLogo: null, // Default for file input
+        schoolLogo: null, 
         linkYoutube: schoolInfo?.linkYoutube || "",
     });
 
     const [imagePreview, setImagePreview] = useState(null);
 
-    // Populate existing school info and preview
     useEffect(() => {
         if (schoolInfo?.schoolLogo) {
             setImagePreview(`/${schoolInfo.schoolLogo}`);
         }
     }, [schoolInfo]);
 
-    // Handle input field changes
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setData(name, value);
     };
 
-    // Handle file upload changes and preview
     const handleFileChange = (e) => {
         const { files } = e.target;
         setData("schoolLogo", files[0]);
@@ -48,7 +45,6 @@ export default function UpdateSchoolTVPSSVersion({ schoolInfo }) { // Ensure 'sc
         }
     };
 
-    // Handle form submission
     const handleSubmit = (e) => {
         e.preventDefault();
         post(route('tvpss1Edit'), {
@@ -61,7 +57,6 @@ export default function UpdateSchoolTVPSSVersion({ schoolInfo }) { // Ensure 'sc
         });
     };
 
-    // Reset form and preview
     const handleCancel = () => {
         reset();
         setImagePreview(schoolInfo?.schoolLogo ? `/images/${schoolInfo.schoolLogo}` : null);

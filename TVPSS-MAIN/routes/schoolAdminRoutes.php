@@ -41,5 +41,5 @@ Route::post('/update-school', [SchoolAdminController::class, 'updateSchool'])->n
 //TVPSS Version
 Route::get('/updateSchoolTVPSSVersion', [SchoolAdminController::class, 'updateTVPSSVer1'])->name('tvpss1');
 Route::post('/updateEditSchoolTVPSSVersion', [SchoolAdminController::class, 'editTVPSSVer1'])->name('tvpss1Edit');
-Route::get('/updateSchoolTVPSSVersion2',[SchoolAdminController::class, 'updateTVPSSVer2'])->name('tvpss2');
+Route::get('/updateSchoolTVPSSVersion2', [SchoolAdminController::class, 'updateTVPSSVer2'])->name('tvpss2');
 Route::post('/updateEditSchoolTVPSSVersion2', [SchoolAdminController::class, 'editTVPSSVer2'])->name('tvpss2Edit');
