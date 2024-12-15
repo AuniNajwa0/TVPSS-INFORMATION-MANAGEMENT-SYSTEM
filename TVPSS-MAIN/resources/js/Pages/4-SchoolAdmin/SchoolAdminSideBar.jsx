@@ -66,7 +66,7 @@ function SchoolAdminSideBar() {
         {/* Informasi Sekolah */}
         <li
           className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-lg transition-all duration-200 ease-in-out ${
-            url === '/informasiSekolah'
+            url === '/updateSchool'
               ? 'bg-gradient-to-r from-[#455185] to-[#008080] text-white'
               : 'text-gray-800 hover:bg-gradient-to-r from-[#455185] to-[#008080] hover:text-white'
           }`}
@@ -94,7 +94,7 @@ function SchoolAdminSideBar() {
         {/* Submit Versi TVPSS */}
         <li
           className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-lg transition-all duration-200 ease-in-out ${
-            url === '/submitVersiTVPSS'
+            url === '/updateSchoolTVPSSVersion'
               ? 'bg-gradient-to-r from-[#455185] to-[#008080] text-white'
               : 'text-gray-800 hover:bg-gradient-to-r from-[#455185] to-[#008080] hover:text-white'
           }`}

@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-//use Illuminate\Database\Eloquent\Model;
 use MongoDB\Laravel\Eloquent\Model as Model;
 use App\Enums\StatusEnum;
 
@@ -16,11 +15,12 @@ class Equipment extends Model
     ];
 
     protected $fillable = [
-        'name',
-        'type',
+        'equipName',
+        'equipType',
         'location',
         'acquired_date',
         'status',
+        'school_info_id',
     ];
 
     protected $casts = [
@@ -35,5 +35,10 @@ class Equipment extends Model
     public function getStatusNameAttribute()
     {
         return ucfirst(str_replace('_', ' ', $this->status));
+    }
+
+    public function school()
+    {
+        return $this->belongsTo(SchoolInfo::class, 'school_info_id');
     }
 }

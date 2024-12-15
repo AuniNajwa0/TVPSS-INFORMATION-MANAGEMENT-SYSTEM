@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('schoolinfo', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id')->nullable(); 
             $table->string('schoolCode');
             $table->string('schoolName');
             $table->string('schoolEmail');
@@ -25,6 +26,8 @@ return new class extends Migration
             $table->string('schoolLogo')->nullable();
             //$table->string('schoolLogo')->nullable()->default('images/');
             $table->string('linkYoutube')->nullable();
+            $table->timestamps(); 
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
@@ -33,6 +36,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('school_info');
+        Schema::dropIfExists('schoolinfo');
     }
 };

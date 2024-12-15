@@ -23,8 +23,8 @@ class UpdateEquipmentRequest extends FormRequest
     public function rules() : array
     {
         return [
-            'name' => 'required|string|max:255',
-            'type' => 'required|string|max:255',
+            'equipName' => 'required|string|max:255',
+            'equipType' => 'required|string|max:255',
             'location' => 'required|string|max:255',
             'acquired_date' => 'required|date_format:Y-m-d',
             'status' => ['required', 'string', 'in:' . implode(',', StatusEnum::getValues())], 
@@ -34,8 +34,8 @@ class UpdateEquipmentRequest extends FormRequest
     public function messages()
     {
         return [
-            'name.required' => 'Nama Peralatan diperlukan!',
-            'type.required' => 'Jenis diperlukan!',
+            'equipName.required' => 'Nama Peralatan diperlukan!',
+            'equipType.required' => 'Jenis diperlukan!',
             'location.required' => 'Lokasi diperlukan!',
             'acquired_date.required' => 'Tarikh Diperolehi diperlukan!',
             'status.required' => 'Status diperlukan!',

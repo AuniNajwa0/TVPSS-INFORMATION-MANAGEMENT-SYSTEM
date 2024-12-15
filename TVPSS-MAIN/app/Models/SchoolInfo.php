@@ -13,6 +13,7 @@ class SchoolInfo extends Model
 
     protected $fillable = [
         'schoolCode',
+        'user_id',
         'schoolName',
         'schoolEmail',
         'schoolAddress1',
@@ -23,7 +24,16 @@ class SchoolInfo extends Model
         'noFax',
         'schoolLogo',
         'linkYoutube',
+        'user_id',
     ];
+
+    /**
+     * A school belongs to a user.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
     // point 2
     public function schoolVersion()
