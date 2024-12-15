@@ -266,10 +266,12 @@ class SchoolAdminController extends Controller
 
     public function updateTVPSSVer1()
     {
-        $schoolInfo = SchoolInfo::with('schoolVersion')->first();
+        $user = request()->user();
+
+        $schoolInfo = SchoolInfo::with('schoolVersion')->where('user_id', $user->id)->first();
 
         if (!$schoolInfo) {
-            return back()->with('error', 'No school information found.');
+            return back()->with('error', 'No school information found for your account.');
         }
 
         return inertia('4-SchoolAdmin/SchoolInformation/UpdateSchoolTVPSSVersion', [
@@ -278,9 +280,10 @@ class SchoolAdminController extends Controller
         ]);
     }
 
-
     public function editTVPSSVer1(Request $request)
     {
+        $user = request()->user();
+
         $validated = $request->validate([
             'schoolCode'    => 'required|string|max:255',
             'schoolName'    => 'required|string|max:255',
@@ -295,25 +298,25 @@ class SchoolAdminController extends Controller
             'schoolLogo'    => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        $schoolInfo = SchoolInfo::first() ?? new SchoolInfo();
+        $schoolInfo = SchoolInfo::where('user_id', $user->id)->first();
 
-        $schoolInfo->schoolCode = $validated['schoolCode'];
-        $schoolInfo->schoolName = $validated['schoolName'];
-        $schoolInfo->schoolEmail = $validated['schoolEmail'];
-        $schoolInfo->schoolAddress1 = $validated['schoolAddress1'] ?? null;
-        $schoolInfo->schoolAddress2 = $validated['schoolAddress2'] ?? null;
-        $schoolInfo->postcode = $validated['postcode'];
-        $schoolInfo->state = $validated['state'];
-        $schoolInfo->noPhone = $validated['noPhone'];
-        $schoolInfo->noFax = $validated['noFax'] ?? null;
-        $schoolInfo->linkYoutube = $validated['linkYoutube'] ?? null;
+        if (!$schoolInfo) {
+            return back()->with('error', 'No school information found for your account.');
+        }
+
+        $schoolInfo->fill($validated);
 
         if ($request->hasFile('schoolLogo')) {
             $file = $request->file('schoolLogo');
-            $destinationPath = public_path('images/schoolLogo'); 
             $fileName = time() . '_' . $file->getClientOriginalName();
+            $destinationPath = public_path('images/schoolLogo');
+
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0755, true);
+            }
+
             $file->move($destinationPath, $fileName);
-            $schoolInfo->schoolLogo = 'images/schoolLogo/' . $fileName; 
+            $schoolInfo->schoolLogo = 'images/schoolLogo/' . $fileName;
         }
 
         $schoolInfo->save();
@@ -323,7 +326,13 @@ class SchoolAdminController extends Controller
 
     public function updateTVPSSVer2()
     {
-        $schoolInfo = SchoolInfo::with('schoolVersion')->first();
+        $user = request()->user();
+
+        $schoolInfo = SchoolInfo::with('schoolVersion')->where('user_id', $user->id)->first();
+
+        if (!$schoolInfo) {
+            return back()->with('error', 'No school information found for your account.');
+        }
 
         return inertia('4-SchoolAdmin/SchoolInformation/UpdateSchoolTVPSSVersion2', [
             'schoolInfo' => $schoolInfo,
@@ -333,6 +342,8 @@ class SchoolAdminController extends Controller
 
     public function editTVPSSVer2(Request $request)
     {
+        $user = request()->user();
+
         $validated = $request->validate([
             'version' => 'nullable|string|max:255',
             'agency1_name' => 'required|string|max:255',
@@ -345,7 +356,11 @@ class SchoolAdminController extends Controller
             'tvpssLogo' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        $schoolInfo = SchoolInfo::first() ?? new SchoolInfo();
+        $schoolInfo = SchoolInfo::where('user_id', $user->id)->first();
+
+        if (!$schoolInfo) {
+            return back()->with('error', 'No school information found for your account.');
+        }
 
         $schoolInfo->agency1_name = $validated['agency1_name'];
         $schoolInfo->agency1Manager_name = $validated['agency1Manager_name'];
@@ -355,26 +370,27 @@ class SchoolAdminController extends Controller
         $schoolInfo->isNoPhone = $validated['isNoPhone'];
         $schoolInfo->greenScreen = $validated['greenScreen'];
 
+        if ($request->hasFile('tvpssLogo')) {
+            $tvpssLogo = $request->file('tvpssLogo');
+            $fileName = time() . '_' . $tvpssLogo->getClientOriginalName();
+            $destinationPath = public_path('images/tvpssLogo');
+
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0755, true);
+            }
+
+            $tvpssLogo->move($destinationPath, $fileName);
+            $schoolInfo->schoolVersion->tvpssLogo = 'images/tvpssLogo/' . $fileName;
+        }
+
         $schoolInfo->save();
 
         $schoolVersion = $schoolInfo->schoolVersion ?? new TVPSSVersion();
         $schoolVersion->version = $validated['version'] ?? null;
         $schoolVersion->schoolInfo()->associate($schoolInfo);
-
-        if ($request->hasFile('tvpssLogo')) {
-            $tvpssLogo = $request->file('tvpssLogo');
-
-            $destinationPath = 'images/tvpssLogo';
-            $fileName = time() . '_' . $tvpssLogo->getClientOriginalName();
-
-            $tvpssLogo->move(public_path($destinationPath), $fileName);
-
-            $schoolVersion->tvpssLogo = $destinationPath . '/' . $fileName;
-        }
-
         $schoolVersion->save();
 
-        return redirect()->route('tvpss2')->with('success', 'School information updated successfully!');
+        return redirect()->route('tvpss2')->with('success', 'School version updated successfully!');
     }
 
     public function eqLocCreate(){

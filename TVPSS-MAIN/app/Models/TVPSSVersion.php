@@ -27,6 +27,11 @@ class TVPSSVersion extends Model
         'agencyManager2_name',
         'isNoPhone',
         'recordEquipment',
+
+        'tvpssStudio',
+        'recInSchool',
+        'recInOutSchool',
+
         'greenScreen',
         'tvpssLogo'
     ];

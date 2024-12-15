@@ -20,6 +20,9 @@ return new class extends Migration
             $table->string('agencyManager1_name')->nullable();
             $table->string('agencyManager2_name')->nullable();
             $table->enum('recordEquipment', ['Ada', 'Tiada']);
+            $table->enum('tvpssStudio', ['Ada', 'Tiada']);
+            $table->enum('recInSchool', ['Ada', 'Tiada']);
+            $table->enum('recInOutSchool', ['Ada', 'Tiada']);
             $table->enum('greenScreen', ['Ada', 'Tiada']);
             $table->string('tvpssLogo')->nullable();
             $table->timestamps();
