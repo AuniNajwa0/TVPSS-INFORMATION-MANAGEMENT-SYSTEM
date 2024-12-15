@@ -16,7 +16,7 @@ export default function UpdateSchoolVersionInfo2({ schoolInfo, schoolVersion }) 
         agency1Manager_name: '',
         agency2_name: '',
         agency2Manager_name: '',
-        noPhone: 'Ada',
+        isNoPhone: 'Ada',
         recordEquipment: 'Ada',
         greenScreen: 'Ada',
         tvpssLogo: null, // TVPSS logo only
@@ -31,7 +31,7 @@ export default function UpdateSchoolVersionInfo2({ schoolInfo, schoolVersion }) 
                 agency1Manager_name: schoolInfo.agency1Manager_name || '',
                 agency2_name: schoolInfo.agency2_name || '',
                 agency2Manager_name: schoolInfo.agency2Manager_name || '',
-                noPhone: schoolInfo.noPhone || 'Ada',
+                isNoPhone: schoolInfo.isNoPhone || 'Ada',
                 recordEquipment: schoolInfo.recordEquipment || 'Ada',
                 greenScreen: schoolInfo.greenScreen || 'Ada',
                 tvpssLogo: '', // Initialize tvpssLogo
@@ -166,15 +166,15 @@ export default function UpdateSchoolVersionInfo2({ schoolInfo, schoolVersion }) 
                                 <FormControl fullWidth>
                                     <InputLabel>No Telefon</InputLabel>
                                     <Select
-                                        name="noPhone"
-                                        value={data.noPhone}
+                                        name="isNoPhone"
+                                        value={data.isNoPhone}
                                         onChange={handleInputChange}
                                     >
                                         <MenuItem value="Ada">Ada</MenuItem>
                                         <MenuItem value="Tiada">Tiada</MenuItem>
                                     </Select>
-                                    {errors.noPhone && (
-                                        <div className="text-red-500">{errors.noPhone}</div>
+                                    {errors.isNoPhone && (
+                                        <div className="text-red-500">{errors.isNoPhone}</div>
                                     )}
                                 </FormControl>
                                 <FormControl fullWidth>

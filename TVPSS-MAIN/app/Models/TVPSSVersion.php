@@ -25,8 +25,13 @@ class TVPSSVersion extends Model
         'agency2_name',
         'agencyManager1_name',
         'agencyManager2_name',
-        'noPhone',
+        'isNoPhone',
         'recordEquipment',
+
+        'tvpssStudio',
+        'recInSchool',
+        'recInOutSchool',
+
         'greenScreen',
         'tvpssLogo'
     ];
@@ -34,7 +39,7 @@ class TVPSSVersion extends Model
     protected $casts = [
         'recordEquipment' => recordEquipmentEnum::class,  
         'greenScreen' => greenScreenEnum::class,
-        'noPhone' => noPhoneEnum::class,
+        'isNoPhone' => noPhoneEnum::class,
     ];
 
     //point 3
