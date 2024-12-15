@@ -14,55 +14,113 @@ use App\Models\TVPSSVersion;
 use App\Enums\StatusEnum;
 use App\Enums\greenScreenEnum;
 use App\Enums\recordEquipmentEnum;
+use Illuminate\Support\Facades\Log;
 
 
 class SchoolAdminController extends Controller
 {
-    public function equipmentIndex()
+    public function equipmentIndex(Request $request)
     {
-        $equipment = Equipment::paginate(10);
-        $eqLocation = EqLocation::all();
-        
+        $user = request()->user();
+
+        $school = SchoolInfo::where('user_id', $user->id)->first();
+
+        if (!$school) {
+            return redirect()->route('school.edit')->with('error', 'Please create your school information first.');
+        }
+
+        $query = Equipment::where('school_info_id', $school->id);
+
+        if ($request->has('status')) {
+            $query->where('status', $request->input('status'));
+        }
+
+        if ($request->has('search')) {
+            $query->where('equipName', 'like', '%' . $request->input('search') . '%');
+        }
+
+        $equipment = $query->paginate(10);
+        $eqLocation = EqLocation::where('school_info_id', $school->id)->get();
+
         return Inertia::render('4-SchoolAdmin/ManageEquipment/ListEquipment', [
-            'equipment' => $equipment, 
+            'equipment' => $equipment,
+            'school' => $school,
             'eqLocation' => $eqLocation,
         ]);
     }
 
     public function equipmentCreate()
     {
-        return Inertia::render('4-SchoolAdmin/ManageEquipment/AddEquipment');
+        $user = request()->user();
+
+        $school = SchoolInfo::where('user_id', $user->id)->first();
+
+        if (!$school) {
+            return redirect()->route('school.edit')->with('error', 'Please complete your school information first.');
+        }
+
+        $eqLocation = EqLocation::where('school_info_id', $school->id)->get();
+
+        return Inertia::render('4-SchoolAdmin/ManageEquipment/AddEquipment', [
+            'eqLocation' => $eqLocation,
+        ]);
     }
 
     public function equipmentStore(StoreEquipmentRequest $request)
     {
         try {
-            $status = StatusEnum::from($request->status);
+            $data = $request->all();
+            //Log::info('Received Data in Controller:', $data); // Debug log
 
             Equipment::create([
-                'name' => $request->name,
-                'type' => $request->type,
-                'location' => $request->location,
-                'acquired_date' => $request->acquired_date,
-                'status' => $status->value,
+                'equipName' => $data['equipName'],
+                'equipType' => $data['equipType'],
+                'location' => $data['location'],
+                'acquired_date' => $data['acquired_date'],
+                'status' => $data['status'],
+                'school_info_id' => SchoolInfo::where('user_id', $request->user()->id)->value('id'),
             ]);
 
-            return redirect()->route('equipment.equipmentIndex')->with('success', 'Barang berjaya ditambah!');
+            return redirect()->route('equipment.equipmentIndex')->with('success', 'Equipment successfully added!');
         } catch (\Exception $e) {
-            return back()->with('error', 'Ralat berlaku, sila cuba lagi.');
+            //Log::error('Error in equipmentStore:', ['message' => $e->getMessage()]);
+            return back()->with('error', 'An error occurred.');
         }
     }
 
     public function equipmentShow(Equipment $equipment)
     {
+        $user = request()->user();
+
+        if ($equipment->school_info_id !== SchoolInfo::where('user_id', $user->id)->value('id')) {
+            abort(403, 'Unauthorized access.');
+        }
+
         return Inertia::render('4-SchoolAdmin/ManageEquipment/ShowEquipment', [
             'equipment' => $equipment,
         ]);
     }
 
-    public function equipmentEdit(Equipment $equipment)
+    public function equipmentEdit($id)
     {
-        $eqLocation = EqLocation::all();
+        $user = request()->user();
+
+        $school = SchoolInfo::where('user_id', $user->id)->first();
+
+        if (!$school) {
+            return redirect()->route('school.edit')->with('error', 'Please complete your school information first.');
+        }
+
+        $equipment = Equipment::where('id', $id)
+            ->where('school_info_id', $school->id)
+            ->first();
+
+        if (!$equipment) {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $eqLocation = EqLocation::where('school_info_id', $school->id)->get();
+
         return Inertia::render('4-SchoolAdmin/ManageEquipment/UpdateEquipment', [
             'equipment' => $equipment,
             'eqLocation' => $eqLocation,
@@ -71,38 +129,74 @@ class SchoolAdminController extends Controller
 
     public function equipmentUpdate(UpdateEquipmentRequest $request, $id)
     {
-        $equipment = Equipment::findOrFail($id);
-        
-        $status = StatusEnum::from($request->status); 
+        $user = request()->user();
 
-        $equipment->update([
-            'name' => $request->name,
-            'type' => $request->type,
-            'location' => $request->location,
-            'acquired_date' => $request->acquired_date,
-            'status' => $status->value, 
-        ]);
+        $school = SchoolInfo::where('user_id', $user->id)->first();
 
-        return redirect()->route('equipment.equipmentIndex')->with('success', 'Barang berjaya dikemaskini!');
+        if (!$school) {
+            return redirect()->route('school.edit')->with('error', 'Please complete your school information first.');
+        }
+
+        $equipment = Equipment::where('id', $id)
+            ->where('school_info_id', $school->id)
+            ->first();
+
+        if (!$equipment) {
+            abort(403, 'Unauthorized access.');
+        }
+
+        try {
+            $data = $request->all();
+
+            if ($request->equipType === 'other' && $request->has('otherType')) {
+                $data['equipType'] = $request->input('otherType'); 
+            }
+
+            $equipment->update([
+                'equipName' => $data['equipName'],
+                'equipType' => $data['equipType'],
+                'location' => $data['location'],
+                'acquired_date' => $data['acquired_date'],
+                'status' => $data['status'],
+            ]);
+
+            return redirect()->route('equipment.equipmentIndex')->with('success', 'Equipment successfully updated!');
+        } catch (\Exception $e) {
+            Log::error('Error updating equipment:', ['message' => $e->getMessage()]);
+            return back()->with('error', 'An error occurred while updating equipment.');
+        }
     }
 
     public function equipmentDestroy(Equipment $equipment)
     {
+        $user = request()->user();
+
+        if ($equipment->school_info_id !== SchoolInfo::where('user_id', $user->id)->value('id')) {
+            abort(403, 'Unauthorized access.');
+        }
+
         $equipment->delete();
 
-        return redirect()->route('equipment.equipmentIndex')->with('success', 'Barang berjaya dipadam!');
+        return redirect()->route('equipment.equipmentIndex')->with('success', 'Equipment successfully deleted!');
     }
 
     public function deleteSelected(Request $request)
     {
         try {
+            $user = request()->user();
+            $school = SchoolInfo::where('user_id', $user->id)->first();
+
+            if (!$school) {
+                return redirect()->route('school.edit')->with('error', 'Please complete your school information first.');
+            }
+
             $ids = $request->input('ids');
 
-            Equipment::whereIn('id', $ids)->delete();
+            Equipment::whereIn('id', $ids)->where('school_info_id', $school->id)->delete();
 
-            return redirect()->route('equipment.equipmentIndex')->with('success', 'Barang berjaya dipadam!');
+            return redirect()->route('equipment.equipmentIndex')->with('success', 'Selected equipment successfully deleted!');
         } catch (\Exception $e) {
-            return back()->with('error', 'Ralat berlaku, sila cuba lagi.');
+            return back()->with('error', 'An error occurred, please try again.');
         }
     }
 
@@ -115,15 +209,19 @@ class SchoolAdminController extends Controller
 
     public function editSchool()
     {
-        $schoolInfo = SchoolInfo::first(); 
+        $user = request()->user();
 
-        return inertia('4-SchoolAdmin/SchoolInformation/UpdateSchoolInformation', [
-            'schoolInfo' => $schoolInfo
+        $schoolInfo = SchoolInfo::where('user_id', $user->id)->first();
+
+        return Inertia::render('4-SchoolAdmin/SchoolInformation/UpdateSchoolInformation', [
+            'schoolInfo' => $schoolInfo,
         ]);
     }
 
     public function updateSchool(Request $request)
     {
+        $user = $request->user();
+
         $validated = $request->validate([
             'schoolCode'    => 'required|string|max:255',
             'schoolName'    => 'required|string|max:255',
@@ -138,34 +236,32 @@ class SchoolAdminController extends Controller
             'schoolLogo'    => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        $schoolInfo = SchoolInfo::first();
-
-        if (!$schoolInfo) {
-            $schoolInfo = new SchoolInfo();
-        }
-
-        $schoolInfo->schoolCode = $validated['schoolCode'];
-        $schoolInfo->schoolName = $validated['schoolName'];
-        $schoolInfo->schoolEmail = $validated['schoolEmail'];
-        $schoolInfo->schoolAddress1 = $validated['schoolAddress1'] ?? null;
-        $schoolInfo->schoolAddress2 = $validated['schoolAddress2'] ?? null;
-        $schoolInfo->postcode = $validated['postcode'];
-        $schoolInfo->state = $validated['state'];
-        $schoolInfo->noPhone = $validated['noPhone'];
-        $schoolInfo->noFax = $validated['noFax'] ?? null;
-        $schoolInfo->linkYoutube = $validated['linkYoutube'] ?? null;
+        $schoolInfo = SchoolInfo::firstOrNew(['user_id' => $user->id]);
+        $schoolInfo->fill($validated);
 
         if ($request->hasFile('schoolLogo')) {
-            $file = $request->file('schoolLogo');
-            $destinationPath = public_path('images/schoolLogo');
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $file->move($destinationPath, $fileName);
-            $schoolInfo->schoolLogo = 'images/schoolLogo/' . $fileName; 
+            try {
+                $file = $request->file('schoolLogo');
+                $fileName = time() . '_' . $file->getClientOriginalName();
+                $destinationPath = public_path('images/schoolLogo');
+
+                if (!file_exists($destinationPath)) {
+                    mkdir($destinationPath, 0755, true);
+                }
+
+                $file->move($destinationPath, $fileName);
+
+                $schoolInfo->schoolLogo = 'images/schoolLogo/' . $fileName;
+            } catch (\Exception $e) {
+                return back()->with('error', 'Error uploading the logo. Please try again.');
+            }
         }
 
+        // Save the record
+        $schoolInfo->user_id = $user->id;
         $schoolInfo->save();
 
-        return back()->with('success', 'School information updated successfully!');
+        return redirect()->route('school.edit')->with('success', 'School information updated successfully!');
     }
 
     public function updateTVPSSVer1()
@@ -287,25 +383,36 @@ class SchoolAdminController extends Controller
 
     public function eqLocStore(Request $request)
     {
-        try {
-            $validated = $request->validate([
-                'eqLocName'    => 'required|string|max:255',
-                'eqLocType'    => 'required|string|max:255',
-            ]);
+        $user = $request->user();
 
-            EqLocation::create([
-                'eqLocName' => $request->eqLocName,
-                'eqLocType' => $request->eqLocType,
-            ]);
+        $school = SchoolInfo::where('user_id', $user->id)->first();
 
-            return redirect()->route('equipment.equipmentIndex')->with('success', 'Lokasi berjaya ditambah!');
-        } catch (\Exception $e) {
-            return back()->with('error', 'Ralat berlaku, sila cuba lagi.');
+        if (!$school) {
+            return redirect()->route('school.edit')->with('error', 'Please complete your school information first.');
         }
+
+        $validated = $request->validate([
+            'eqLocName' => 'required|string|max:255',
+            'eqLocType' => 'required|string|max:255',
+        ]);
+
+        EqLocation::create([
+            'eqLocName' => $validated['eqLocName'],
+            'eqLocType' => $validated['eqLocType'],
+            'school_info_id' => $school->id, 
+        ]);
+
+        return redirect()->route('equipment.equipmentIndex')->with('success', 'Equipment location successfully added!');
     }
 
     public function eqLocShow(EqLocation $eqLocation)
     {
+        $user = request()->user();
+
+        if ($eqLocation->school_info_id !== SchoolInfo::where('user_id', $user->id)->value('id')) {
+            abort(403, 'Unauthorized access.');
+        }
+
         return Inertia::render('4-SchoolAdmin/ManageEquipment/UpdateEqLoc', [
             'eqLocation' => $eqLocation,
         ]);
@@ -313,6 +420,12 @@ class SchoolAdminController extends Controller
 
     public function eqLocEdit(EqLocation $eqLocation)
     {
+        $user = request()->user();
+
+        if ($eqLocation->school_info_id !== SchoolInfo::where('user_id', $user->id)->value('id')) {
+            abort(403, 'Unauthorized access.');
+        }
+
         return Inertia::render('4-SchoolAdmin/ManageEquipment/UpdateEqLoc', [
             'eqLocation' => $eqLocation,
         ]);
@@ -344,6 +457,21 @@ class SchoolAdminController extends Controller
         $eqLocation->delete();
 
         return redirect()->route('equipment.equipmentIndex')->with('success', 'Barang berjaya dipadam!');
+    }
+
+    public function getLocations(Request $request)
+    {
+        $user = $request->user();
+
+        $school = SchoolInfo::where('user_id', $user->id)->first();
+
+        if (!$school) {
+            return response()->json(['locations' => []]);
+        }
+
+        $locations = EqLocation::where('school_info_id', $school->id)->get();
+
+        return response()->json(['locations' => $locations]);
     }
 
 }

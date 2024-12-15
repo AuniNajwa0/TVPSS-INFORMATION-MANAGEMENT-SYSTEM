@@ -32,13 +32,14 @@ Route::get('eqLoc/{eqLocation}', [SchoolAdminController::class, 'eqLocShow'])->n
 Route::get('/eqLoc/{eqLocation}/edit', [SchoolAdminController::class, 'eqLocEdit'])->name('eqLoc.eqLocEdit');
 Route::put('eqLoc/{eqLocation}', [SchoolAdminController::class, 'eqLocUpdate'])->name('eqLoc.eqLocUpdate');
 Route::delete('eqLoc/{eqLocation}', [SchoolAdminController::class, 'eqLocDestroy'])->name('eqLoc.eqLocDestroy');
-
+Route::get('/locations', [SchoolAdminController::class, 'getLocations'])->name('locations');
 
 //School Information
 Route::get('/updateSchool', [SchoolAdminController::class, 'editSchool'])->name('school.edit');
 Route::post('/update-school', [SchoolAdminController::class, 'updateSchool'])->name('school.update');
 
 //TVPSS Version
+Route::get('/version-checker', [SchoolAdminController::class, 'checkVersionCriteria'])->name('version.checker');
 Route::get('/updateSchoolTVPSSVersion', [SchoolAdminController::class, 'updateTVPSSVer1'])->name('tvpss1');
 Route::post('/updateEditSchoolTVPSSVersion', [SchoolAdminController::class, 'editTVPSSVer1'])->name('tvpss1Edit');
 Route::get('/updateSchoolTVPSSVersion2', [SchoolAdminController::class, 'updateTVPSSVer2'])->name('tvpss2');

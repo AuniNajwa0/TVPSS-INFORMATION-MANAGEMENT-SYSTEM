@@ -13,9 +13,11 @@ return new class extends Migration
     {
         Schema::create('eq_locations', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('school_info_id');
             $table->string('eqLocName');
             $table->string('eqLocType');
             $table->timestamps();
+            $table->foreign('school_info_id')->references('id')->on('schoolinfo')->onDelete('cascade');
         });
     }
 
