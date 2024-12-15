@@ -340,7 +340,7 @@ class SchoolAdminController extends Controller
             'agency2_name' => 'nullable|string|max:255',
             'agency2Manager_name' => 'required|string|max:10',
             'recordEquipment' => 'required|string|max:100',
-            'noPhone' => 'required|string|max:20',
+            'isNoPhone' => 'required|string|max:20',
             'greenScreen' => 'nullable|string|max:20',
             'tvpssLogo' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
         ]);
@@ -352,7 +352,7 @@ class SchoolAdminController extends Controller
         $schoolInfo->agency2_name = $validated['agency2_name'];
         $schoolInfo->agency2Manager_name = $validated['agency2Manager_name'];
         $schoolInfo->recordEquipment = $validated['recordEquipment'];
-        $schoolInfo->noPhone = $validated['noPhone'];
+        $schoolInfo->isNoPhone = $validated['isNoPhone'];
         $schoolInfo->greenScreen = $validated['greenScreen'];
 
         $schoolInfo->save();
