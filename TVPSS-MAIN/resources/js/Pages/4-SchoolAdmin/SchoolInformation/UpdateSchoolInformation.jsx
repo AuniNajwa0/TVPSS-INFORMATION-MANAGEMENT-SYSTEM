@@ -4,8 +4,28 @@ import { useEffect, useState } from 'react';
 import SchoolAdminSideBar from '../SchoolAdminSideBar';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
+import MenuItem from '@mui/material/MenuItem'; 
 
 export default function UpdateSchoolInformation(props) {
+    const malaysianStates = [
+        "Johor",
+        "Kedah",
+        "Kelantan",
+        "Melaka",
+        "Negeri Sembilan",
+        "Pahang",
+        "Penang",
+        "Perak",
+        "Perlis",
+        "Sabah",
+        "Sarawak",
+        "Selangor",
+        "Terengganu",
+        "Kuala Lumpur",
+        "Labuan",
+        "Putrajaya",
+    ];
+
     const { data, setData, post, processing, errors, reset } = useForm({
         schoolCode: "",
         schoolName: "",
@@ -16,11 +36,10 @@ export default function UpdateSchoolInformation(props) {
         noPhone: "",
         schoolEmail: "",
         noFax: "",
-        schoolLogo: null,
+        schoolLogo: "",
         linkYoutube: "",
     });
 
-    // State to hold the image preview
     const [imagePreview, setImagePreview] = useState(null);
 
     useEffect(() => {
@@ -36,10 +55,9 @@ export default function UpdateSchoolInformation(props) {
                 schoolEmail: props.schoolInfo.schoolEmail || "",
                 noFax: props.schoolInfo.noFax || "",
                 linkYoutube: props.schoolInfo.linkYoutube || "",
-                schoolLogo: props.schoolInfo.schoolLogo || null, // Existing image link if available
+                schoolLogo: props.schoolInfo.schoolLogo || null,
             });
 
-            // Set image preview if schoolLogo exists
             if (props.schoolInfo.schoolLogo) {
                 setImagePreview(props.schoolInfo.schoolLogo);
             }
@@ -52,25 +70,24 @@ export default function UpdateSchoolInformation(props) {
     };
 
     const handleFileChange = (e) => {
-        const { name, files } = e.target;
-        setData(name, files[0]);
-
-        // Set the preview image
-        const file = files[0];
-        if (file) {
+        const { files } = e.target;
+        if (files.length > 0) {
+            setData("schoolLogo", files[0]); 
+    
             const reader = new FileReader();
-            reader.onloadend = () => {
-                setImagePreview(reader.result); // Set preview to file content
-            };
-            reader.readAsDataURL(file); // Read the file as base64 URL
+            reader.onloadend = () => setImagePreview(reader.result); 
+            reader.readAsDataURL(files[0]);
+        } else {
+            setData("schoolLogo", null); 
+            setImagePreview(null); 
         }
-    };
+    };    
 
     const handleSubmit = (e) => {
         e.preventDefault();
         post(route('school.update'), {
             onSuccess: () => {
-                console.log('School updated successfully!');
+                console.log("School information updated!");
             },
             onError: (errors) => {
                 console.error(errors);
@@ -82,26 +99,70 @@ export default function UpdateSchoolInformation(props) {
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Informasi Sekolah
+                    Kemaskini Versi Sekolah
                 </h2>
             }
         >
-            <Head title="TVPSS | Informasi Sekolah" />
+            <Head title="TVPSS | Kemaskini Versi Sekolah" />
             <div className="flex min-h-screen bg-gray-100">
-                {/* Sidebar */}
                 <SchoolAdminSideBar />
-
-                {/* Main Content */}
                 <div className="flex-1 p-8">
                     <div className="max-w-5xl mx-auto bg-white shadow-md rounded-md border border-gray-200 p-8">
                         <h3 className="text-2xl font-semibold text-gray-800 mb-6">
-                            Maklumat Sekolah
+                            Maklumat Versi Sekolah
                         </h3>
 
-                        {/* Form */}
                         <form onSubmit={handleSubmit} encType="multipart/form-data">
+                            <div className="mb-8 text-center">
+                                <input
+                                    type="file"
+                                    name="schoolLogo"
+                                    accept="image/*"
+                                    onChange={handleFileChange}
+                                    className="hidden"
+                                    id="schoolLogoUpload"
+                                />
+                                <div
+                                    className="relative w-48 h-48 mx-auto bg-gray-100 border-4 border-solid border-blue-900 rounded-lg shadow-lg overflow-hidden cursor-pointer hover:shadow-xl transition-shadow"
+                                    onClick={() =>
+                                        document.getElementById('schoolLogoUpload').click()
+                                    }
+                                >
+                                    {imagePreview ? (
+                                        <img
+                                            src={imagePreview}
+                                            alt="Logo Sekolah Preview"
+                                            className="w-full h-full object-cover"
+                                        />
+                                    ) : (
+                                        <div className="flex items-center justify-center w-full h-full text-gray-500 text-sm">
+                                            Klik untuk Muat Naik Logo
+                                        </div>
+                                    )}
+
+                                    <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-30 opacity-0 hover:opacity-100 transition-opacity">
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className="w-12 h-12 text-white"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M12 4v16m8-8H4"
+                                            />
+                                        </svg>
+                                    </div>
+                                </div>
+                                {errors.schoolLogo && (
+                                    <div className="text-red-500 mt-2">{errors.schoolLogo}</div>
+                                )}
+                            </div>
+
                             <div className="grid grid-cols-2 gap-6 mb-6">
-                                {/* School Code */}
                                 <Box className="col-span-2">
                                     <TextField
                                         label="Kod Sekolah"
@@ -114,8 +175,6 @@ export default function UpdateSchoolInformation(props) {
                                         helperText={errors.schoolCode}
                                     />
                                 </Box>
-
-                                {/* School Name */}
                                 <Box className="col-span-2">
                                     <TextField
                                         label="Nama Sekolah"
@@ -128,8 +187,6 @@ export default function UpdateSchoolInformation(props) {
                                         helperText={errors.schoolName}
                                     />
                                 </Box>
-
-                                {/* Address 1 */}
                                 <Box className="col-span-1">
                                     <TextField
                                         label="Alamat Sekolah 1"
@@ -142,22 +199,6 @@ export default function UpdateSchoolInformation(props) {
                                         helperText={errors.schoolAddress1}
                                     />
                                 </Box>
-
-                                {/* Postcode */}
-                                <Box className="col-span-1">
-                                    <TextField
-                                        label="Poskod"
-                                        variant="outlined"
-                                        fullWidth
-                                        name="postcode"
-                                        value={data.postcode}
-                                        onChange={handleInputChange}
-                                        error={!!errors.postcode}
-                                        helperText={errors.postcode}
-                                    />
-                                </Box>
-
-                                {/* Address 2 */}
                                 <Box className="col-span-1">
                                     <TextField
                                         label="Alamat Sekolah 2"
@@ -170,10 +211,21 @@ export default function UpdateSchoolInformation(props) {
                                         helperText={errors.schoolAddress2}
                                     />
                                 </Box>
-
-                                {/* State */}
                                 <Box className="col-span-1">
                                     <TextField
+                                        label="Poskod"
+                                        variant="outlined"
+                                        fullWidth
+                                        name="postcode"
+                                        value={data.postcode}
+                                        onChange={handleInputChange}
+                                        error={!!errors.postcode}
+                                        helperText={errors.postcode}
+                                    />
+                                </Box>
+                                <Box className="col-span-1">
+                                    <TextField
+                                        select
                                         label="Negeri"
                                         variant="outlined"
                                         fullWidth
@@ -182,11 +234,16 @@ export default function UpdateSchoolInformation(props) {
                                         onChange={handleInputChange}
                                         error={!!errors.state}
                                         helperText={errors.state}
-                                    />
+                                    >
+                                        {malaysianStates.map((state) => (
+                                            <MenuItem key={state} value={state}>
+                                                {state}
+                                            </MenuItem>
+                                        ))}
+                                    </TextField>
                                 </Box>
                             </div>
 
-                            {/* Phone, Email, Fax */}
                             <div className="grid grid-cols-3 gap-6 mb-6">
                                 <Box>
                                     <TextField
@@ -200,7 +257,6 @@ export default function UpdateSchoolInformation(props) {
                                         helperText={errors.noPhone}
                                     />
                                 </Box>
-
                                 <Box>
                                     <TextField
                                         label="Email"
@@ -213,7 +269,6 @@ export default function UpdateSchoolInformation(props) {
                                         helperText={errors.schoolEmail}
                                     />
                                 </Box>
-
                                 <Box>
                                     <TextField
                                         label="No Fax"
@@ -228,31 +283,6 @@ export default function UpdateSchoolInformation(props) {
                                 </Box>
                             </div>
 
-                            {/* File Upload */}
-                            <div className="mb-6">
-                                <label className="block mb-2 text-gray-700">
-                                    Muat naik Logo Sekolah
-                                </label>
-                                <input
-                                    type="file"
-                                    name="schoolLogo"
-                                    onChange={handleFileChange}
-                                    className="block w-full text-gray-700 border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500"
-                                />
-                                {/* Display the image preview */}
-                                {imagePreview && (
-                                    <div className="mt-2">
-                                        <img
-                                            src={imagePreview}
-                                            alt="Logo Sekolah Preview"
-                                            className="w-20 h-20 object-cover"
-                                        />
-                                    </div>
-                                )}
-                                {errors.schoolLogo && <div className="text-red-500">{errors.schoolLogo}</div>}
-                            </div>
-
-                            {/* YouTube Link */}
                             <div className="mb-6">
                                 <TextField
                                     label="Link Video (YouTube)"
@@ -266,12 +296,11 @@ export default function UpdateSchoolInformation(props) {
                                 />
                             </div>
 
-                            {/* Submit Button */}
-                            <div className="flex justify-end space-x-4 mb-6">
+                            <div className="flex justify-end space-x-4">
                                 <button
                                     type="reset"
                                     onClick={() => reset()}
-                                    className="px-6 py-2 bg-gray-500 text-white rounded-md shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 transition"
+                                    className="px-6 py-2 bg-gray-500 text-white rounded-md shadow-md hover:bg-gray-600 transition"
                                 >
                                     Batal
                                 </button>
@@ -280,7 +309,7 @@ export default function UpdateSchoolInformation(props) {
                                     disabled={processing}
                                     className="px-6 py-2 bg-[#455185] text-white rounded-md shadow-md hover:bg-[#3d4674] focus:outline-none focus:ring-2 focus:ring-[#455185] transition"
                                 >
-                                    {processing ? 'Menghantar...' : 'Hantar Maklumat Sekolah'}
+                                    {processing ? "Menghantar..." : "Kemaskini"}
                                 </button>
                             </div>
                         </form>
