@@ -50,7 +50,11 @@ export default function CertificateTemplateEdit({ template }) {
                 img.src = `/storage/${template.file_path}`;
                 const imgPromise = new Promise((resolve) => {
                     img.onload = () => {
+                        if (page > 0) {
+                            doc.addPage(); // Add a new page for every subsequent page
+                        }
                         doc.addImage(img, 'JPEG', 0, 0, 210, 297); // Adjust dimensions as needed
+    
                         // Add text entries for the current page
                         textEntries[page]?.forEach(entry => {
                             doc.setFontSize(parseInt(entry.fontSize));
@@ -69,6 +73,7 @@ export default function CertificateTemplateEdit({ template }) {
             doc.save('certificate.pdf'); // Save the PDF after all images are added
         });
     };
+    
 
     // Function to handle click on the preview area
     const handlePreviewClick = (e) => {
@@ -89,7 +94,7 @@ export default function CertificateTemplateEdit({ template }) {
         };
 
         setTextEntries((prevEntries) => {
-            const currentPageEntries = prevEntries[currentPage ] || [];
+            const currentPageEntries = prevEntries[currentPage] || [];
             return {
                 ...prevEntries,
                 [currentPage]: [...currentPageEntries, newEntry],
@@ -157,6 +162,88 @@ export default function CertificateTemplateEdit({ template }) {
         if (currentPage > 0) setCurrentPage(currentPage - 1);
     };
 
+    // Function to handle print preview
+    const handlePrintPreview = () => {
+        const printWindow = window.open('', '_blank');
+    
+        // Assuming data.numberOfPages holds the number of pages you need to display
+        let pagesHTML = '';
+        for (let page = 0; page < data.numberOfPages; page++) {
+            const pageContent = textEntries[page]
+                ? textEntries[page]
+                    .map(entry => `
+                        <div class="text-entry" style="
+                            position: absolute;
+                            top: ${entry.position.y}px;
+                            left: ${entry.position.x}px;
+                            font-weight: ${entry.isBold ? 'bold' : 'normal'};
+                            font-style: ${entry.isItalic ? 'italic' : 'normal'};
+                            font-size: ${entry.fontSize};
+                            color: ${entry.textColor};
+                            font-family: ${entry.fontFamily};
+                        ">
+                            ${entry.content}
+                        </div>`
+                    ).join('')
+                : '<p>No text entries for this page.</p>';
+    
+            // Wrap each page's content in a container with page-break styles
+            pagesHTML += `
+                <div class="page-container">
+                    ${
+                        template.file_path
+                            ? template.file_path.endsWith('.pdf')
+                                ? `<iframe src="/storage/${template.file_path}" style="width: 100%; height: 100%; border: none;"></iframe>`
+                                : `<img src="/storage/${template.file_path}" style="width: 100%; height: 100%;" alt="Template Preview" />`
+                            : '<p>No template file available.</p>'
+                    }
+                    ${pageContent}
+                </div>
+            `;
+            if (page < data.numberOfPages - 1) {
+                pagesHTML += `<div class="page-break"></div>`; // Page break between pages
+            }
+        }
+    
+        printWindow.document.write(`
+            <html>
+                <head>
+                    <title>Print Preview</title>
+                    <style>
+                        body {
+                            margin: 0;
+                            font-family: Arial, sans-serif;
+                            color: ${data.textColor};
+                            font-size: ${data.fontSize};
+                        }
+                        .page-container {
+                            width: 210mm; /* A4 width */
+                            height: 297mm; /* A4 height */
+                            position: relative;
+                            overflow: hidden;
+                            margin: auto;
+                            page-break-before: always; /* Forces page break before each page */
+                        }
+                        .page-break {
+                            page-break-before: always; /* Ensures a page break after each content */
+                        }
+                        .text-entry {
+                            position: absolute;
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${pagesHTML}
+                </body>
+            </html>
+        `);
+    
+        printWindow.document.close();
+        setTimeout(() => {
+            printWindow.print();
+        }, 10); 
+    };
+
     return (
         <AuthenticatedLayout
             header={
@@ -185,7 +272,7 @@ export default function CertificateTemplateEdit({ template }) {
                                         value={data.numberOfPages}
                                         onChange={(e) => setData('numberOfPages', e.target.value)}
                                         min="1"
-                                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50"
+                                        className="mt- 1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50"
                                     />
                                 </div>
                                 <div className="mt-4">
@@ -278,6 +365,11 @@ export default function CertificateTemplateEdit({ template }) {
                                         Cetak Sijil
                                     </button>
                                 </div>
+                                <div className="mt-6">
+                                    <button type="button" onClick={handlePrintPreview} className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                                        Print Preview
+                                    </button>
+                                </div>
                             </form>
                         )}
                     </div>
@@ -305,8 +397,7 @@ export default function CertificateTemplateEdit({ template }) {
                                 )
                             )}
                             {/* Render text entries for the current page */}
-                            {textEntries 
-[currentPage]?.map((entry, index) => (
+                            {textEntries[currentPage]?.map((entry, index) => (
                                 <div 
                                     key={index} 
                                     className="absolute" 
@@ -315,8 +406,7 @@ export default function CertificateTemplateEdit({ template }) {
                                         left: entry.position.x, 
                                         transform: 'translate(-50%, -50%)', 
                                         fontSize: entry.fontSize, 
-                                        fontWeight: entry.isBold 
-                                        ? 'bold' : 'normal', 
+                                        fontWeight: entry.isBold ? 'bold' : 'normal', 
                                         fontStyle: entry.isItalic ? 'italic' : 'normal', 
                                         color: entry.textColor, 
                                         fontFamily: entry.fontFamily 
