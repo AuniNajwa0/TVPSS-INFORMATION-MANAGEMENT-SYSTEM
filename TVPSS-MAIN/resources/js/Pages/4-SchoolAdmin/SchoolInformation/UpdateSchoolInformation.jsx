@@ -73,14 +73,14 @@ export default function UpdateSchoolInformation({ schoolInfo }) {
 
     return (
         <AuthenticatedLayout
-            header={<h2 className="text-xl font-semibold leading-tight text-gray-800">Kemaskini Versi Sekolah</h2>}
+            header={<h2 className="text-xl font-semibold leading-tight text-gray-800">Kemaskini Maklumat Sekolah</h2>}
         >
-            <Head title="TVPSS | Kemaskini Versi Sekolah" />
+            <Head title="TVPSS | Kemaskini Maklumat Sekolah" />
             <div className="flex min-h-screen bg-gray-100">
                 <SchoolAdminSideBar />
                 <div className="flex-1 p-8">
                     <div className="max-w-5xl mx-auto bg-white shadow-md rounded-md border border-gray-200 p-8">
-                        <h3 className="text-2xl font-semibold text-gray-800 mb-6">Maklumat Versi Sekolah</h3>
+                        <h3 className="text-2xl font-semibold text-gray-800 mb-6">Maklumat Sekolah</h3>
                         <form onSubmit={handleSubmit} encType="multipart/form-data">
                             {/* Logo Upload Section */}
                             <div className="mb-8 text-center">

@@ -12,10 +12,8 @@ class StateAdminController extends Controller
 {
     public function certList()
     {
-        // Fetch all certificate templates
         $templates = CertificateTemplate::all();
 
-        // Render the Inertia view and pass the templates
         return Inertia::render('2-StateAdmin/StudentCertificate/CertificateTemplateList', [
             'templates' => $templates,
         ]);
@@ -47,14 +45,12 @@ class StateAdminController extends Controller
         }
     }
 
-    // Method to retrieve all certificate templates
     public function getTemplates()
     {
         $templates = CertificateTemplate::all();
         return response()->json($templates);
     }
 
-    // Method to retrieve a specific certificate template
     public function getTemplate($id)
     {
         $template = CertificateTemplate::find($id);
