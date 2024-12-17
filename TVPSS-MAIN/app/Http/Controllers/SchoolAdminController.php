@@ -282,7 +282,7 @@ class SchoolAdminController extends Controller
 
     public function editTVPSSVer1(Request $request)
     {
-        $user = request()->user();
+        $user = $request->user();
 
         $validated = $request->validate([
             'schoolCode'    => 'required|string|max:255',
@@ -304,6 +304,8 @@ class SchoolAdminController extends Controller
             return back()->with('error', 'No school information found for your account.');
         }
 
+        $currentSchoolLogo = $schoolInfo->schoolLogo;
+
         $schoolInfo->fill($validated);
 
         if ($request->hasFile('schoolLogo')) {
@@ -317,6 +319,8 @@ class SchoolAdminController extends Controller
 
             $file->move($destinationPath, $fileName);
             $schoolInfo->schoolLogo = 'images/schoolLogo/' . $fileName;
+        } else {
+            $schoolInfo->schoolLogo = $currentSchoolLogo;
         }
 
         $schoolInfo->save();
@@ -342,56 +346,61 @@ class SchoolAdminController extends Controller
 
     public function editTVPSSVer2(Request $request)
     {
-        $user = request()->user();
-
+        $user = $request->user();
+    
+        // Validate input
         $validated = $request->validate([
             'version' => 'nullable|string|max:255',
             'agency1_name' => 'required|string|max:255',
             'agency1Manager_name' => 'nullable|string|max:255',
             'agency2_name' => 'nullable|string|max:255',
-            'agency2Manager_name' => 'required|string|max:10',
-            'recordEquipment' => 'required|string|max:100',
-            'isNoPhone' => 'required|string|max:20',
-            'greenScreen' => 'nullable|string|max:20',
+            'agency2Manager_name' => 'required|string|max:255',
+            'recordEquipment' => 'required|in:Ada,Tiada',
+            'tvpssStudio' => 'required|in:Ada,Tiada',
+            'recInSchool' => 'required|in:Ada,Tiada',
+            'recInOutSchool' => 'required|in:Ada,Tiada',
+            'greenScreen' => 'nullable|in:Ada,Tiada',
             'tvpssLogo' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
         ]);
-
-        $schoolInfo = SchoolInfo::where('user_id', $user->id)->first();
-
-        if (!$schoolInfo) {
-            return back()->with('error', 'No school information found for your account.');
-        }
-
-        $schoolInfo->agency1_name = $validated['agency1_name'];
-        $schoolInfo->agency1Manager_name = $validated['agency1Manager_name'];
-        $schoolInfo->agency2_name = $validated['agency2_name'];
-        $schoolInfo->agency2Manager_name = $validated['agency2Manager_name'];
-        $schoolInfo->recordEquipment = $validated['recordEquipment'];
-        $schoolInfo->isNoPhone = $validated['isNoPhone'];
-        $schoolInfo->greenScreen = $validated['greenScreen'];
-
+    
+        // Fetch school info and version
+        $schoolInfo = SchoolInfo::where('user_id', $user->id)->firstOrFail();
+        $schoolVersion = $schoolInfo->schoolVersion ?? new TVPSSVersion();
+    
+        // Update TVPSSVersion fields
+        $schoolVersion->fill([
+            'version' => $validated['version'] ?? null,
+            'agency1_name' => $validated['agency1_name'],
+            'agencyManager1_name' => $validated['agency1Manager_name'],
+            'agency2_name' => $validated['agency2_name'],
+            'agencyManager2_name' => $validated['agency2Manager_name'],
+            'recordEquipment' => $validated['recordEquipment'],
+            'tvpssStudio' => $validated['tvpssStudio'],
+            'recInSchool' => $validated['recInSchool'],
+            'recInOutSchool' => $validated['recInOutSchool'],
+            'greenScreen' => $validated['greenScreen'],
+        ]);
+    
+        // Handle tvpssLogo upload
         if ($request->hasFile('tvpssLogo')) {
             $tvpssLogo = $request->file('tvpssLogo');
             $fileName = time() . '_' . $tvpssLogo->getClientOriginalName();
             $destinationPath = public_path('images/tvpssLogo');
-
+    
             if (!file_exists($destinationPath)) {
                 mkdir($destinationPath, 0755, true);
             }
-
+    
             $tvpssLogo->move($destinationPath, $fileName);
-            $schoolInfo->schoolVersion->tvpssLogo = 'images/tvpssLogo/' . $fileName;
+            $schoolVersion->tvpssLogo = 'images/tvpssLogo/' . $fileName;
         }
-
-        $schoolInfo->save();
-
-        $schoolVersion = $schoolInfo->schoolVersion ?? new TVPSSVersion();
-        $schoolVersion->version = $validated['version'] ?? null;
-        $schoolVersion->schoolInfo()->associate($schoolInfo);
+    
+        // Manually set school_info_id without triggering a re-save of SchoolInfo
+        $schoolVersion->school_info_id = $schoolInfo->id;
         $schoolVersion->save();
-
+    
         return redirect()->route('tvpss2')->with('success', 'School version updated successfully!');
-    }
+    }    
 
     public function eqLocCreate(){
         return Inertia::render('4-SchoolAdmin/ManageEquipment/AddEqLoc');

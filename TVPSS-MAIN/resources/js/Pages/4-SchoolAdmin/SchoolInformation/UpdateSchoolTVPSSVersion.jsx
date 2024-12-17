@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import SchoolAdminSideBar from '../SchoolAdminSideBar';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import MenuItem from '@mui/material/MenuItem'; // Import for dropdown
+import MenuItem from '@mui/material/MenuItem'; 
 import Button from '@mui/material/Button';
 
 export default function UpdateSchoolTVPSSVersion({ schoolInfo }) {
@@ -73,13 +73,13 @@ export default function UpdateSchoolTVPSSVersion({ schoolInfo }) {
         post(route('tvpss1Edit'), {
             onSuccess: () => {
                 console.log("School version information updated!");
-                window.location.href = route('schoolInfo.updateTVPSSVer2');
+                Inertia.visit(route('tvpss2')); 
             },
             onError: (errors) => {
                 console.error(errors);
             },
         });
-    };
+    };    
 
     const handleCancel = () => {
         reset();

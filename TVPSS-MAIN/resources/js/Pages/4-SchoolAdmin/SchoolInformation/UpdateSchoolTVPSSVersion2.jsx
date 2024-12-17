@@ -12,36 +12,26 @@ import FormControl from '@mui/material/FormControl';
 
 export default function UpdateSchoolVersionInfo2({ schoolInfo, schoolVersion }) {
     const { data, setData, post, errors } = useForm({
-        agency1_name: '',
-        agency1Manager_name: '',
-        agency2_name: '',
-        agency2Manager_name: '',
-        isNoPhone: 'Ada',
-        recordEquipment: 'Ada',
-        greenScreen: 'Ada',
-        tvpssLogo: null, // TVPSS logo only
+        version: schoolVersion?.version || '',
+        agency1_name: schoolVersion?.agency1_name || '',
+        agency1Manager_name: schoolVersion?.agencyManager1_name || '',
+        agency2_name: schoolVersion?.agency2_name || '',
+        agency2Manager_name: schoolVersion?.agencyManager2_name || '',
+        recordEquipment: schoolVersion?.recordEquipment || 'Ada',
+        tvpssStudio: schoolVersion?.tvpssStudio || 'Ada',
+        recInSchool: schoolVersion?.recInSchool || 'Ada',
+        recInOutSchool: schoolVersion?.recInOutSchool || 'Ada',
+        greenScreen: schoolVersion?.greenScreen || 'Ada',
+        tvpssLogo: null,
     });
 
     const [tvpssLogoPreview, setTVPSSLogoPreview] = useState(null);
 
     useEffect(() => {
-        if (schoolInfo && schoolVersion) {
-            setData({
-                agency1_name: schoolInfo.agency1_name || '',
-                agency1Manager_name: schoolInfo.agency1Manager_name || '',
-                agency2_name: schoolInfo.agency2_name || '',
-                agency2Manager_name: schoolInfo.agency2Manager_name || '',
-                isNoPhone: schoolInfo.isNoPhone || 'Ada',
-                recordEquipment: schoolInfo.recordEquipment || 'Ada',
-                greenScreen: schoolInfo.greenScreen || 'Ada',
-                tvpssLogo: '', // Initialize tvpssLogo
-            });
-
-            if (schoolVersion.tvpssLogo) {
-                setTVPSSLogoPreview(`${window.location.origin}/${schoolVersion.tvpssLogo}`);
-            }
+        if (schoolVersion?.tvpssLogo) {
+            setTVPSSLogoPreview(`${window.location.origin}/${schoolVersion.tvpssLogo}`);
         }
-    }, [schoolInfo, schoolVersion]);
+    }, [schoolVersion]);
 
     const handleFileChange = (e) => {
         const { files } = e.target;
@@ -101,7 +91,7 @@ export default function UpdateSchoolVersionInfo2({ schoolInfo, schoolVersion }) 
                                     id="tvpssLogoUpload"
                                 />
                                 <div
-                                    className="relative w-48 h-48 mx-auto bg-gray-100 border-4 border-solid border-blue-00 rounded-lg shadow-lg overflow-hidden cursor-pointer hover:shadow-xl transition-shadow"
+                                    className="relative w-48 h-48 mx-auto bg-gray-100 border-4 border-solid border-blue-500 rounded-lg shadow-lg overflow-hidden cursor-pointer hover:shadow-xl transition-shadow"
                                     onClick={() => document.getElementById('tvpssLogoUpload').click()}
                                 >
                                     {tvpssLogoPreview ? (
@@ -124,7 +114,7 @@ export default function UpdateSchoolVersionInfo2({ schoolInfo, schoolVersion }) 
                             {/* Agency Details */}
                             <Box className="grid grid-cols-2 gap-6 mb-6">
                                 <TextField
-                                    label="Syarikat Kolaborasi Agensi I"
+                                    label="Agensi 1"
                                     name="agency1_name"
                                     value={data.agency1_name}
                                     onChange={handleInputChange}
@@ -133,7 +123,7 @@ export default function UpdateSchoolVersionInfo2({ schoolInfo, schoolVersion }) 
                                     helperText={errors.agency1_name}
                                 />
                                 <TextField
-                                    label="Pengurus Syarikat Agensi I"
+                                    label="Pengurus Agensi 1"
                                     name="agency1Manager_name"
                                     value={data.agency1Manager_name}
                                     onChange={handleInputChange}
@@ -142,7 +132,7 @@ export default function UpdateSchoolVersionInfo2({ schoolInfo, schoolVersion }) 
                                     helperText={errors.agency1Manager_name}
                                 />
                                 <TextField
-                                    label="Syarikat Kolaborasi Agensi II"
+                                    label="Agensi 2"
                                     name="agency2_name"
                                     value={data.agency2_name}
                                     onChange={handleInputChange}
@@ -151,7 +141,7 @@ export default function UpdateSchoolVersionInfo2({ schoolInfo, schoolVersion }) 
                                     helperText={errors.agency2_name}
                                 />
                                 <TextField
-                                    label="Pengurus Syarikat Agensi II"
+                                    label="Pengurus Agensi 2"
                                     name="agency2Manager_name"
                                     value={data.agency2Manager_name}
                                     onChange={handleInputChange}
@@ -162,21 +152,7 @@ export default function UpdateSchoolVersionInfo2({ schoolInfo, schoolVersion }) 
                             </Box>
 
                             {/* Additional Details */}
-                            <Box className="grid grid-cols-3 gap-6 mb-6">
-                                <FormControl fullWidth>
-                                    <InputLabel>No Telefon</InputLabel>
-                                    <Select
-                                        name="isNoPhone"
-                                        value={data.isNoPhone}
-                                        onChange={handleInputChange}
-                                    >
-                                        <MenuItem value="Ada">Ada</MenuItem>
-                                        <MenuItem value="Tiada">Tiada</MenuItem>
-                                    </Select>
-                                    {errors.isNoPhone && (
-                                        <div className="text-red-500">{errors.isNoPhone}</div>
-                                    )}
-                                </FormControl>
+                            <Box className="grid grid-cols-2 gap-6 mb-6">
                                 <FormControl fullWidth>
                                     <InputLabel>Peralatan Rakaman</InputLabel>
                                     <Select
@@ -192,7 +168,49 @@ export default function UpdateSchoolVersionInfo2({ schoolInfo, schoolVersion }) 
                                     )}
                                 </FormControl>
                                 <FormControl fullWidth>
-                                    <InputLabel>Penggunaan Teknologi 'Green Screen'</InputLabel>
+                                    <InputLabel>Penggunaan Studio TVPSS</InputLabel>
+                                    <Select
+                                        name="tvpssStudio"
+                                        value={data.tvpssStudio}
+                                        onChange={handleInputChange}
+                                    >
+                                        <MenuItem value="Ada">Ada</MenuItem>
+                                        <MenuItem value="Tiada">Tiada</MenuItem>
+                                    </Select>
+                                    {errors.tvpssStudio && (
+                                        <div className="text-red-500">{errors.tvpssStudio}</div>
+                                    )}
+                                </FormControl>
+                                <FormControl fullWidth>
+                                    <InputLabel>Rakaman Dalam Sekolah</InputLabel>
+                                    <Select
+                                        name="recInSchool"
+                                        value={data.recInSchool}
+                                        onChange={handleInputChange}
+                                    >
+                                        <MenuItem value="Ada">Ada</MenuItem>
+                                        <MenuItem value="Tiada">Tiada</MenuItem>
+                                    </Select>
+                                    {errors.recInSchool && (
+                                        <div className="text-red-500">{errors.recInSchool}</div>
+                                    )}
+                                </FormControl>
+                                <FormControl fullWidth>
+                                    <InputLabel>Rakaman Luar Sekolah</InputLabel>
+                                    <Select
+                                        name="recInOutSchool"
+                                        value={data.recInOutSchool}
+                                        onChange={handleInputChange}
+                                    >
+                                        <MenuItem value="Ada">Ada</MenuItem>
+                                        <MenuItem value="Tiada">Tiada</MenuItem>
+                                    </Select>
+                                    {errors.recInOutSchool && (
+                                        <div className="text-red-500">{errors.recInOutSchool}</div>
+                                    )}
+                                </FormControl>
+                                <FormControl fullWidth>
+                                    <InputLabel>Teknologi 'Green Screen'</InputLabel>
                                     <Select
                                         name="greenScreen"
                                         value={data.greenScreen}
@@ -208,20 +226,22 @@ export default function UpdateSchoolVersionInfo2({ schoolInfo, schoolVersion }) 
                             </Box>
 
                             {/* Buttons */}
-                            <div className="flex justify-between">
-                                <Link
-                                    href="/updateSchoolTVPSSVersion"
-                                    className="px-6 py-2 bg-gray-500 text-white rounded-md shadow-md hover:bg-gray-600"
+                            <div className="flex justify-end space-x-4">
+                                <Button
+                                    variant="contained"
+                                    color="secondary"
+                                    href={route('tvpss1')}
                                 >
                                     Kembali
-                                </Link>
-                                <button
-                                    className="px-6 py-2 bg-[#455185] text-white rounded-md shadow-md hover:bg-[#3d4674] focus:outline-none focus:ring-2 focus:ring-[#455185] transition"
+                                </Button>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
                                     type="submit"
                                     disabled={errors.processing}
                                 >
                                     Hantar Informasi TVPSS
-                                </button>
+                                </Button>
                             </div>
                         </form>
                     </div>
