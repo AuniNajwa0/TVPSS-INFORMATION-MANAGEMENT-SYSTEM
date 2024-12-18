@@ -1,232 +1,221 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
-import { FaFilter, FaEdit, FaTrash } from 'react-icons/fa';
-import SuperAdminSideBar from '../SuperAdminSideBar';
-import { useState, useEffect } from 'react';
-import { Inertia } from '@inertiajs/inertia';
+import { Head } from "@inertiajs/react";
+import { useState, useEffect } from "react";
+import { FaUsers, FaUserShield, FaSchool, FaDownload } from "react-icons/fa";
+import { Bar, Doughnut } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  ArcElement,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import SuperAdminSideBar from "./SuperAdminSideBar";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { Select, MenuItem, TextField, Button, FormControl, InputLabel, Box } from "@mui/material";
 
-export default function ListUser({ auth, users, pagination, selectedRole }) {
-    // State variables
-    const [rowsPerPage, setRowsPerPage] = useState(pagination.per_page);  // Default rows per page
-    const [currentPage, setCurrentPage] = useState(pagination.current_page);
-    const [selectedRoleState, setSelectedRole] = useState(selectedRole);  // New state for selected role
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, ArcElement, Tooltip, Legend);
 
-    // Accessing the 'data' array from the 'users' prop
-    const usersData = users.data;
+export default function Dashboard() {
+  const [timeRange, setTimeRange] = useState("Mingguan");
+  const [date, setDate] = useState("2024-07-02");
 
-    // Filter users by role
-    const filteredUsers = selectedRoleState
-        ? usersData.filter(user => user.role === Number(selectedRoleState))  // Ensure comparison with number
-        : usersData;
+  const [userCounts, setUserCounts] = useState({
+    stateAdmin: 0,
+    ppdAdmin: 0,
+    schoolAdmin: 0,
+  });
 
-    // Pagination logic
-    const indexOfLastUser = currentPage * rowsPerPage;
-    const indexOfFirstUser = indexOfLastUser - rowsPerPage;
-
-    // Get users for the current page manually without using slice
-    const currentUsers = [];
-    for (let i = indexOfFirstUser; i < indexOfLastUser; i++) {
-        if (filteredUsers[i]) {
-            currentUsers.push(filteredUsers[i]);
-        }
+  useEffect(() => {
+    async function fetchUserCounts() {
+      try {
+        const response = await fetch("/user-role-counts");
+        const data = await response.json();
+        setUserCounts({
+          stateAdmin: data.state_admin,
+          ppdAdmin: data.ppd_admin,
+          schoolAdmin: data.school_admin,
+        });
+      } catch (error) {
+        console.error("Error fetching user role counts:", error);
+      }
     }
 
-    // Log filtered users and current users for debugging
-    useEffect(() => {
-        console.log("Users data:", usersData);  // Log the users data from the prop
-        console.log("Filtered users:", filteredUsers);  // Log filtered users after applying role filter
-        console.log("Current users:", currentUsers);  // Log current page's users
-    }, [usersData, filteredUsers, currentPage]);
+    fetchUserCounts();
+  }, []);
 
-    // Handle page change
-    const nextPage = () => {
-        if (currentPage < pagination.last_page) {
-            setCurrentPage(currentPage + 1);
-        }
-    };
+  // Bar chart data with border colors
+  const barData = {
+    labels: ["Admin State", "Admin PPD", "Admin Sekolah"],
+    datasets: [
+      {
+        label: "Bilangan Pengguna Mengikut Jenis",
+        data: [userCounts.stateAdmin, userCounts.ppdAdmin, userCounts.schoolAdmin],
+        backgroundColor: ["#455185", "#008080", "#00BFFF"],
+        borderColor: ["#1C2433", "#006666", "#005F9E"], // Border colors
+        borderWidth: 1, // Border thickness
+      },
+    ],
+  };
 
-    const prevPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        }
-    };
+  // Doughnut chart data with border colors
+  const doughnutData = {
+    labels: ["Admin State", "Admin PPD", "Admin Sekolah"],
+    datasets: [
+      {
+        label: "Bilangan Peratusan Pengguna Mengikut Jenis",
+        data: [userCounts.stateAdmin, userCounts.ppdAdmin, userCounts.schoolAdmin],
+        backgroundColor: ["#455185", "#FF6384", "#FFA500"],
+        borderColor: ["#1C2433", "#B22234", "#D2691E"], // Border colors
+        borderWidth: 2, // Border thickness
+        hoverOffset: 4,
+      },
+    ],
+  };
 
-    const handleRowsPerPageChange = (e) => {
-        setRowsPerPage(Number(e.target.value));
-        setCurrentPage(1);  
-    };
+  return (
+    <AuthenticatedLayout>
+      <Head title="TVPSS | Dashboard" />
 
-    const handleRoleChange = (e) => {
-        setSelectedRole(e.target.value);
-        setCurrentPage(1);  // Reset to first page when role filter changes
-    };
+      <div className="flex flex-col md:flex-row min-h-screen bg-[#f8faff]">
+        <div className="w-1/6 bg-white shadow-lg">
+          <SuperAdminSideBar />
+        </div>
 
-    // Handle user deletion
-    const handleDelete = async (userId) => {
-        if (confirm('Are you sure you want to delete this user?')) {
-            await Inertia.delete(`/users/${userId}`);
-        }
-    };
+        <div className="w-full md:ml-[120px] p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-4xl font-bold text-gray-900 bg-clip-text hover:scale-105 transform transition duration-300 ease-in-out">
+              Dashboard
+            </h2>
 
-    return (
-        <AuthenticatedLayout
-            user={auth.user}
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Pengurusan Pengguna
-                </h2>
-            }
-        >
-            <Head title="TVPSS | Pengurusan Pengguna" />
+            <Box component="form" className="flex items-center space-x-4">
+              {/* Time Range Dropdown */}
+              <FormControl sx={{ minWidth: 150, height: "40px" }}>
+                <InputLabel id="time-range-label" sx={{ fontSize: "16px" }}>
+                  Jenis
+                </InputLabel>
+                <Select
+                  labelId="time-range-label"
+                  value={timeRange}
+                  onChange={(e) => setTimeRange(e.target.value)}
+                  label="Jenis"
+                  size="small"
+                  sx={{
+                    backgroundColor: "#ffffff",
+                    height: "40px",
+                    borderRadius: 2,
+                    "& .MuiOutlinedInput-notchedOutline": { borderColor: "#455185" },
+                    "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#008080" },
+                    "& .MuiInputBase-input": { fontSize: "14px", padding: "10px 14px" },
+                  }}
+                >
+                  <MenuItem value="Harian">Harian</MenuItem>
+                  <MenuItem value="Mingguan">Mingguan</MenuItem>
+                  <MenuItem value="Bulanan">Bulanan</MenuItem>
+                </Select>
+              </FormControl>
 
-            <div className="flex">
-                <div className="w-1/6 p-4 text-white min-h-screen">
-                    <SuperAdminSideBar />
-                </div>
+              {/* Date Input */}
+              <TextField
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                label="Tarikh"
+                size="small"
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    backgroundColor: "#ffffff",
+                    height: "40px",
+                    borderRadius: 2,
+                    "& fieldset": { borderColor: "#455185" },
+                    "&:hover fieldset": { borderColor: "#008080" },
+                  },
+                  "& .MuiInputLabel-root": { fontSize: "16px", top: "1px" },
+                  height: "40px",
+                }}
+              />
 
-                <div className="flex-1 p-6">
-                    <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-lg font-semibold">Semua Pengguna</h3>
-                        <button
-                            className="bg-[#455185] hover:bg-[#3C4565] text-white rounded-md px-4 py-2 shadow-md"
-                            onClick={() => Inertia.visit('/users/create')}  // Use Inertia.js navigation here
-                        >
-                            Tambah Pengguna Baharu
-                        </button>
-                    </div>
+              {/* Export Button with Icon */}
+              <Button
+                variant="contained"
+                sx={{
+                  background: "#455185",
+                  color: "white",
+                  padding: "10px 20px",
+                  textTransform: "none",
+                  borderRadius: 2,
+                  height: "40px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "8px",
+                  "&:hover": {
+                    background: "#3C4565",
+                    transform: "scale(1.05)",
+                    boxShadow: "0px 4px 15px rgba(0,0,0,0.2)",
+                  },
+                }}
+              >
+                <FaDownload />
+                Export
+              </Button>
+            </Box>
+          </div>
 
-                    <div className="max-w-8xl mx-auto p-6 text-gray-900 bg-white rounded shadow-md">
-                        {/* Search */}
-                        <div className="flex items-center mb-4 justify-between">
-                            <div className="flex items-center space-x-2 w-full max-w-xs">
-                                <FaFilter className="text-gray-500 text-xl" />
-                                <input
-                                    type="text"
-                                    placeholder="Cari Pengguna..."
-                                    className="w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all placeholder-gray-400"
-                                />
-                            </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <SummaryCard
+              title="Bilangan State Admin"
+              value={userCounts.stateAdmin}
+              icon={<FaUsers className="text-white text-5xl" />}
+            />
+            <SummaryCard
+              title="Bilangan PPD Admin"
+              value={userCounts.ppdAdmin}
+              icon={<FaUserShield className="text-white text-5xl" />}
+            />
+            <SummaryCard
+              title="Bilangan Sekolah Admin"
+              value={userCounts.schoolAdmin}
+              icon={<FaSchool className="text-white text-5xl" />}
+            />
+          </div>
 
-                            {/* Role Filter Dropdown */}
-                            <div className="flex items-center space-x-4">
-                                <label htmlFor="roleFilter" className="text-sm font-medium">Jenis Pengguna :</label>
-                                <select
-                                    id="roleFilter"
-                                    value={selectedRoleState}
-                                    onChange={handleRoleChange}
-                                    className="px-4 py-2 bg-white text-[#455185] rounded-md border border-[#455185] shadow-lg transition-all hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#3C4565] hover:ring-2"
-                                >
-                                    <option value="">Semua</option>
-                                    <option value="0">Super Admin</option>
-                                    <option value="1">State Admin</option>
-                                    <option value="2">PPD Admin</option>
-                                    <option value="3">School Admin</option>
-                                </select>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div className="bg-white p-6 rounded-lg border-2 border-gray-200">
+    <h3 className="text-lg text-center font-semibold text-[#455185] mb-4">
+      Bilangan Pengguna Mengikut Jenis
+    </h3>
+    <Bar data={barData} />
+  </div>
 
-                                <label htmlFor="rowsPerPage" className="text-sm font-medium">Bilangan Data :</label>
-                                <select
-                                    id="rowsPerPage"
-                                    value={rowsPerPage}
-                                    onChange={handleRowsPerPageChange}
-                                    className="px-7 py-2 bg-white text-[#455185] rounded-md border border-[#455185] shadow-lg transition-all hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#3C4565] hover:ring-2"
-                                >
-                                    <option value="5">5</option>
-                                    <option value="10">10</option>
-                                    <option value="25">25</option>
-                                </select>
-                            </div>
-                        </div>
+  <div className="bg-white p-6 rounded-lg border-2 border-gray-200">
+    <h3 className="text-lg text-center font-semibold text-[#455185] mb-4">
+      Bilangan Peratusan Pengguna Mengikut Jenis
+    </h3>
+    <Doughnut data={doughnutData} />
+  </div>
+</div>
 
-                        {/* User Table */}
-                        <table className="w-full text-left border-collapse">
-                            <thead>
-                                <tr className="bg-gray-100">
-                                    <th className="border-b p-4">Bil</th>
-                                    <th className="border-b p-4">Nama Penuh</th>
-                                    <th className="border-b p-4">Alamat Email</th>
-                                    <th className="border-b p-4">Negeri</th>
-                                    <th className="border-b p-4">Jenis Pengguna</th>
-                                    <th className="border-b p-4">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {currentUsers.length === 0 ? (
-                                    <tr>
-                                        <td colSpan="6" className="text-center py-4">Tiada Data Ditemui</td>
-                                    </tr>
-                                ) : (
-                                    currentUsers.map((user, index) => (
-                                        <tr key={user.id} className="hover:bg-gray-50">
-                                            <td className="border-b p-4">{index + 1}</td>
-                                            <td className="border-b p-4">{user.name}</td>
-                                            <td className="border-b p-4">{user.email}</td>
-                                            <td className="border-b p-4">{user.state}</td>
-                                            <td className="border-b p-4">
-                                                <span className={`px-2 py-1 rounded-full text-white ${getRoleColor(user.role)}`}>
-                                                    {getRoleLabel(user.role)}
-                                                </span>
-                                            </td>
-                                            <td className="border-b p-4">
-                                                <div className="flex items-center space-x-4">
-                                                    <button
-                                                        onClick={() => Inertia.visit(`/users/${user.id}/edit`)}  // Use Inertia.js for edit navigation
-                                                        className="text-yellow-500 hover:text-yellow-700"
-                                                    >
-                                                        <FaEdit />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleDelete(user.id)}
-                                                        className="text-red-500 hover:text-red-700"
-                                                    >
-                                                        <FaTrash />
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))
-                                )}
-                            </tbody>
-                        </table>
+        </div>
+      </div>
 
-                        {/* Pagination */}
-                        <div className="flex justify-between items-center mt-4">
-                            <div>
-                                <button onClick={prevPage} className="text-[#455185] hover:text-[#3C4565]">
-                                    Prev
-                                </button>
-                                <span className="mx-2">
-                                    {currentPage} of {Math.ceil(filteredUsers.length / rowsPerPage)}
-                                </span>
-                                <button onClick={nextPage} className="text-[#455185] hover:text-[#3C4565]">
-                                    Next
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </AuthenticatedLayout>
-    );
+      <footer className="text-center py-4 bg-white text-[#455185]">
+        © 2024 Kementerian Pendidikan Malaysia (KPM)
+      </footer>
+    </AuthenticatedLayout>
+  );
 }
 
-// Helper function to return color based on the role
-const getRoleColor = (role) => {
-    switch (role) {
-        case 0: return 'bg-blue-600';   // Super Admin
-        case 1: return 'bg-green-600';  // State Admin
-        case 2: return 'bg-purple-600'; // PPD Admin
-        case 3: return 'bg-yellow-600'; // School Admin
-        default: return 'bg-gray-600';
-    }
-};
-
-// Helper function to return label based on the role
-const getRoleLabel = (role) => {
-    switch (role) {
-        case 0: return 'Super Admin';
-        case 1: return 'State Admin';
-        case 2: return 'PPD Admin';
-        case 3: return 'School Admin';
-        default: return 'Unknown';
-    }
-};
+function SummaryCard({ title, value, icon }) {
+  return (
+    <div className="bg-white p-5 rounded-2xl border-2 border-gray-200 flex items-center hover:scale-105 transform transition duration-300 ease-in-out">
+      <div className="mr-4 p-3 bg-[#455185] rounded-3xl ">{icon}</div>
+      <div className="text-[#455185]">
+        <h3 className="text-xl font-semibold">{title}</h3>
+        <p className="text-3xl font-bold">{value}</p>
+      </div>
+    </div>
+  );
+}

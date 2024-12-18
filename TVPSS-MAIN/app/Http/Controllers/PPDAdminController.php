@@ -17,24 +17,9 @@ class PPDAdminController extends Controller
         ]);
     }
 
-    public function create()
+    public function tvpssInfoEdit(string $id)
     {
-        //
-    }
-
-    public function store(Request $request)
-    {
-        //
-    }
-
-    public function show(string $id)
-    {
-        //
-    }
-
-    public function edit(string $id)
-    {
-        //
+        return Inertia::render('3-PPDAdmin/SchoolVersionStatus/listSchool');
     }
 
     public function update(Request $request, string $id)
