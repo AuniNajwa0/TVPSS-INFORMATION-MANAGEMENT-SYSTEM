@@ -25,7 +25,7 @@ function StateAdminSideBar() {
           </Link>
         </li>
         <li className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:bg-gray-200 rounded-md text-lg">
-          <Link href="/listSchool"> {/* Using Inertia Link */}
+          <Link href="/tvpssInfo"> {/* Using Inertia Link */}
             <FaInfoCircle />
             <span>Informasi TVPSS Sekolah</span>
           </Link>
