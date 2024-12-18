@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FaFilter, FaEdit, FaTrash } from 'react-icons/fa';
 import StateAdminSideBar from '../PPDAdminSideBar';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'; // Importing the Authenticated Layout
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 
 export default function TVPSSInfoSchoolPPD() {
@@ -29,24 +29,20 @@ export default function TVPSSInfoSchoolPPD() {
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
-    setCurrentPage(1); // Reset to first page when searching
+    setCurrentPage(1);
   };
 
   const handleRowsPerPageChange = (e) => {
     setRowsPerPage(Number(e.target.value));
-    setCurrentPage(1); // Reset to first page when rows per page changes
+    setCurrentPage(1);
   };
 
   const handlePrevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
 
   const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
 
   const handleCheckboxChange = (id) => {
@@ -63,12 +59,15 @@ export default function TVPSSInfoSchoolPPD() {
   return (
     <AuthenticatedLayout header={<h2 className="text-xl font-semibold leading-tight text-gray-800">Info Status TVPSS</h2>}>
       <Head title="TVPSS | Info Status TVPSS" />
+
       <div className="flex">
-        <div className="w-1/6 p-4 bg-gray-800 text-white min-h-screen">
+        {/* Fixed Sidebar */}
+        <div className="fixed top-0 left-0 w-64 h-screen bg-gray-800 text-white shadow-lg z-10">
           <StateAdminSideBar />
         </div>
 
-        <div className="flex-1 p-6 bg-white min-h-screen">
+        {/* Scrollable Content */}
+        <div className="ml-64 w-full p-6 overflow-y-auto bg-gray-100">
           <h1 className="text-2xl font-semibold mb-6">Maklumat Sekolah</h1>
 
           {/* Search Bar and Actions */}
@@ -85,8 +84,6 @@ export default function TVPSSInfoSchoolPPD() {
                 <FaFilter className="mr-2" /> Filter
               </button>
             </div>
-
-            {/* Action Buttons */}
             <div className="flex items-center space-x-4">
               <button className="px-4 py-2 bg-[#666969] text-white rounded-md shadow hover:bg-[#5c5f5f]">
                 Eksport
@@ -94,15 +91,12 @@ export default function TVPSSInfoSchoolPPD() {
               <button className="px-4 py-2 bg-[#F44336] text-white rounded-md shadow hover:bg-[#e32e2e]">
                 Hapus
               </button>
-
-              {/* Bilangan Dropdown Section */}
               <div className="flex items-center space-x-2">
                 <span className="text-sm font-medium">Tunjuk</span>
                 <select
-                  id="rowsPerPage"
                   value={rowsPerPage}
                   onChange={handleRowsPerPageChange}
-                  className="px-4 py-2 border rounded-md shadow focus:outline-none"
+                  className="px-4 py-2 border rounded-md shadow"
                 >
                   <option value={5}>5</option>
                   <option value={10}>10</option>
@@ -120,16 +114,10 @@ export default function TVPSSInfoSchoolPPD() {
                 <th className="p-4">
                   <input
                     type="checkbox"
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        setSelectedSchools(filteredData.map((school) => school.id));
-                      } else {
-                        setSelectedSchools([]);
-                      }
-                    }}
-                    checked={
-                      selectedSchools.length === filteredData.length && filteredData.length > 0
+                    onChange={(e) =>
+                      setSelectedSchools(e.target.checked ? filteredData.map((s) => s.id) : [])
                     }
+                    checked={selectedSchools.length === filteredData.length && filteredData.length > 0}
                   />
                 </th>
                 <th className="text-left p-4">Kod Sekolah</th>
@@ -155,51 +143,17 @@ export default function TVPSSInfoSchoolPPD() {
                   <td className="p-4">{school.officer}</td>
                   <td className="p-4">{school.version}</td>
                   <td className="p-4">
-                    <span
-                      className={`px-2 py-1 rounded-full text-white ${
-                        school.status === 'Aktif' ? 'bg-green-500' : 'bg-gray-500'
-                      }`}
-                    >
+                    <span className={`px-2 py-1 rounded-full text-white ${school.status === 'Aktif' ? 'bg-green-500' : 'bg-gray-500'}`}>
                       {school.status}
                     </span>
                   </td>
                   <td className="p-4">
-                    <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
-                      Lihat
-                    </button>
+                    <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Lihat</button>
                   </td>
                 </tr>
               ))}
-              {paginatedData.length === 0 && (
-                <tr>
-                  <td colSpan="7" className="text-center py-4">
-                    Tiada Data Ditemui
-                  </td>
-                </tr>
-              )}
             </tbody>
           </table>
-
-          {/* Pagination */}
-          <div className="flex justify-between items-center mt-6">
-            <button
-              onClick={handlePrevPage}
-              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
-              disabled={currentPage === 1}
-            >
-              Prev
-            </button>
-            <span className="text-sm text-gray-600 font-semibold">
-              Page {currentPage} of {totalPages}
-            </span>
-            <button
-              onClick={handleNextPage}
-              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
-              disabled={currentPage === totalPages}
-            >
-              Next
-            </button>
-          </div>
         </div>
       </div>
     </AuthenticatedLayout>
