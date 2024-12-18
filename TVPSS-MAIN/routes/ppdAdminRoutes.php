@@ -13,3 +13,4 @@ Route::get('/dashboardPPD', fn() => Inertia::render('3-PPDAdmin/PPDAdminDashboar
 
 // TVPSS VERSION (LIST OF SCHOOL)
 Route::get('/tvpssInfo', [PPDAdminController::class, 'tvpssInfoIndex'])->name('schoolInfo.tvpssInfoIndex');
+Route::get('/tvpssInfo/{tvpssInfo}/edit', [PPDAdminController::class, 'tvpssInfoEdit'])->name('tvpssInfoEdit');

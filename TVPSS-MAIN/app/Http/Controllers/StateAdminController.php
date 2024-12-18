@@ -7,6 +7,7 @@ use App\Models\CertificateTemplate;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use App\Models\SchoolInfo;
 
 class StateAdminController extends Controller
 {
@@ -105,6 +106,15 @@ class StateAdminController extends Controller
 
         return Inertia::render('2-StateAdmin/StudentCertificate/CertificateTemplateEdit', [
             'template' => $template,
+        ]);
+    }
+
+    public function tvpssInfoIndex()
+    {
+        $schoolInfo = SchoolInfo::first(); 
+        
+        return Inertia::render('2-StateAdmin/SchoolVersionStatus/listSchool', [
+            'schoolInfo' => $schoolInfo, 
         ]);
     }
 }
