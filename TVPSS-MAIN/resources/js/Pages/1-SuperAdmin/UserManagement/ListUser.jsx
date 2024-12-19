@@ -12,7 +12,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import SuperAdminSideBar from "./SuperAdminSideBar";
+import SuperAdminSideBar from "../SuperAdminSideBar";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Select, MenuItem, TextField, Button, FormControl, InputLabel, Box } from "@mui/material";
 
