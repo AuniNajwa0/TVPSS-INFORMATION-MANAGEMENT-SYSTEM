@@ -3,7 +3,7 @@ import { Head } from '@inertiajs/react';
 import SuperAdminSideBar from '../SuperAdminSideBar';
 import { useState } from 'react';
 import { TextField, MenuItem, FormControl, Select, InputLabel, styled } from '@mui/material';
-import { FiUser, FiMail, FiLock, FiShield, FiMapPin, FiBriefcase, FiBook } from 'react-icons/fi';
+import { FiUser, FiMail, FiLock } from 'react-icons/fi';
 import { Inertia } from '@inertiajs/inertia';
 
 export default function AddUser() {
@@ -21,10 +21,12 @@ export default function AddUser() {
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState({});
 
+    const roles = ['SuperAdmin', 'State Admin', 'PPD Admin', 'School Admin'];
+
     const states = [
         'Johor', 'Melaka', 'Pahang', 'Wilayah Persekutuan Kuala Lumpur', 'Selangor',
         'Negeri Sembilan', 'Perak', 'Kedah', 'Pulau Pinang', 'Perlis', 'Kelantan',
-        'Terengganu', 'Sabah', 'Sarawak'
+        'Terengganu', 'Sabah', 'Sarawak',
     ];
 
     const districts = {
@@ -55,8 +57,8 @@ export default function AddUser() {
         e.preventDefault();
 
         setErrors({});
-
         const newErrors = {};
+
         if (!formData.name) newErrors.name = 'Nama diperlukan!';
         if (!formData.email) newErrors.email = 'Email diperlukan!';
         if (!formData.password) newErrors.password = 'Katalaluan diperlukan!';
@@ -123,13 +125,13 @@ export default function AddUser() {
                         <h2 className="text-3xl font-bold mb-6 text-gray-900">Tambah Pengguna Baharu</h2>
                         <hr className="border-t-2 border-gray-200 mb-6" />
 
-                        {/* Feedback message */}
                         {message && (
                             <div className={`text-${message.includes('berjaya') ? 'green' : 'red'}-500 mb-4`}>
                                 {message}
                             </div>
                         )}
 
+                        
                         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-7">
                             <StyledTextField
                                 label="Nama"
@@ -186,6 +188,21 @@ export default function AddUser() {
                                     startAdornment: <FiLock className="text-gray-400 mr-2" />,
                                 }}
                             />
+                            <FormControl fullWidth error={!!errors.role}>
+                                <InputLabel>Peranan</InputLabel>
+                                <Select
+                                    name="role"
+                                    value={formData.role}
+                                    onChange={handleInputChange}
+                                >
+                                    {roles.map((role) => (
+                                        <MenuItem key={role} value={role}>
+                                            {role}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                                {errors.role && <p className="text-red-500 mt-1">{errors.role}</p>}
+                            </FormControl>
                             <FormControl fullWidth error={!!errors.state}>
                                 <InputLabel>Negeri</InputLabel>
                                 <Select
