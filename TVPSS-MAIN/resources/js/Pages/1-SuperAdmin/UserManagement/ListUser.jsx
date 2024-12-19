@@ -1,221 +1,306 @@
-import { Head } from "@inertiajs/react";
-import { useState, useEffect } from "react";
-import { FaUsers, FaUserShield, FaSchool, FaDownload } from "react-icons/fa";
-import { Bar, Doughnut } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  ArcElement,
-  Tooltip,
-  Legend,
-} from "chart.js";
-import SuperAdminSideBar from "../SuperAdminSideBar";
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Select, MenuItem, TextField, Button, FormControl, InputLabel, Box } from "@mui/material";
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { Head } from '@inertiajs/react';
+import { FaUserPlus, FaSearch, FaEdit, FaTrash } from 'react-icons/fa';
+import SuperAdminSideBar from '../SuperAdminSideBar';
+import { useState } from 'react';
+import { Inertia } from '@inertiajs/inertia';
+import { Button, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, ArcElement, Tooltip, Legend);
+export default function ListUser({ auth, users, pagination, selectedRole }) {
+    const [rowsPerPage, setRowsPerPage] = useState(pagination.per_page);
+    const [currentPage, setCurrentPage] = useState(pagination.current_page);
+    const [selectedRoleState, setSelectedRole] = useState(selectedRole);
+    const [searchQuery, setSearchQuery] = useState('');
 
-export default function Dashboard() {
-  const [timeRange, setTimeRange] = useState("Mingguan");
-  const [date, setDate] = useState("2024-07-02");
+    const usersData = users.data;
 
-  const [userCounts, setUserCounts] = useState({
-    stateAdmin: 0,
-    ppdAdmin: 0,
-    schoolAdmin: 0,
-  });
+    const filteredUsers = usersData.filter((user) => {
+        const searchFields = [
+            user.name.toLowerCase(),
+            user.email.toLowerCase(),
+            user.state?.toLowerCase(),
+            getRoleLabel(user.role).toLowerCase()
+        ];
+        return searchFields.some(field => field.includes(searchQuery.toLowerCase()));
+    });
 
-  useEffect(() => {
-    async function fetchUserCounts() {
-      try {
-        const response = await fetch("/user-role-counts");
-        const data = await response.json();
-        setUserCounts({
-          stateAdmin: data.state_admin,
-          ppdAdmin: data.ppd_admin,
-          schoolAdmin: data.school_admin,
-        });
-      } catch (error) {
-        console.error("Error fetching user role counts:", error);
-      }
+    const roleFilteredUsers = selectedRoleState
+        ? filteredUsers.filter(user => user.role === Number(selectedRoleState))
+        : filteredUsers;
+
+    const indexOfLastUser = currentPage * rowsPerPage;
+    const indexOfFirstUser = indexOfLastUser - rowsPerPage;
+    const currentUsers = roleFilteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+
+    const nextPage = () => {
+        if (currentPage < Math.ceil(roleFilteredUsers.length / rowsPerPage)) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    const prevPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    const handleRowsPerPageChange = (e) => {
+        setRowsPerPage(Number(e.target.value));
+        setCurrentPage(1);
+    };
+
+    const handleRoleChange = (e) => {
+        setSelectedRole(e.target.value);
+        setCurrentPage(1);
+    };
+
+    const handleDelete = (userId) => {
+        if (confirm('Are you sure you want to delete this user?')) {
+            Inertia.delete(`/users/${userId}`, {
+                onSuccess: () => alert('User successfully deleted!'),
+                onError: (errors) => alert('Failed to delete user: ' + errors.message),
+            });
+        }
+    };
+
+    return (
+        <AuthenticatedLayout>
+            <Head title="TVPSS | Pengurusan Pengguna" />
+
+            <div className="flex flex-col md:flex-row min-h-screen bg-[#f8faff]">
+                <div className="w-1/6 bg-white shadow-lg">
+                    <SuperAdminSideBar />
+                </div>
+
+                <div className="w-full md:ml-[120px] p-6">
+                    <div className="flex items-center justify-between mb-6">
+                        <h2 className="text-4xl font-bold text-gray-900 bg-clip-text hover:scale-105 transform transition duration-300 ease-in-out">
+                            Pengurusan Pengguna
+                        </h2>
+                        <a href="/addUser">
+                        <Button
+                            variant="contained"
+                            sx={{
+                                background: "#455185",
+                                color: "white",
+                                padding: "10px 20px",
+                                textTransform: "none",
+                                borderRadius: 2,
+                                height: "40px",
+                                "&:hover": {
+                                    background: "#3C4565",
+                                    transform: "scale(1.05)",
+                                    boxShadow: "0px 4px 15px rgba(0,0,0,0.2)",
+                                },
+                            }}
+                        >
+                            <FaUserPlus />
+                            Tambah Pengguna Baharu
+                        </Button>
+                        </a>
+                    </div>
+
+                    <div className="max-w-8xl mx-auto p-6 text-gray-900 bg-white rounded shadow-md">
+                        <div className="flex items-center mb-4 justify-between">
+                            <div className="flex items-center w-full max-w-xs relative">
+                                <FaSearch className="absolute right-3 text-gray-400 text-xl" />
+                                <input
+                                    type="text"
+                                    placeholder="Cari Pengguna..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="w-full pl-4 pr-4 py-3 bg-white border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#455185] focus:border-[#455185] transition-all placeholder-gray-400"
+                                />
+                            </div>
+
+                            <div className="flex items-center space-x-4">
+                                <FormControl variant="outlined" sx={{ minWidth: 160, borderRadius: 4 }}>
+                                    <InputLabel id="roleFilter-label" sx={{ fontSize: '0.875rem' }}>
+                                        Jenis Pengguna
+                                    </InputLabel>
+                                    <Select
+                                        labelId="roleFilter-label"
+                                        id="roleFilter"
+                                        value={selectedRoleState}
+                                        onChange={handleRoleChange}
+                                        label="Jenis Pengguna"
+                                        sx={{
+                                            fontSize: '1rem',
+                                            height: '50px',
+                                            borderRadius: '12px',
+                                            '& .MuiOutlinedInput-notchedOutline': {
+                                                borderRadius: '12px',
+                                            },
+                                        }}
+                                    >
+                                        <MenuItem value="">
+                                            <em>Semua</em>
+                                        </MenuItem>
+                                        <MenuItem value={0}>Super Admin</MenuItem>
+                                        <MenuItem value={1}>State Admin</MenuItem>
+                                        <MenuItem value={2}>PPD Admin</MenuItem>
+                                        <MenuItem value={3}>School Admin</MenuItem>
+                                    </Select>
+                                </FormControl>
+
+                                <FormControl variant="outlined" sx={{ minWidth: 120, borderRadius: 4 }}>
+                                    <InputLabel id="rowsPerPage-label" sx={{ fontSize: '0.875rem' }}>
+                                    Bilangan Data
+                                    </InputLabel>
+                                    <Select
+                                        labelId="rowsPerPage-label"
+                                        id="rowsPerPage"
+                                        value={rowsPerPage}
+                                        onChange={handleRowsPerPageChange}
+                                        label="Bilangan Data"
+                                        sx={{
+                                            fontSize: '1rem',
+                                            height: '50px',
+                                            borderRadius: '12px',
+                                            '& .MuiOutlinedInput-notchedOutline': {
+                                                borderRadius: '12px',
+                                            },
+                                        }}
+                                    >
+                                        <MenuItem value={5}>5</MenuItem>
+                                        <MenuItem value={10}>10</MenuItem>
+                                        <MenuItem value={25}>25</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </div>
+                        </div>
+
+                        <table className="w-full text-left rounded-lg border-collapse">
+                            <thead>
+                                <tr className="bg-white">
+                                    <th className="border-b px-4 py-6">Bil</th>
+                                    <th className="border-b px-4 py-6">Nama Penuh</th>
+                                    <th className="border-b px-4 py-6">Alamat Email</th>
+                                    <th className="border-b px-4 py-6 text-center">Negeri</th>
+                                    <th className="border-b px-4 py-6 text-center">Jenis Pengguna</th>
+                                    <th className="border-b px-4 py-6 text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {currentUsers.length === 0 ? (
+                                    <tr>
+                                        <td colSpan="6" className="text-center py-4">
+                                            Tiada Data Ditemui
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    currentUsers.map((user, index) => (
+                                        <tr key={user.id} className="hover:bg-gray-50">
+                                            <td className="border-b px-4 py-6">{index + 1}</td>
+                                            <td className="border-b px-4 py-6">{user.name}</td>
+                                            <td className="border-b px-4 py-6">{user.email}</td>
+                                            <td className="border-b px-4 py-6 text-center">{user.state}</td>
+                                            <td className="border-b px-4 py-6 text-center">
+                                                <span
+                                                    className={`px-2 py-1.5 rounded-full ${getRoleColor(user.role)}`}
+                                                    style={{ color: getRoleTextColor(user.role) }}
+                                                >
+                                                    {getRoleLabel(user.role)}
+                                                </span>
+                                            </td>
+                                            <td className="border-b px-6 py-4 text-center">
+                                                <div className="flex justify-center items-center space-x-4">
+                                                    <button
+                                                        onClick={() => Inertia.visit(`/users/${user.id}/edit`)}
+                                                        className="text-gray-400 hover:text-gray-600"
+                                                    >
+                                                        <FaEdit size={18} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDelete(user.id)}
+                                                        className="text-gray-400 hover:text-gray-600"
+                                                    >
+                                                        <FaTrash size={18} />
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
+
+                        <div className="flex justify-between items-center mt-6">
+                            <button
+                                onClick={prevPage}
+                                className={`px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 focus:ring-2 focus:ring-gray-400 focus:outline-none text-gray-600 font-medium disabled:opacity-50 ${currentPage === 1 && 'cursor-not-allowed'}`}
+                                disabled={currentPage === 1}
+                            >
+                                Sebelum
+                            </button>
+
+                            <span className="inline-flex items-center px-4 py-2 rounded-lg bg-[#f1f5f9] text-[#455185] font-semibold shadow-sm text-sm">
+    <span className="text-gray-600 mr-2">Halaman</span> 
+    <span className="bg-white px-3 py-1 rounded-lg text-[#455185] shadow-md border border-gray-200 mx-1">
+        {currentPage}
+    </span> 
+    <span className="text-gray-600 ml-2">daripada</span>
+    <span className="bg-white px-3 py-1 rounded-lg text-[#455185] shadow-md border border-gray-200 mx-1">
+        {Math.ceil(roleFilteredUsers.length / rowsPerPage)}
+    </span>
+</span>
+
+                            <button
+                                onClick={nextPage}
+                                className={`px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 focus:ring-2 focus:ring-gray-400 focus:outline-none text-gray-600 font-medium disabled:opacity-50 ${currentPage === Math.ceil(roleFilteredUsers.length / rowsPerPage) && 'cursor-not-allowed'}`}
+                                disabled={currentPage === Math.ceil(roleFilteredUsers.length / rowsPerPage)}
+                            >
+                                Seterusnya
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </AuthenticatedLayout>
+    );
+}
+
+const getRoleColor = (role) => {
+    switch (role) {
+        case 0:
+            return 'bg-blue-100';
+        case 1:
+            return 'bg-green-100';
+        case 2:
+            return 'bg-purple-100';
+        case 3:
+            return 'bg-yellow-100';
+        default:
+            return 'bg-gray-100';
     }
+};
 
-    fetchUserCounts();
-  }, []);
+const getRoleTextColor = (role) => {
+    switch (role) {
+        case 0:
+            return '#0000FF'; // Blue
+        case 1:
+            return '#1d8238'; // Green
+        case 2:
+            return '#800080'; // Purple
+        case 3:
+            return '#b3b300'; // Yellow
+        default:
+            return '#808080'; // Gray
+    }
+};
 
-  // Bar chart data with border colors
-  const barData = {
-    labels: ["Admin State", "Admin PPD", "Admin Sekolah"],
-    datasets: [
-      {
-        label: "Bilangan Pengguna Mengikut Jenis",
-        data: [userCounts.stateAdmin, userCounts.ppdAdmin, userCounts.schoolAdmin],
-        backgroundColor: ["#455185", "#008080", "#00BFFF"],
-        borderColor: ["#1C2433", "#006666", "#005F9E"], // Border colors
-        borderWidth: 1, // Border thickness
-      },
-    ],
-  };
-
-  // Doughnut chart data with border colors
-  const doughnutData = {
-    labels: ["Admin State", "Admin PPD", "Admin Sekolah"],
-    datasets: [
-      {
-        label: "Bilangan Peratusan Pengguna Mengikut Jenis",
-        data: [userCounts.stateAdmin, userCounts.ppdAdmin, userCounts.schoolAdmin],
-        backgroundColor: ["#455185", "#FF6384", "#FFA500"],
-        borderColor: ["#1C2433", "#B22234", "#D2691E"], // Border colors
-        borderWidth: 2, // Border thickness
-        hoverOffset: 4,
-      },
-    ],
-  };
-
-  return (
-    <AuthenticatedLayout>
-      <Head title="TVPSS | Dashboard" />
-
-      <div className="flex flex-col md:flex-row min-h-screen bg-[#f8faff]">
-        <div className="w-1/6 bg-white shadow-lg">
-          <SuperAdminSideBar />
-        </div>
-
-        <div className="w-full md:ml-[120px] p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-4xl font-bold text-gray-900 bg-clip-text hover:scale-105 transform transition duration-300 ease-in-out">
-              Dashboard
-            </h2>
-
-            <Box component="form" className="flex items-center space-x-4">
-              {/* Time Range Dropdown */}
-              <FormControl sx={{ minWidth: 150, height: "40px" }}>
-                <InputLabel id="time-range-label" sx={{ fontSize: "16px" }}>
-                  Jenis
-                </InputLabel>
-                <Select
-                  labelId="time-range-label"
-                  value={timeRange}
-                  onChange={(e) => setTimeRange(e.target.value)}
-                  label="Jenis"
-                  size="small"
-                  sx={{
-                    backgroundColor: "#ffffff",
-                    height: "40px",
-                    borderRadius: 2,
-                    "& .MuiOutlinedInput-notchedOutline": { borderColor: "#455185" },
-                    "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#008080" },
-                    "& .MuiInputBase-input": { fontSize: "14px", padding: "10px 14px" },
-                  }}
-                >
-                  <MenuItem value="Harian">Harian</MenuItem>
-                  <MenuItem value="Mingguan">Mingguan</MenuItem>
-                  <MenuItem value="Bulanan">Bulanan</MenuItem>
-                </Select>
-              </FormControl>
-
-              {/* Date Input */}
-              <TextField
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                label="Tarikh"
-                size="small"
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    backgroundColor: "#ffffff",
-                    height: "40px",
-                    borderRadius: 2,
-                    "& fieldset": { borderColor: "#455185" },
-                    "&:hover fieldset": { borderColor: "#008080" },
-                  },
-                  "& .MuiInputLabel-root": { fontSize: "16px", top: "1px" },
-                  height: "40px",
-                }}
-              />
-
-              {/* Export Button with Icon */}
-              <Button
-                variant="contained"
-                sx={{
-                  background: "#455185",
-                  color: "white",
-                  padding: "10px 20px",
-                  textTransform: "none",
-                  borderRadius: 2,
-                  height: "40px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "8px",
-                  "&:hover": {
-                    background: "#3C4565",
-                    transform: "scale(1.05)",
-                    boxShadow: "0px 4px 15px rgba(0,0,0,0.2)",
-                  },
-                }}
-              >
-                <FaDownload />
-                Export
-              </Button>
-            </Box>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <SummaryCard
-              title="Bilangan State Admin"
-              value={userCounts.stateAdmin}
-              icon={<FaUsers className="text-white text-5xl" />}
-            />
-            <SummaryCard
-              title="Bilangan PPD Admin"
-              value={userCounts.ppdAdmin}
-              icon={<FaUserShield className="text-white text-5xl" />}
-            />
-            <SummaryCard
-              title="Bilangan Sekolah Admin"
-              value={userCounts.schoolAdmin}
-              icon={<FaSchool className="text-white text-5xl" />}
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-  <div className="bg-white p-6 rounded-lg border-2 border-gray-200">
-    <h3 className="text-lg text-center font-semibold text-[#455185] mb-4">
-      Bilangan Pengguna Mengikut Jenis
-    </h3>
-    <Bar data={barData} />
-  </div>
-
-  <div className="bg-white p-6 rounded-lg border-2 border-gray-200">
-    <h3 className="text-lg text-center font-semibold text-[#455185] mb-4">
-      Bilangan Peratusan Pengguna Mengikut Jenis
-    </h3>
-    <Doughnut data={doughnutData} />
-  </div>
-</div>
-
-        </div>
-      </div>
-
-      <footer className="text-center py-4 bg-white text-[#455185]">
-        © 2024 Kementerian Pendidikan Malaysia (KPM)
-      </footer>
-    </AuthenticatedLayout>
-  );
-}
-
-function SummaryCard({ title, value, icon }) {
-  return (
-    <div className="bg-white p-5 rounded-2xl border-2 border-gray-200 flex items-center hover:scale-105 transform transition duration-300 ease-in-out">
-      <div className="mr-4 p-3 bg-[#455185] rounded-3xl ">{icon}</div>
-      <div className="text-[#455185]">
-        <h3 className="text-xl font-semibold">{title}</h3>
-        <p className="text-3xl font-bold">{value}</p>
-      </div>
-    </div>
-  );
-}
+const getRoleLabel = (role) => {
+    switch (role) {
+        case 0:
+            return 'Super Admin';
+        case 1:
+            return 'State Admin';
+        case 2:
+            return 'PPD Admin';
+        case 3:
+            return 'School Admin';
+        default:
+            return 'Unknown';
+    }
+};
