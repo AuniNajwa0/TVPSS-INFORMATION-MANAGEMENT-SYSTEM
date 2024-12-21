@@ -230,6 +230,7 @@ class SchoolAdminController extends Controller
             'schoolAddress2'=> 'nullable|string|max:255',
             'postcode'      => 'required|string|max:10',
             'state'         => 'required|string|max:100',
+            'district'      => 'required|string|max:100',
             'noPhone'       => 'required|string|max:20',
             'noFax'         => 'nullable|string|max:20',
             'linkYoutube'   => 'nullable|url|max:255',
@@ -237,6 +238,8 @@ class SchoolAdminController extends Controller
         ]);
 
         $schoolInfo = SchoolInfo::firstOrNew(['user_id' => $user->id]);
+        $currentSchoolLogo = $schoolInfo->schoolLogo;
+        $schoolInfo->schoolOfficer = $user->name;
         $schoolInfo->fill($validated);
 
         if ($request->hasFile('schoolLogo')) {
@@ -255,10 +258,10 @@ class SchoolAdminController extends Controller
             } catch (\Exception $e) {
                 return back()->with('error', 'Error uploading the logo. Please try again.');
             }
+        } else {
+            $schoolInfo->schoolLogo = $currentSchoolLogo;
         }
 
-        // Save the record
-        $schoolInfo->user_id = $user->id;
         $schoolInfo->save();
 
         return redirect()->route('school.edit')->with('success', 'School information updated successfully!');
@@ -292,6 +295,7 @@ class SchoolAdminController extends Controller
             'schoolAddress2'=> 'nullable|string|max:255',
             'postcode'      => 'required|string|max:10',
             'state'         => 'required|string|max:100',
+            'district'      => 'required|string|max:100',
             'noPhone'       => 'required|string|max:20',
             'noFax'         => 'nullable|string|max:20',
             'linkYoutube'   => 'nullable|url|max:255',
@@ -299,13 +303,15 @@ class SchoolAdminController extends Controller
         ]);
 
         $schoolInfo = SchoolInfo::where('user_id', $user->id)->first();
+        $schoolInfo->schoolOfficer = $user->name;
 
         if (!$schoolInfo) {
             return back()->with('error', 'No school information found for your account.');
         }
 
-        $currentSchoolLogo = $schoolInfo->schoolLogo;
+        //$schoolInfo->schoolOfficer = $user->name;
 
+        $currentSchoolLogo = $schoolInfo->schoolLogo;
         $schoolInfo->fill($validated);
 
         if ($request->hasFile('schoolLogo')) {

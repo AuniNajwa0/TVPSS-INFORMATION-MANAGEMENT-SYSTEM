@@ -6,50 +6,83 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 
-export default function UpdateSchoolInformation({ schoolInfo }) {
-    const malaysianStates = [
-        "Johor", "Kedah", "Kelantan", "Melaka", "Negeri Sembilan",
-        "Pahang", "Penang", "Perak", "Perlis", "Sabah", "Sarawak",
-        "Selangor", "Terengganu", "Kuala Lumpur", "Labuan", "Putrajaya",
-    ];
+const states = [
+    'Johor', 'Melaka', 'Pahang', 'Wilayah Persekutuan Kuala Lumpur', 'Selangor',
+    'Negeri Sembilan', 'Perak', 'Kedah', 'Pulau Pinang', 'Perlis', 'Kelantan',
+    'Terengganu', 'Sabah', 'Sarawak',
+];
 
+const districts = {
+    Johor: ['Johor Bahru', 'Muar', 'Kluang', 'Segamat', 'Mersing', 'Kota Tinggi', 'Batu Pahat', 'Pontian', 'Pasir Gudang', 'Tangkak', 'Kulaijaya'],
+    Pahang: ['Kuantan', 'Temerloh', 'Bera', 'Pekan', 'Rompin', 'Maran', 'Jerantut', 'Bentong'],
+    'Wilayah Persekutuan Kuala Lumpur': ['Kuala Lumpur'],
+    Selangor: ['Petaling', 'Hulu Langat', 'Sepang', 'Klang', 'Gombak', 'Kuala Selangor', 'Sabak Bernam', 'Selayang'],
+    'Negeri Sembilan': ['Seremban', 'Port Dickson', 'Rembau', 'Jelebu', 'Tampin', 'Gemenceh'],
+    Perak: ['Ipoh', 'Kuala Kangsar', 'Taiping', 'Teluk Intan', 'Sitiawan', 'Parit Buntar', 'Tanjung Malim', 'Kampar'],
+    Kedah: ['Alor Setar', 'Sungai Petani', 'Kuala Kedah', 'Kulim', 'Baling', 'Langkawi', 'Pokok Sena', 'Kubang Pasu'],
+    'Pulau Pinang': ['Georgetown', 'Bukit Mertajam', 'Nibong Tebal', 'Balik Pulau'],
+    Perlis: ['Kangar', 'Arau'],
+    Kelantan: ['Kota Bharu', 'Tumpat', 'Pasir Mas', 'Machang', 'Tanah Merah', 'Gua Musang', 'Kuala Krai'],
+    Terengganu: ['Kuala Terengganu', 'Dungun', 'Kemaman', 'Besut', 'Hulu Terengganu', 'Marang'],
+    Sabah: ['Kota Kinabalu', 'Sandakan', 'Tawau', 'Keningau', 'Beaufort', 'Lahad Datu', 'Semporna', 'Ranau', 'Papar'],
+    Sarawak: ['Kuching', 'Sibu', 'Miri', 'Bintulu', 'Sri Aman', 'Mukah', 'Betong', 'Limbang'],
+};
+
+export default function UpdateSchoolInformation({ schoolInfo }) {
     const { data, setData, post, processing, errors, reset } = useForm({
-        schoolCode: schoolInfo?.schoolCode || "",
-        schoolName: schoolInfo?.schoolName || "",
-        schoolAddress1: schoolInfo?.schoolAddress1 || "",
-        schoolAddress2: schoolInfo?.schoolAddress2 || "",
-        postcode: schoolInfo?.postcode || "",
-        state: schoolInfo?.state || "",
-        noPhone: schoolInfo?.noPhone || "",
-        schoolEmail: schoolInfo?.schoolEmail || "",
-        noFax: schoolInfo?.noFax || "",
+        schoolCode: schoolInfo?.schoolCode || '',
+        schoolName: schoolInfo?.schoolName || '',
+        schoolAddress1: schoolInfo?.schoolAddress1 || '',
+        schoolAddress2: schoolInfo?.schoolAddress2 || '',
+        postcode: schoolInfo?.postcode || '',
+        state: schoolInfo?.state || '',
+        district: schoolInfo?.district || '',
+        noPhone: schoolInfo?.noPhone || '',
+        schoolEmail: schoolInfo?.schoolEmail || '',
+        noFax: schoolInfo?.noFax || '',
         schoolLogo: null,
-        linkYoutube: schoolInfo?.linkYoutube || "",
+        linkYoutube: schoolInfo?.linkYoutube || '',
     });
 
     const [imagePreview, setImagePreview] = useState(null);
+    const [currentDistricts, setCurrentDistricts] = useState([]);
 
     useEffect(() => {
         if (schoolInfo?.schoolLogo) {
-            setImagePreview(`${schoolInfo.schoolLogo}`); // Path to existing logo
+            setImagePreview(`${schoolInfo.schoolLogo}`);
         }
-    }, [schoolInfo]);
+
+        if (data.state) {
+            setCurrentDistricts(districts[data.state] || []);
+        }
+    }, [data.state, schoolInfo]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setData(name, value);
-    };
+        setData(prevData => ({
+            ...prevData,
+            [name]: value
+        }));
+    
+        if (name === 'state') {
+            setCurrentDistricts(districts[value] || []);
+            setData(prevData => ({
+                ...prevData,
+                district: ''
+            }));
+        }
+    };    
 
     const handleFileChange = (e) => {
         const { files } = e.target;
         if (files.length > 0) {
-            setData("schoolLogo", files[0]); 
+            setData('schoolLogo', files[0]);
 
             const reader = new FileReader();
-            reader.onloadend = () => setImagePreview(reader.result); 
+            reader.onloadend = () => setImagePreview(reader.result);
             reader.readAsDataURL(files[0]);
         } else {
-            setData("schoolLogo", null); 
+            setData('schoolLogo', null);
             setImagePreview(null);
         }
     };
@@ -58,7 +91,7 @@ export default function UpdateSchoolInformation({ schoolInfo }) {
         e.preventDefault();
         post(route('school.update'), {
             onSuccess: () => {
-                console.log("School information updated successfully!");
+                console.log('School information updated successfully!');
             },
             onError: (errors) => {
                 console.error(errors);
@@ -186,9 +219,29 @@ export default function UpdateSchoolInformation({ schoolInfo }) {
                                         error={!!errors.state}
                                         helperText={errors.state}
                                     >
-                                        {malaysianStates.map((state) => (
+                                        {states.map((state) => (
                                             <MenuItem key={state} value={state}>
                                                 {state}
+                                            </MenuItem>
+                                        ))}
+                                    </TextField>
+                                </Box>
+                                <Box className="col-span-2">
+                                    <TextField
+                                        select
+                                        label="Daerah"
+                                        variant="outlined"
+                                        fullWidth
+                                        name="district"
+                                        value={data.district}
+                                        onChange={handleInputChange}
+                                        error={!!errors.district}
+                                        helperText={errors.district}
+                                        disabled={!currentDistricts.length}
+                                    >
+                                        {currentDistricts.map((district) => (
+                                            <MenuItem key={district} value={district}>
+                                                {district}
                                             </MenuItem>
                                         ))}
                                     </TextField>
@@ -257,7 +310,7 @@ export default function UpdateSchoolInformation({ schoolInfo }) {
                                     type="submit"
                                     disabled={processing}
                                 >
-                                    {processing ? "Menghantar..." : "Kemaskini"}
+                                    {processing ? 'Menghantar...' : 'Kemaskini'}
                                 </button>
                             </div>
                         </form>

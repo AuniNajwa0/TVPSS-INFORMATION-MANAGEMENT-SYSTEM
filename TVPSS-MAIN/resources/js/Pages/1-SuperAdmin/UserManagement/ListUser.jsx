@@ -206,7 +206,7 @@ export default function ListUser({ auth, users, pagination, selectedRole }) {
                                             <td className="border-b px-6 py-4 text-center">
                                                 <div className="flex justify-center items-center space-x-4">
                                                     <button
-                                                        onClick={() => Inertia.visit(`/users/${user.id}/edit`)}
+                                                        onClick={() => Inertia.visit(`/updateUser/${user.id}`)}
                                                         className="text-gray-400 hover:text-gray-600"
                                                     >
                                                         <FaEdit size={18} />

@@ -14,10 +14,12 @@ class SchoolInfo extends Model
     protected $fillable = [
         'schoolCode',
         'user_id',
+        'schoolOfficer', 
         'schoolName',
         'schoolEmail',
         'schoolAddress1',
         'schoolAddress2',
+        'district',
         'postcode',
         'state',
         'noPhone',
