@@ -46,7 +46,7 @@ function PPDAdminSideBar() {
           />
 
           <SidebarLink
-            href="/tvpssInfo"
+            href="/tvpssInfoPPD"
             icon={<FaInfoCircle size={20} />}
             label="Informasi TVPSS Sekolah"
             active={url.startsWith("/tvpssInfo")}
