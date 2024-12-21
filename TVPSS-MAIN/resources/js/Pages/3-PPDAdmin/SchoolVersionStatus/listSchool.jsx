@@ -17,7 +17,7 @@ export default function TVPSSInfoSchoolPPD({ schools }) {
       school.schoolName.toLowerCase().includes(searchQuery.toLowerCase())
     );
     setFilteredData(searchResults);
-    setCurrentPage(1); // Reset to the first page when search query changes
+    setCurrentPage(1); 
   }, [searchQuery, schools]);
 
   const totalPages = Math.ceil(filteredData.length / rowsPerPage);
@@ -28,7 +28,7 @@ export default function TVPSSInfoSchoolPPD({ schools }) {
 
   const handleRowsPerPageChange = (e) => {
     setRowsPerPage(Number(e.target.value));
-    setCurrentPage(1); // Reset to the first page when rows per page changes
+    setCurrentPage(1);
   };
 
   const handlePrevPage = () => {
