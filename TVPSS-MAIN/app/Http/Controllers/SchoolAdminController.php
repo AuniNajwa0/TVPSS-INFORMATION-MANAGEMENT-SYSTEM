@@ -546,4 +546,17 @@ class SchoolAdminController extends Controller
         return response()->json(['locations' => $locations]);
     }
 
+    public function getTVPSSVersion(Request $request)
+    {
+        $user = $request->user();
+
+        $schoolInfo = SchoolInfo::with('schoolVersion')->where('user_id', $user->id)->first();
+
+        if (!$schoolInfo || !$schoolInfo->schoolVersion) {
+            return response()->json(['version' => '-']);
+        }
+
+        return response()->json(['version' => $schoolInfo->schoolVersion->version]);
+    }
+
 }
