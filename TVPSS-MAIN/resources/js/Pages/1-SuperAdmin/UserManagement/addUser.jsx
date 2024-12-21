@@ -2,7 +2,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import SuperAdminSideBar from '../SuperAdminSideBar';
 import { useState } from 'react';
-import { TextField, MenuItem, FormControl, Select, InputLabel, styled } from '@mui/material';
+import { TextField, MenuItem, FormControl, Select, InputLabel, styled, CircularProgress, Alert, FormHelperText } from '@mui/material';
 import { FiUser, FiMail, FiLock } from 'react-icons/fi';
 import { Inertia } from '@inertiajs/inertia';
 
@@ -21,7 +21,12 @@ export default function AddUser() {
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState({});
 
-    const roles = ['SuperAdmin', 'State Admin', 'PPD Admin', 'School Admin'];
+    const roles = [
+        { id: 0, name: 'Super Admin' },
+        { id: 1, name: 'State Admin' },
+        { id: 2, name: 'PPD Admin' },
+        { id: 3, name: 'School Admin' },
+    ];
 
     const states = [
         'Johor', 'Melaka', 'Pahang', 'Wilayah Persekutuan Kuala Lumpur', 'Selangor',
@@ -81,7 +86,11 @@ export default function AddUser() {
         setMessage('');
 
         try {
-            await Inertia.post('/users', formData);
+            const transformedData = {
+                ...formData,
+                role: formData.role,
+            };
+            await Inertia.post('/users', transformedData);
 
             setMessage('Pengguna berjaya ditambah!');
             setFormData({
@@ -126,12 +135,11 @@ export default function AddUser() {
                         <hr className="border-t-2 border-gray-200 mb-6" />
 
                         {message && (
-                            <div className={`text-${message.includes('berjaya') ? 'green' : 'red'}-500 mb-4`}>
+                            <Alert severity={message.includes('berjaya') ? 'success' : 'error'}>
                                 {message}
-                            </div>
+                            </Alert>
                         )}
 
-                        
                         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-7">
                             <StyledTextField
                                 label="Nama"
@@ -193,15 +201,15 @@ export default function AddUser() {
                                 <Select
                                     name="role"
                                     value={formData.role}
-                                    onChange={handleInputChange}
+                                    onChange={(e) => setFormData({ ...formData, role: e.target.value })}
                                 >
                                     {roles.map((role) => (
-                                        <MenuItem key={role} value={role}>
-                                            {role}
+                                        <MenuItem key={role.id} value={role.id}>
+                                            {role.name}
                                         </MenuItem>
                                     ))}
                                 </Select>
-                                {errors.role && <p className="text-red-500 mt-1">{errors.role}</p>}
+                                <FormHelperText>{errors.role}</FormHelperText>
                             </FormControl>
                             <FormControl fullWidth error={!!errors.state}>
                                 <InputLabel>Negeri</InputLabel>
@@ -216,6 +224,7 @@ export default function AddUser() {
                                         </MenuItem>
                                     ))}
                                 </Select>
+                                <FormHelperText>{errors.state}</FormHelperText>
                             </FormControl>
                             <FormControl fullWidth error={!!errors.district}>
                                 <InputLabel>Daerah</InputLabel>
@@ -232,6 +241,7 @@ export default function AddUser() {
                                             </MenuItem>
                                         ))}
                                 </Select>
+                                <FormHelperText>{errors.district}</FormHelperText>
                             </FormControl>
 
                             <div className="col-span-2 flex justify-end gap-3">
@@ -243,9 +253,10 @@ export default function AddUser() {
                                 </a>
                                 <button
                                     type="submit"
-                                    className="bg-[#455185] text-white py-2 px-4 rounded-2xl hover:bg-blue-900"
+                                    className="bg-[#455185] text-white py-2 px-4 rounded-2xl hover:bg-blue-900 flex items-center"
+                                    disabled={isLoading}
                                 >
-                                    {isLoading ? 'Saving...' : 'Tambah Pengguna'}
+                                    {isLoading ? <CircularProgress size={20} color="inherit" /> : 'Tambah Pengguna'}
                                 </button>
                             </div>
                         </form>
