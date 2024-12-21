@@ -4,13 +4,8 @@ use App\Http\Controllers\SchoolAdminController;
 use Illuminate\Support\Facades\Route;  
 use Inertia\Inertia;
 
-/*Route::get('/dashboardSchool', function () {
-    return Inertia::render('4-SchoolAdmin/SchoolAdminDashboard');
-})->middleware(['auth', 'verified'])->name('dashboardSA');*/
-
 Route::get('/dashboardSchool', fn() => Inertia::render('4-SchoolAdmin/SchoolAdminDashboard'))
     ->name('dashboardSA');
-
 
 // Equipment Management
 //Route::resource('equipment', SchoolAdminController::class);
@@ -39,8 +34,11 @@ Route::get('/updateSchool', [SchoolAdminController::class, 'editSchool'])->name(
 Route::post('/update-school', [SchoolAdminController::class, 'updateSchool'])->name('school.update');
 
 //TVPSS Version
-Route::get('/version-checker', [SchoolAdminController::class, 'checkVersionCriteria'])->name('version.checker');
+//Route::get('/version-checker', [SchoolAdminController::class, 'checkVersionCriteria'])->name('version.checker');
 Route::get('/updateSchoolTVPSSVersion', [SchoolAdminController::class, 'updateTVPSSVer1'])->name('tvpss1');
 Route::post('/updateEditSchoolTVPSSVersion', [SchoolAdminController::class, 'editTVPSSVer1'])->name('tvpss1Edit');
 Route::get('/updateSchoolTVPSSVersion2', [SchoolAdminController::class, 'updateTVPSSVer2'])->name('tvpss2');
 Route::post('/updateEditSchoolTVPSSVersion2', [SchoolAdminController::class, 'editTVPSSVer2'])->name('tvpss2Edit');
+
+//Dashboard Count 
+Route::get('/get-tvpss-version', [SchoolAdminController::class, 'getTVPSSVersion'])->name('tvpss.getVersion');
