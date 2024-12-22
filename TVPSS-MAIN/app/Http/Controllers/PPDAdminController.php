@@ -5,12 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\SchoolInfo;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Log;
 
 class PPDAdminController extends Controller
 {
-    public function tvpssInfoPPDIndex(Request $request)
+    public function tvpssInfoPPDList(Request $request)
     {
-        $user = $request->user(); 
+        $user = $request->user();
 
         if (!$user->district) {
             return Inertia::render('3-PPDAdmin/SchoolVersionStatus/listSchool', [
@@ -19,19 +20,66 @@ class PPDAdminController extends Controller
             ]);
         }
 
-        $schools = SchoolInfo::where('district', $user->district)->get();
+        $schools = SchoolInfo::where('district', $user->district)
+            ->with(['schoolVersion' => function ($query) {
+                $query->select('id', 'school_info_id', 'version', 'status');
+            }])
+            ->get()
+            ->map(function ($school) {
+                return [
+                    'schoolCode' => $school->schoolCode,
+                    'schoolName' => $school->schoolName,
+                    'schoolOfficer' => $school->schoolOfficer,
+                    'district' => $school->district,
+                    'schoolVersion' => $school->schoolVersion->version ?? '-',
+                    'status' => $school->schoolVersion->status ?? 'Null',
+                ];
+            });
 
         return Inertia::render('3-PPDAdmin/SchoolVersionStatus/listSchool', [
             'schools' => $schools,
         ]);
     }
 
-    public function tvpssInfoPPDEdit(string $id)
+    public function tvpssInfoPPDView(string $schoolCode)
     {
-        return Inertia::render('3-PPDAdmin/SchoolVersionStatus/listSchool');
+        $school = SchoolInfo::with('schoolVersion')->where('schoolCode', $schoolCode)->first();
+
+        if (!$school) {
+            return redirect()->route('schoolInfo.tvpssInfoPPDList')->with('error', 'School not found.');
+        }
+
+        $currentVersion = $school->schoolVersion->version?->value ?? 0;
+
+        $tvpssData = [
+            'schoolName' => $school->schoolName . " (" . $school->schoolCode . ")",
+            'officer' => $school->schoolOfficer,
+            'info' => [
+                //'tvpssLogo' => $school->schoolVersion->tvpssLogo,
+                'isTvpssLogo' => $school->schoolVersion->isTvpssLogo ?? 'TIADA',
+                'studio' => $school->schoolVersion->tvpssStudio ?? 'TIADA',
+                'youtube' => $school->schoolVersion->isUploadYoutube ?? 'TIADA',
+                'inSchoolRecording' => $school->schoolVersion->recInSchool ?? 'TIADA',
+                'outSchoolRecording' => $school->schoolVersion->recInOutSchool ?? 'TIADA',
+                'collaboration' => $school->schoolVersion->isCollabAgency ?? 'TIADA',
+                'greenScreen' => $school->schoolVersion->greenScreen ?? 'TIADA',
+            ],
+            'currentVersion' => $currentVersion,
+            'nextVersion' => $currentVersion + 1,
+        ];
+
+        $debugData = [
+            'schoolCode' => $schoolCode,
+            'school' => $school->toArray(),
+        ];
+
+        return Inertia::render('3-PPDAdmin/SchoolVersionStatus/approvePPDTvpss', [
+            'tvpssData' => $tvpssData,
+            'debug' => $debugData, 
+        ]);
     }
 
-    public function update(Request $request, string $id)
+    public function tvpssInfoPPDUpdate(Request $request, string $id)
     {
         //
     }

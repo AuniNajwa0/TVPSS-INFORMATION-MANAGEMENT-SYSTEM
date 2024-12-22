@@ -7,5 +7,6 @@ use Inertia\Inertia;
 Route::get('/dashboardPPD', fn() => Inertia::render('3-PPDAdmin/PPDAdminDashboard'))->name('dashboardPP');
 
 // TVPSS VERSION (LIST OF SCHOOL)
-Route::get('/tvpssInfoPPD', [PPDAdminController::class, 'tvpssInfoPPDIndex'])->name('schoolInfo.tvpssInfoPPDIndex');
-Route::get('/tvpssInfoPPD/{tvpssInfoPPD}/edit', [PPDAdminController::class, 'tvpssInfoPPDEdit'])->name('tvpssInfoPPDEdit');
+Route::get('/tvpssInfoPPDList', [PPDAdminController::class, 'tvpssInfoPPDList'])->name('schoolInfo.tvpssInfoPPDList');
+Route::get('/tvpssInfoPPD/{schoolCode}/edit', [PPDAdminController::class, 'tvpssInfoPPDView'])->name('schoolInfo.tvpssInfoPPDView');
+
