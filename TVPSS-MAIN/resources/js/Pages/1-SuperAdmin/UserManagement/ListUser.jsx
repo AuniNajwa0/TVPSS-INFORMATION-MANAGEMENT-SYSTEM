@@ -1,20 +1,20 @@
-import { Head } from "@inertiajs/react";
-import { useState, useEffect } from "react";
-import { FaUsers, FaUserShield, FaSchool, FaDownload } from "react-icons/fa";
-import { Bar, Doughnut } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  ArcElement,
-  Tooltip,
-  Legend,
-} from "chart.js";
-import SuperAdminSideBar from "./SuperAdminSideBar";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Select, MenuItem, TextField, Button, FormControl, InputLabel, Box } from "@mui/material";
+import { Head } from "@inertiajs/react";
+import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import {
+  ArcElement,
+  BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  Title,
+  Tooltip,
+} from "chart.js";
+import { useEffect, useState } from "react";
+import { Bar, Doughnut } from "react-chartjs-2";
+import { FaDownload, FaSchool, FaUsers, FaUserShield } from "react-icons/fa";
+import SuperAdminSideBar from "./SuperAdminSideBar";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, ArcElement, Tooltip, Legend);
 
