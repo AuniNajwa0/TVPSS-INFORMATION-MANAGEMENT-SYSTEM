@@ -1,79 +1,67 @@
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head } from "@inertiajs/react";
-import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
-import {
-  ArcElement,
-  BarElement,
-  CategoryScale,
-  Chart as ChartJS,
-  Legend,
-  LinearScale,
-  Title,
-  Tooltip,
-} from "chart.js";
-import { useEffect, useState } from "react";
-import { Bar, Doughnut } from "react-chartjs-2";
-import { FaDownload, FaSchool, FaUsers, FaUserShield } from "react-icons/fa";
-import SuperAdminSideBar from "./SuperAdminSideBar";
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { Head } from '@inertiajs/react';
+import { FaUserPlus, FaSearch, FaEdit, FaTrash } from 'react-icons/fa';
+import SuperAdminSideBar from '../SuperAdminSideBar';
+import { useState } from 'react';
+import { Inertia } from '@inertiajs/inertia';
+import { Button, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, ArcElement, Tooltip, Legend);
+export default function ListUser({ auth, users, pagination, selectedRole }) {
+    const [rowsPerPage, setRowsPerPage] = useState(pagination.per_page);
+    const [currentPage, setCurrentPage] = useState(pagination.current_page);
+    const [selectedRoleState, setSelectedRole] = useState(selectedRole);
+    const [searchQuery, setSearchQuery] = useState('');
 
-export default function Dashboard() {
-  const [timeRange, setTimeRange] = useState("Mingguan");
-  const [date, setDate] = useState("2024-07-02");
+    const usersData = users.data;
 
-  const [userCounts, setUserCounts] = useState({
-    stateAdmin: 0,
-    ppdAdmin: 0,
-    schoolAdmin: 0,
-  });
+    const filteredUsers = usersData.filter((user) => {
+        const searchFields = [
+            user.name.toLowerCase(),
+            user.email.toLowerCase(),
+            user.state?.toLowerCase(),
+            getRoleLabel(user.role).toLowerCase()
+        ];
+        return searchFields.some(field => field.includes(searchQuery.toLowerCase()));
+    });
 
-  useEffect(() => {
-    async function fetchUserCounts() {
-      try {
-        const response = await fetch("/user-role-counts");
-        const data = await response.json();
-        setUserCounts({
-          stateAdmin: data.state_admin,
-          ppdAdmin: data.ppd_admin,
-          schoolAdmin: data.school_admin,
-        });
-      } catch (error) {
-        console.error("Error fetching user role counts:", error);
-      }
-    }
+    const roleFilteredUsers = selectedRoleState
+        ? filteredUsers.filter(user => user.role === Number(selectedRoleState))
+        : filteredUsers;
 
-    fetchUserCounts();
-  }, []);
+    const indexOfLastUser = currentPage * rowsPerPage;
+    const indexOfFirstUser = indexOfLastUser - rowsPerPage;
+    const currentUsers = roleFilteredUsers.slice(indexOfFirstUser, indexOfLastUser);
 
-  // Bar chart data with border colors
-  const barData = {
-    labels: ["Admin State", "Admin PPD", "Admin Sekolah"],
-    datasets: [
-      {
-        label: "Bilangan Pengguna Mengikut Jenis",
-        data: [userCounts.stateAdmin, userCounts.ppdAdmin, userCounts.schoolAdmin],
-        backgroundColor: ["#455185", "#008080", "#00BFFF"],
-        borderColor: ["#1C2433", "#006666", "#005F9E"], // Border colors
-        borderWidth: 1, // Border thickness
-      },
-    ],
-  };
+    const nextPage = () => {
+        if (currentPage < Math.ceil(roleFilteredUsers.length / rowsPerPage)) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
 
-  // Doughnut chart data with border colors
-  const doughnutData = {
-    labels: ["Admin State", "Admin PPD", "Admin Sekolah"],
-    datasets: [
-      {
-        label: "Bilangan Peratusan Pengguna Mengikut Jenis",
-        data: [userCounts.stateAdmin, userCounts.ppdAdmin, userCounts.schoolAdmin],
-        backgroundColor: ["#455185", "#FF6384", "#FFA500"],
-        borderColor: ["#1C2433", "#B22234", "#D2691E"], // Border colors
-        borderWidth: 2, // Border thickness
-        hoverOffset: 4,
-      },
-    ],
-  };
+    const prevPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    const handleRowsPerPageChange = (e) => {
+        setRowsPerPage(Number(e.target.value));
+        setCurrentPage(1);
+    };
+
+    const handleRoleChange = (e) => {
+        setSelectedRole(e.target.value);
+        setCurrentPage(1);
+    };
+
+    const handleDelete = (userId) => {
+        if (confirm('Are you sure you want to delete this user?')) {
+            Inertia.delete(`/users/${userId}`, {
+                onSuccess: () => alert('User successfully deleted!'),
+                onError: (errors) => alert('Failed to delete user: ' + errors.message),
+            });
+        }
+    };
 
     return (
         <AuthenticatedLayout>
