@@ -355,7 +355,7 @@ class SchoolAdminController extends Controller
         $user = $request->user();
 
         $validated = $request->validate([
-            'version' => 'nullable|string|max:255',
+            'version' => 'nullable|integer', // Change validation to integer
             'agency1_name' => 'required|string|max:255',
             'agency1Manager_name' => 'nullable|string|max:255',
             'agency2_name' => 'nullable|string|max:255',
@@ -390,7 +390,7 @@ class SchoolAdminController extends Controller
         $schoolVersion->isCollabAgency = ($validated['agency1_name'] || $validated['agency2_name']) ? 'Ada' : 'Tiada';
 
         $schoolVersion->fill([
-            'version' => $validated['version'] ?? null,
+            'version' => $validated['version'] ?? $schoolVersion->version, // Keep as integer
             'agency1_name' => $validated['agency1_name'],
             'agencyManager1_name' => $validated['agency1Manager_name'],
             'agency2_name' => $validated['agency2_name'],
@@ -402,10 +402,11 @@ class SchoolAdminController extends Controller
             'greenScreen' => $validated['greenScreen'],
         ]);
 
-        $schoolVersion->status = ApprovalStatusEnum::PENDING; 
-        $schoolVersion->ppd_approval = false; 
-        $schoolVersion->state_approval = false; 
-        $schoolVersion->version = $this->checkTVPSSVersion($schoolInfo, $schoolVersion); 
+        $schoolVersion->status = ApprovalStatusEnum::PENDING;
+        $schoolVersion->ppd_approval = false;
+        $schoolVersion->state_approval = false;
+
+        $schoolVersion->version = $this->checkTVPSSVersion($schoolInfo, $schoolVersion);
 
         $schoolVersion->school_info_id = $schoolInfo->id;
         $schoolVersion->save();
@@ -422,37 +423,64 @@ class SchoolAdminController extends Controller
         $isUploadYoutube = $schoolInfo->linkYoutube ? 'Ada' : 'Tiada';
         $recInOutSchool = $schoolVersion->recInOutSchool ?? 'Tiada';
         $isCollabAgency = ($schoolVersion->agency1_name || $schoolVersion->agency2_name) ? 'Ada' : 'Tiada';
-        $greenScreen = $schoolVersion->greenScreen ?? 'Tiada';
+        $greenScreen = $schoolVersion->greenScreen?->value ?? 'Tiada'; 
+
+        // Debugging logs
+        \Log::info("Check TVPSS Version", [
+            'isFillSchoolName' => $isFillSchoolName,
+            'isTvpssLogo' => $isTvpssLogo,
+            'tvpssStudio' => $tvpssStudio,
+            'recInSchool' => $recInSchool,
+            'isUploadYoutube' => $isUploadYoutube,
+            'recInOutSchool' => $recInOutSchool,
+            'isCollabAgency' => $isCollabAgency,
+            'greenScreen' => $greenScreen,
+        ]);
+
+        if (
+            $isFillSchoolName === 'Ada' &&
+            $isTvpssLogo === 'Ada' &&
+            $tvpssStudio === 'Ada' &&
+            $recInSchool === 'Ada' &&
+            $isUploadYoutube === 'Ada' &&
+            $recInOutSchool === 'Ada' &&
+            $isCollabAgency === 'Ada' &&
+            $greenScreen === 'Ada'
+        ) {
+            return versionEnum::V4->value;
+        }
+
+        if (
+            $isFillSchoolName === 'Ada' &&
+            $isTvpssLogo === 'Ada' &&
+            $tvpssStudio === 'Ada' &&
+            $recInSchool === 'Ada' &&
+            $isUploadYoutube === 'Ada' &&
+            $recInOutSchool === 'Ada' &&
+            $isCollabAgency === 'Ada'
+        ) {
+            return versionEnum::V3->value;
+        }
+
+        if (
+            $isFillSchoolName === 'Ada' &&
+            $isTvpssLogo === 'Ada' &&
+            $tvpssStudio === 'Ada' &&
+            $recInSchool === 'Ada' &&
+            $isUploadYoutube === 'Ada'
+        ) {
+            return versionEnum::V2->value;
+        }
 
         if (
             $isFillSchoolName === 'Ada' &&
             $isTvpssLogo === 'Ada' &&
             $tvpssStudio === 'Ada'
         ) {
-            $version = 1;
-
-            if (
-                $recInSchool === 'Ada' &&
-                $isUploadYoutube === 'Ada'
-            ) {
-                $version = 2;
-
-                if (
-                    $recInOutSchool === 'Ada' &&
-                    $isCollabAgency === 'Ada'
-                ) {
-                    $version = 3;
-
-                    if ($greenScreen === 'Ada') {
-                        $version = 4;
-                    }
-                }
-            }
-        } else {
-            $version = 0; 
+            return versionEnum::V1->value;
         }
 
-        return $version;
+        return versionEnum::NOT_SATISFIED->value;
     }
 
     public function eqLocCreate(){
