@@ -27,12 +27,12 @@ export default function ListSchool() {
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
-    setCurrentPage(1); // Reset to first page when searching
+    setCurrentPage(1); 
   };
 
   const handleRowsPerPageChange = (e) => {
     setRowsPerPage(Number(e.target.value));
-    setCurrentPage(1); // Reset to first page when rows per page changes
+    setCurrentPage(1); 
   };
 
   const handlePrevPage = () => {
