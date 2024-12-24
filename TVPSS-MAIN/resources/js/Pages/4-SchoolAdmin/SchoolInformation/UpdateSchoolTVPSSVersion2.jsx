@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import SchoolAdminSideBar from '../SchoolAdminSideBar';
 import { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
@@ -12,7 +12,7 @@ import FormControl from '@mui/material/FormControl';
 
 export default function UpdateSchoolVersionInfo2({ schoolInfo, schoolVersion }) {
     const { data, setData, post, errors } = useForm({
-        version: schoolVersion?.version || '',
+        version: schoolVersion?.version || 0, 
         agency1_name: schoolVersion?.agency1_name || '',
         agency1Manager_name: schoolVersion?.agencyManager1_name || '',
         agency2_name: schoolVersion?.agency2_name || '',
@@ -34,21 +34,22 @@ export default function UpdateSchoolVersionInfo2({ schoolInfo, schoolVersion }) 
     }, [schoolVersion]);
 
     const handleFileChange = (e) => {
-        const { files } = e.target;
-        setData('tvpssLogo', files[0]);
+        const file = e.target.files[0];
+        setData('tvpssLogo', file);
 
-        if (files[0]) {
+        if (file) {
             const reader = new FileReader();
             reader.onloadend = () => {
                 setTVPSSLogoPreview(reader.result);
             };
-            reader.readAsDataURL(files[0]);
+            reader.readAsDataURL(file);
         }
     };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setData(name, value);
+        const parsedValue = name === 'version' ? parseInt(value, 10) : value; // Parse version as integer
+        setData(name, parsedValue);
     };
 
     const handleSubmit = (e) => {
@@ -153,76 +154,26 @@ export default function UpdateSchoolVersionInfo2({ schoolInfo, schoolVersion }) 
 
                             {/* Additional Details */}
                             <Box className="grid grid-cols-2 gap-6 mb-6">
-                                <FormControl fullWidth>
-                                    <InputLabel>Peralatan Rakaman</InputLabel>
-                                    <Select
-                                        name="recordEquipment"
-                                        value={data.recordEquipment}
-                                        onChange={handleInputChange}
-                                    >
-                                        <MenuItem value="Ada">Ada</MenuItem>
-                                        <MenuItem value="Tiada">Tiada</MenuItem>
-                                    </Select>
-                                    {errors.recordEquipment && (
-                                        <div className="text-red-500">{errors.recordEquipment}</div>
-                                    )}
-                                </FormControl>
-                                <FormControl fullWidth>
-                                    <InputLabel>Penggunaan Studio TVPSS</InputLabel>
-                                    <Select
-                                        name="tvpssStudio"
-                                        value={data.tvpssStudio}
-                                        onChange={handleInputChange}
-                                    >
-                                        <MenuItem value="Ada">Ada</MenuItem>
-                                        <MenuItem value="Tiada">Tiada</MenuItem>
-                                    </Select>
-                                    {errors.tvpssStudio && (
-                                        <div className="text-red-500">{errors.tvpssStudio}</div>
-                                    )}
-                                </FormControl>
-                                <FormControl fullWidth>
-                                    <InputLabel>Rakaman Dalam Sekolah</InputLabel>
-                                    <Select
-                                        name="recInSchool"
-                                        value={data.recInSchool}
-                                        onChange={handleInputChange}
-                                    >
-                                        <MenuItem value="Ada">Ada</MenuItem>
-                                        <MenuItem value="Tiada">Tiada</MenuItem>
-                                    </Select>
-                                    {errors.recInSchool && (
-                                        <div className="text-red-500">{errors.recInSchool}</div>
-                                    )}
-                                </FormControl>
-                                <FormControl fullWidth>
-                                    <InputLabel>Rakaman Luar Sekolah</InputLabel>
-                                    <Select
-                                        name="recInOutSchool"
-                                        value={data.recInOutSchool}
-                                        onChange={handleInputChange}
-                                    >
-                                        <MenuItem value="Ada">Ada</MenuItem>
-                                        <MenuItem value="Tiada">Tiada</MenuItem>
-                                    </Select>
-                                    {errors.recInOutSchool && (
-                                        <div className="text-red-500">{errors.recInOutSchool}</div>
-                                    )}
-                                </FormControl>
-                                <FormControl fullWidth>
-                                    <InputLabel>Teknologi 'Green Screen'</InputLabel>
-                                    <Select
-                                        name="greenScreen"
-                                        value={data.greenScreen}
-                                        onChange={handleInputChange}
-                                    >
-                                        <MenuItem value="Ada">Ada</MenuItem>
-                                        <MenuItem value="Tiada">Tiada</MenuItem>
-                                    </Select>
-                                    {errors.greenScreen && (
-                                        <div className="text-red-500">{errors.greenScreen}</div>
-                                    )}
-                                </FormControl>
+                                {[
+                                    { label: 'Peralatan Rakaman', name: 'recordEquipment' },
+                                    { label: 'Studio TVPSS', name: 'tvpssStudio' },
+                                    { label: 'Rakaman Dalam Sekolah', name: 'recInSchool' },
+                                    { label: 'Rakaman Luar Sekolah', name: 'recInOutSchool' },
+                                    { label: "'Green Screen' Technology", name: 'greenScreen' },
+                                ].map(({ label, name }) => (
+                                    <FormControl fullWidth key={name}>
+                                        <InputLabel>{label}</InputLabel>
+                                        <Select
+                                            name={name}
+                                            value={data[name]}
+                                            onChange={handleInputChange}
+                                        >
+                                            <MenuItem value="Ada">Ada</MenuItem>
+                                            <MenuItem value="Tiada">Tiada</MenuItem>
+                                        </Select>
+                                        {errors[name] && <div className="text-red-500">{errors[name]}</div>}
+                                    </FormControl>
+                                ))}
                             </Box>
 
                             {/* Buttons */}
