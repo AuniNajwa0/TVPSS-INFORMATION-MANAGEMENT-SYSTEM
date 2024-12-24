@@ -117,4 +117,16 @@ class StateAdminController extends Controller
             'schoolInfo' => $schoolInfo, 
         ]);
     }
+
+    public function tvpssInfoView($schoolCode)
+    {
+        $schoolInfo = SchoolInfo::where('schoolCode', $schoolCode)->first();
+        if (!$schoolInfo) {
+            return redirect()->route('schoolInfo.tvpssInfoIndex')->with('error', 'School not found.');
+        }
+
+        return Inertia::render('2-StateAdmin/SchoolVersionStatus/', [
+            'schoolInfo' => $schoolInfo,
+        ]);
+    }
 }

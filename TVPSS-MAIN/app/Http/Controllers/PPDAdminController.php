@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\SchoolInfo;
+use App\Models\TVPSSVersion;
+use App\Enums\ApprovalStatusEnum;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
 
@@ -53,6 +55,7 @@ class PPDAdminController extends Controller
 
         $tvpssData = [
             'schoolName' => $school->schoolName . " (" . $school->schoolCode . ")",
+            'schoolCode' => $school->schoolCode,
             'officer' => $school->schoolOfficer,
             'info' => [
                 //'tvpssLogo' => $school->schoolVersion->tvpssLogo,
@@ -65,7 +68,7 @@ class PPDAdminController extends Controller
                 'greenScreen' => $school->schoolVersion->greenScreen ?? 'TIADA',
             ],
             'currentVersion' => $currentVersion,
-            'nextVersion' => $currentVersion + 1,
+            'nextVersion' => $currentVersion < 4 ? $currentVersion + 1 : 'Versi Dipenuhi',
         ];
 
         $debugData = [
@@ -79,9 +82,43 @@ class PPDAdminController extends Controller
         ]);
     }
 
-    public function tvpssInfoPPDUpdate(Request $request, string $id)
+    public function approveTVPSS(Request $request, string $schoolCode)
     {
-        //
+        $school = SchoolInfo::where('schoolCode', $schoolCode)->firstOrFail();
+        $schoolVersion = $school->schoolVersion;
+
+        if (!$schoolVersion) {
+            return redirect()
+                ->route('schoolInfo.tvpssInfoPPDList')
+                ->with('error', 'TVPSS Version not found for the given school.');
+        }
+
+        $schoolVersion->ppd_approval = true; 
+        $schoolVersion->status = ApprovalStatusEnum::PENDING;
+        $schoolVersion->save();
+
+        return redirect()->route('schoolInfo.tvpssInfoPPDList')
+            ->with('success', 'TVPSS Version successfully approved!');
+    }
+
+    public function rejectTVPSS(Request $request, string $schoolCode)
+    {
+        $school = SchoolInfo::where('schoolCode', $schoolCode)->firstOrFail();
+        $schoolVersion = $school->schoolVersion;
+
+        if (!$schoolVersion) {
+            return redirect()
+                ->route('schoolInfo.tvpssInfoPPDList')
+                ->with('error', 'TVPSS Version not found for the given school.');
+        }
+
+        $schoolVersion->ppd_approval = false; 
+        $schoolVersion->status = ApprovalStatusEnum::REJECTED->value; 
+        $schoolVersion->save();
+
+        return redirect()
+            ->route('schoolInfo.tvpssInfoPPDList')
+            ->with('error', 'TVPSS Version has been rejected.');
     }
 
     public function destroy(string $id)

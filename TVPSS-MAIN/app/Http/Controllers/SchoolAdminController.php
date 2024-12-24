@@ -355,7 +355,7 @@ class SchoolAdminController extends Controller
         $user = $request->user();
 
         $validated = $request->validate([
-            'version' => 'nullable|integer', // Change validation to integer
+            'version' => 'nullable|integer', 
             'agency1_name' => 'required|string|max:255',
             'agency1Manager_name' => 'nullable|string|max:255',
             'agency2_name' => 'nullable|string|max:255',
@@ -390,7 +390,7 @@ class SchoolAdminController extends Controller
         $schoolVersion->isCollabAgency = ($validated['agency1_name'] || $validated['agency2_name']) ? 'Ada' : 'Tiada';
 
         $schoolVersion->fill([
-            'version' => $validated['version'] ?? $schoolVersion->version, // Keep as integer
+            'version' => $validated['version'] ?? $schoolVersion->version, 
             'agency1_name' => $validated['agency1_name'],
             'agencyManager1_name' => $validated['agency1Manager_name'],
             'agency2_name' => $validated['agency2_name'],
@@ -405,7 +405,6 @@ class SchoolAdminController extends Controller
         $schoolVersion->status = ApprovalStatusEnum::PENDING;
         $schoolVersion->ppd_approval = false;
         $schoolVersion->state_approval = false;
-
         $schoolVersion->version = $this->checkTVPSSVersion($schoolInfo, $schoolVersion);
 
         $schoolVersion->school_info_id = $schoolInfo->id;
