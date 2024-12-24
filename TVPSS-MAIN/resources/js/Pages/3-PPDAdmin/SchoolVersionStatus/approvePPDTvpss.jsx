@@ -1,14 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import {
     Box,
     Typography,
     Card,
     CardContent,
     Button,
+    Checkbox,
     Chip,
+    FormControlLabel,
 } from "@mui/material";
-import { CheckCircle, Close, ArrowForward, Done, Clear } from "@mui/icons-material";
+import {
+    CheckCircle,
+    Close,
+    ArrowForward,
+    Done,
+    Clear,
+} from "@mui/icons-material";
 import { Head, usePage } from "@inertiajs/react";
+import { Inertia } from "@inertiajs/inertia";
 import PPDAdminSideBar from "../PPDAdminSideBar";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
@@ -22,16 +31,81 @@ const ApprovePPDTvpss = () => {
         info = {},
         currentVersion = 0,
         nextVersion = 0,
+        schoolCode = "",
     } = tvpssData;
 
     const normalizeValue = (value) => (value || "").trim().toUpperCase();
+
+    const descriptiveFields = [
+        { label: "Logo TVPSS", value: info.isTvpssLogo },
+        { label: "Corner/ Mini/ TV Studio", value: info.studio },
+        { label: "Upload di YouTube", value: info.youtube },
+        { label: "Rakaman dalam Sekolah", value: info.inSchoolRecording },
+        {
+            label: "Rakaman dalam dan luar Sekolah",
+            value: info.outSchoolRecording,
+        },
+        { label: "Berkolaborat dengan agensi luar", value: info.collaboration },
+        {
+            label: "Penggunaan Teknologi 'Green Screen'",
+            value: info.greenScreen,
+        },
+    ];
+
+    const [checkboxStates, setCheckboxStates] = useState(
+        descriptiveFields.reduce(
+            (acc, field) => ({
+                ...acc,
+                [field.label]: normalizeValue(field.value) === "ADA",
+            }),
+            {}
+        )
+    );
+
+    const handleCheckboxChange = (label) => {
+        setCheckboxStates((prevState) => ({
+            ...prevState,
+            [label]: !prevState[label],
+        }));
+    };
+
+    const handleApprove = () => {
+        console.log("Approving schoolCode:", tvpssData.schoolCode);
+        Inertia.post(`/tvpssInfoPPD/${schoolCode}/approve`, {}, {
+            onSuccess: () => {
+                alert("TVPSS has been approved!");
+            },
+            onError: (error) => {
+                console.error("Approval error:", error);
+                alert("Failed to approve TVPSS.");
+            },
+        });
+    };
+
+    const handleReject = () => {
+        console.log("Rejecting schoolCode:", tvpssData.schoolCode);
+        Inertia.post(`/tvpssInfoPPD/${schoolCode}/reject`, {}, {
+            onSuccess: () => {
+                alert("TVPSS has been rejected!");
+            },
+            onError: (error) => {
+                console.error("Rejection error:", error);
+                alert("Failed to reject TVPSS.");
+            },
+        });
+    };
 
     return (
         <AuthenticatedLayout
             header={
                 <Typography
                     variant="h5"
-                    sx={{ fontWeight: "bold", color: "#455185" }}
+                    sx={{
+                        fontWeight: "bold",
+                        color: "#455185",
+                        fontSize: "1.5rem",
+                        marginBottom: "0.5rem",
+                    }}
                 >
                     Info Status TVPSS
                 </Typography>
@@ -52,6 +126,23 @@ const ApprovePPDTvpss = () => {
 
                 {/* Main Content */}
                 <Box width="80%" p={4} sx={{ backgroundColor: "#F7F9FC" }}>
+                    {/* Breadcrumb */}
+                    <Box
+                        sx={{
+                            display: "flex",
+                            gap: 1,
+                            mb: 2,
+                            color: "#666",
+                            fontSize: "0.875rem",
+                        }}
+                    >
+                        <Typography>Informasi TVPSS Sekolah</Typography>
+                        <Typography>›</Typography>
+                        <Typography>Info Status TVPSS</Typography>
+                        <Typography>›</Typography>
+                        <Typography>{schoolName}</Typography>
+                    </Box>
+
                     <Typography
                         variant="h5"
                         sx={{ mb: 3, fontWeight: "bold", color: "#455185" }}
@@ -68,7 +159,12 @@ const ApprovePPDTvpss = () => {
                         }}
                     >
                         {/* Left Section */}
-                        <Card sx={{ flex: 1 }}>
+                        <Card
+                            sx={{
+                                flex: 1,
+                                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                            }}
+                        >
                             <CardContent>
                                 <Box
                                     sx={{
@@ -83,6 +179,7 @@ const ApprovePPDTvpss = () => {
                                         sx={{
                                             fontWeight: "bold",
                                             color: "white",
+                                            fontSize: "1rem",
                                         }}
                                     >
                                         {schoolName}
@@ -92,87 +189,73 @@ const ApprovePPDTvpss = () => {
                                 {/* Info Sekolah */}
                                 <Typography
                                     variant="subtitle1"
-                                    sx={{ fontWeight: "bold" }}
+                                    sx={{ fontWeight: "bold", mb: 1 }}
                                 >
                                     A. Info Sekolah
                                 </Typography>
                                 <Typography variant="body1" sx={{ mb: 3 }}>
                                     Pegawai TVPSS Sekolah:{" "}
-                                    <strong>{officer}</strong>
+                                    <Box
+                                        component="span"
+                                        sx={{
+                                            bgcolor: "#E8EAF6",
+                                            px: 1,
+                                            py: 0.5,
+                                            borderRadius: 1,
+                                            display: "inline-block",
+                                        }}
+                                    >
+                                        {officer}
+                                    </Box>
                                 </Typography>
 
                                 {/* Info TVPSS */}
                                 <Typography
                                     variant="subtitle1"
-                                    sx={{ fontWeight: "bold" }}
+                                    sx={{ fontWeight: "bold", mb: 2 }}
                                 >
                                     B. Info TVPSS Sekolah
                                 </Typography>
                                 <Box mt={2}>
-                                    {Object.entries(info).map(
-                                        ([key, value], index) => (
-                                            <Box
-                                                key={index}
-                                                display="flex"
-                                                alignItems="center"
-                                                justifyContent="space-between"
-                                                mb={1}
+                                    {descriptiveFields.map((field, index) => (
+                                        <Box
+                                            key={index}
+                                            display="flex"
+                                            alignItems="center"
+                                            justifyContent="space-between"
+                                            mb={1.5}
+                                            sx={{
+                                                "&:not(:last-child)": {
+                                                    borderBottom:
+                                                        "1px solid #eee",
+                                                    pb: 1,
+                                                },
+                                            }}
+                                        >
+                                            <Typography
+                                                variant="body2"
+                                                sx={{
+                                                    flex: 1,
+                                                    color: "#444",
+                                                }}
                                             >
-                                                <Typography
-                                                    variant="body2"
-                                                    sx={{
-                                                        flex: 1,
-                                                        fontWeight: "bold",
-                                                    }}
-                                                >
-                                                    {key
-                                                        .replace(
-                                                            /([A-Z])/g,
-                                                            " $1"
-                                                        )
-                                                        .replace(/^\w/, (c) =>
-                                                            c.toUpperCase()
-                                                        )}
-                                                    :
-                                                </Typography>
-                                                <Chip
-                                                    label={value}
-                                                    sx={{
-                                                        bgcolor:
-                                                            normalizeValue(
-                                                                value
-                                                            ) === "ADA"
-                                                                ? "#E8F5E9"
-                                                                : "#FFEBEE",
-                                                        color:
-                                                            normalizeValue(
-                                                                value
-                                                            ) === "ADA"
-                                                                ? "#388E3C"
-                                                                : "#D32F2F",
-                                                        fontWeight: "bold",
-                                                    }}
-                                                    icon={
-                                                        normalizeValue(
-                                                            value
-                                                        ) === "ADA" ? (
-                                                            <CheckCircle
-                                                                sx={{
-                                                                    color: "#388E3C",
-                                                                }}
-                                                            />
-                                                        ) : (
-                                                            <Close
-                                                                sx={{
-                                                                    color: "#D32F2F",
-                                                                }}
-                                                            />
-                                                        )
-                                                    }
-                                                />
-                                            </Box>
-                                        )
-                                    )}
+                                                {field.label} :
+                                            </Typography>
+                                            <Chip
+                                                label={normalizeValue(
+                                                    field.value
+                                                )}
+                                                sx={{
+                                                    bgcolor: "#E8EAF6",
+                                                    color: "#455185",
+                                                    fontSize: "0.75rem",
+                                                    height: "24px",
+                                                    fontWeight: "normal",
+                                                }}
+                                                size="small"
+                                            />
+                                        </Box>
+                                    ))}
                                 </Box>
                             </CardContent>
                         </Card>
@@ -183,6 +266,7 @@ const ApprovePPDTvpss = () => {
                                 flex: 1,
                                 backgroundColor: "#F8F9FE",
                                 textAlign: "center",
+                                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
                             }}
                         >
                             <CardContent>
@@ -198,8 +282,11 @@ const ApprovePPDTvpss = () => {
                                 </Typography>
                                 <Typography
                                     variant="body2"
-                                    color="textSecondary"
-                                    mb={3}
+                                    sx={{
+                                        color: "#666",
+                                        mb: 3,
+                                        textDecoration: "underline",
+                                    }}
                                 >
                                     Naik Taraf Status Versi
                                 </Typography>
@@ -232,86 +319,85 @@ const ApprovePPDTvpss = () => {
                                     </Typography>
                                 </Box>
 
-                                <Card
-                                    sx={{
-                                        p: 3,
-                                        bgcolor: "white",
-                                        boxShadow:
-                                            "0px 2px 4px rgba(0,0,0,0.1)",
-                                        borderRadius: "8px",
-                                    }}
-                                >
-                                    {Object.entries(info).map(
-                                        ([key, value], index) => (
-                                            <Box
-                                                key={index}
-                                                sx={{
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    mb: 1,
-                                                }}
-                                            >
-                                                <CheckCircle
+                                <Box>
+                                    {descriptiveFields.map((field, index) => (
+                                        <FormControlLabel
+                                            key={index}
+                                            control={
+                                                <Checkbox
+                                                    checked={
+                                                        checkboxStates[
+                                                            field.label
+                                                        ]
+                                                    }
+                                                    onChange={() =>
+                                                        handleCheckboxChange(
+                                                            field.label
+                                                        )
+                                                    }
                                                     sx={{
-                                                        color:
-                                                            normalizeValue(
-                                                                value
-                                                            ) === "ADA"
-                                                                ? "#388E3C"
-                                                                : "#D32F2F",
-                                                        mr: 1,
-                                                        fontSize: 20,
+                                                        color: "#455185",
+                                                        "&.Mui-checked": {
+                                                            color: "#455185",
+                                                        },
                                                     }}
                                                 />
-                                                <Typography variant="body2">
-                                                    {key
-                                                        .replace(
-                                                            /([A-Z])/g,
-                                                            " $1"
-                                                        )
-                                                        .replace(/^\w/, (c) =>
-                                                            c.toUpperCase()
-                                                        )}
-                                                </Typography>
-                                            </Box>
-                                        )
-                                    )}
-                                    <Box
-                                        display="flex"
-                                        justifyContent="space-between"
-                                        gap={2}
-                                        mt={3}
+                                            }
+                                            label={field.label}
+                                            sx={{
+                                                display: "flex",
+                                                justifyContent: "left",
+                                                //justifyContent: "space-between",
+                                                color: "#455185",
+                                                mb: 1,
+                                                ml: 0,
+                                                width: "100%",
+                                                ".MuiFormControlLabel-label": {
+                                                    fontSize: "0.875rem",
+                                                    fontWeight: "normal",
+                                                },
+                                            }}
+                                        />
+                                    ))}
+                                </Box>
+
+                                <Box
+                                    display="flex"
+                                    justifyContent="space-between"
+                                    gap={2}
+                                    mt={3}
+                                >
+                                    <Button
+                                        variant="contained"
+                                        startIcon={<Done />}
+                                        fullWidth
+                                        onClick={handleApprove} 
+                                        sx={{
+                                            bgcolor: "#4CAF50",
+                                            "&:hover": {
+                                                bgcolor: "#45A049",
+                                            },
+                                            fontWeight: "bold",
+                                        }}
                                     >
-                                        <Button
-                                            variant="contained"
-                                            startIcon={<Done />}
-                                            fullWidth
-                                            sx={{
-                                                bgcolor: "#4CAF50",
-                                                "&:hover": {
-                                                    bgcolor: "#45A049",
-                                                },
-                                                fontWeight: "bold",
-                                            }}
-                                        >
-                                            Diterima
-                                        </Button>
-                                        <Button
-                                            variant="contained"
-                                            startIcon={<Clear />}
-                                            fullWidth
-                                            sx={{
-                                                bgcolor: "#F44336",
-                                                "&:hover": {
-                                                    bgcolor: "#E53935",
-                                                },
-                                                fontWeight: "bold",
-                                            }}
-                                        >
-                                            Ditolak
-                                        </Button>
-                                    </Box>
-                                </Card>
+                                        Diterima
+                                    </Button>
+                                    <Button
+                                        variant="contained"
+                                        startIcon={<Clear />}
+                                        fullWidth
+                                        onClick={handleReject}
+                                        sx={{
+                                            bgcolor: "#F44336",
+                                            "&:hover": {
+                                                bgcolor: "#E53935",
+                                            },
+                                            fontWeight: "bold",
+                                        }}
+                                    >
+                                        Ditolak
+                                    </Button>
+                                </Box>
                             </CardContent>
                         </Card>
                     </Box>
