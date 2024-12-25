@@ -151,7 +151,7 @@ const StudentList = () => {
                                             </button>
                                             <button
                                                 onClick={() => {
-                                                    if (confirm("Are you sure you want to delete this student?")) {
+                                                    if (window.confirm("Are you sure you want to delete this student?")) {
                                                         router.delete(`/students/${student.id}`);
                                                     }
                                                 }}
