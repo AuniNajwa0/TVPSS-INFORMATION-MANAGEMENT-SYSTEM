@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 use App\Http\Requests\Equipment\StoreEquipmentRequest;
 use App\Http\Requests\Equipment\UpdateEquipmentRequest;
 use Inertia\Inertia;
@@ -11,6 +10,7 @@ use App\Models\Equipment;
 use App\Models\EqLocation;
 use App\Models\SchoolInfo;
 use App\Models\TVPSSVersion;
+use App\Models\Student;
 use App\Enums\StatusEnum;
 use App\Enums\versionEnum;
 use App\Enums\ApprovalStatusEnum;
@@ -590,6 +590,101 @@ class SchoolAdminController extends Controller
         }
 
         return response()->json(['version' => $schoolInfo->schoolVersion->version]);
+    }
+
+    public function studentList(Request $request)
+    {
+        $students = Student::all();
+
+        return Inertia::render('4-SchoolAdmin/StudentManagement/studentList', [
+            'students' => $students,
+        ]);
+    }
+
+    public function studentCreate(Request $request)
+    {
+        $user = $request->user(); 
+        $schoolInfo = SchoolInfo::where('user_id', $user->id)->first();
+
+        return Inertia::render('4-SchoolAdmin/StudentManagement/addStudent', [
+            'schoolInfo' => $schoolInfo,
+        ]);
+    }
+
+    public function storeStudent(Request $request)
+    {
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'ic_num' => 'required|string|unique:students,ic_num',
+            'email' => 'required|email|unique:students,email',
+            'crew' => 'nullable|string|max:255',
+            'school_info_id' => 'required|exists:schoolinfo,id',
+        ]);
+
+        try {
+            $schoolInfo = SchoolInfo::findOrFail($validatedData['school_info_id']);
+
+            Student::create([
+                'name' => $validatedData['name'],
+                'ic_num' => $validatedData['ic_num'],
+                'email' => $validatedData['email'],
+                'crew' => $validatedData['crew'],
+                'state' => $schoolInfo->state,
+                'district' => $schoolInfo->district,
+                'schoolName' => $schoolInfo->schoolName,
+                'school_info_id' => $schoolInfo->id,
+            ]);
+
+            return redirect()->route('student.studentList')->with('success', 'Student added successfully!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to add student. Please try again.');
+        }
+    }
+
+    public function studentEdit($id)
+    {
+        $student = Student::findOrFail($id);
+        $schoolInfo = SchoolInfo::findOrFail($student->school_info_id);
+
+        return Inertia::render('4-SchoolAdmin/StudentManagement/updateStudent', [
+            'student' => $student,
+            'schoolInfo' => $schoolInfo,
+        ]);
+    }
+
+    public function updateStudent(Request $request, $id)
+    {
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'ic_num' => 'required|string|unique:students,ic_num,' . $id,
+            'email' => 'required|email|unique:students,email,' . $id,
+            'crew' => 'nullable|string|max:255',
+            'school_info_id' => 'required|exists:schoolinfo,id',
+        ]);
+
+        $student = Student::findOrFail($id);
+        $schoolInfo = SchoolInfo::findOrFail($validatedData['school_info_id']);
+
+        $student->update([
+            'name' => $validatedData['name'],
+            'ic_num' => $validatedData['ic_num'],
+            'email' => $validatedData['email'],
+            'crew' => $validatedData['crew'],
+            'state' => $schoolInfo->state,
+            'district' => $schoolInfo->district,
+            'schoolName' => $schoolInfo->schoolName,
+            'school_info_id' => $schoolInfo->id,
+        ]);
+
+        return redirect()->route('student.studentList')->with('success', 'Student updated successfully!');
+    }
+
+    public function deleteStudent($id)
+    {
+        $student = Student::findOrFail($id);
+        $student->delete();
+
+        return redirect()->route('student.studentList')->with('success', 'Student deleted successfully!');
     }
 
 }

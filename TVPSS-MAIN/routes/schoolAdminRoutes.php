@@ -34,7 +34,6 @@ Route::get('/updateSchool', [SchoolAdminController::class, 'editSchool'])->name(
 Route::post('/update-school', [SchoolAdminController::class, 'updateSchool'])->name('school.update');
 
 //TVPSS Version
-//Route::get('/version-checker', [SchoolAdminController::class, 'checkVersionCriteria'])->name('version.checker');
 Route::get('/updateSchoolTVPSSVersion', [SchoolAdminController::class, 'updateTVPSSVer1'])->name('tvpss1');
 Route::post('/updateEditSchoolTVPSSVersion', [SchoolAdminController::class, 'editTVPSSVer1'])->name('tvpss1Edit');
 Route::get('/updateSchoolTVPSSVersion2', [SchoolAdminController::class, 'updateTVPSSVer2'])->name('tvpss2');
@@ -42,3 +41,11 @@ Route::post('/updateEditSchoolTVPSSVersion2', [SchoolAdminController::class, 'ed
 
 //Dashboard Count 
 Route::get('/get-tvpss-version', [SchoolAdminController::class, 'getTVPSSVersion'])->name('tvpss.getVersion');
+
+//Student Data
+Route::get('/listStudent', [SchoolAdminController::class, 'studentList'])->name('student.studentList');
+Route::get('/students/create', [SchoolAdminController::class, 'studentCreate'])->name('student.create');
+Route::post('/students', [SchoolAdminController::class, 'storeStudent'])->name('student.store');
+Route::get('/students/{id}/edit', [SchoolAdminController::class, 'studentEdit'])->name('student.edit');
+Route::put('/students/{id}', [SchoolAdminController::class, 'updateStudent'])->name('student.update');
+Route::delete('/students/{id}', [SchoolAdminController::class, 'deleteStudent'])->name('student.delete');
