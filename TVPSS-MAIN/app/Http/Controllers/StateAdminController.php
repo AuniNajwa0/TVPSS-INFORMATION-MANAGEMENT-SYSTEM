@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\CertificateTemplate;
+use App\Models\TVPSSVersion;
+use App\Enums\ApprovalStatusEnum;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -153,6 +155,7 @@ class StateAdminController extends Controller
 
         $tvpssData = [
             'schoolName' => $school->schoolName . " (" . $school->schoolCode . ")",
+            'schoolCode' => $school->schoolCode,
             'officer' => $school->schoolOfficer,
             'info' => [
                 'isTvpssLogo' => $school->schoolVersion->isTvpssLogo ?? 'TIADA',
@@ -167,8 +170,47 @@ class StateAdminController extends Controller
             'nextVersion' => $currentVersion < 4 ? $currentVersion + 1 : 'Versi Dipenuhi',
         ];
 
-        return Inertia::render('2-StateAdmin/SchoolVersionStatus/approveTVPSS', [
+        return Inertia::render('2-StateAdmin/SchoolVersionStatus/approveStateTvpss', [
             'tvpssData' => $tvpssData,
         ]);
+    }
+
+    public function approveTVPSS(Request $request, string $schoolCode)
+    {
+        $school = SchoolInfo::where('schoolCode', $schoolCode)->firstOrFail();
+        $schoolVersion = $school->schoolVersion;
+
+        if (!$schoolVersion) {
+            return redirect()
+                ->route('schoolInfo.tvpssInfoIndex')
+                ->with('error', 'TVPSS Version not found for the given school.');
+        }
+
+        $schoolVersion->state_approval = true; 
+        $schoolVersion->status = ApprovalStatusEnum::APPROVED;
+        $schoolVersion->save();
+
+        return redirect()->route('schoolInfo.tvpssInfoIndex')
+            ->with('success', 'TVPSS Version successfully approved!');
+    }
+
+    public function rejectTVPSS(Request $request, string $schoolCode)
+    {
+        $school = SchoolInfo::where('schoolCode', $schoolCode)->firstOrFail();
+        $schoolVersion = $school->schoolVersion;
+
+        if (!$schoolVersion) {
+            return redirect()
+                ->route('schoolInfo.tvpssInfoIndex')
+                ->with('error', 'TVPSS Version not found for the given school.');
+        }
+
+        $schoolVersion->state_approval = false;
+        $schoolVersion->status = ApprovalStatusEnum::REJECTED->value; 
+        $schoolVersion->save();
+
+        return redirect()
+            ->route('schoolInfo.tvpssInfoIndex')
+            ->with('error', 'TVPSS Version has been rejected.');
     }
 }
