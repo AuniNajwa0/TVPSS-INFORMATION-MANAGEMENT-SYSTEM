@@ -109,24 +109,66 @@ class StateAdminController extends Controller
         ]);
     }
 
-    public function tvpssInfoIndex()
+    public function tvpssInfoIndex(Request $request)
     {
-        $schoolInfo = SchoolInfo::first(); 
-        
+        $user = $request->user();
+
+        if (!$user->state) {
+            return Inertia::render('2-StateAdmin/SchoolVersionStatus/listSchool', [
+                'schools' => [],
+                'message' => 'No schools found for your state.',
+            ]);
+        }
+
+        $schools = SchoolInfo::where('state', $user->state)
+            ->with(['schoolVersion' => function ($query) {
+                $query->select('id', 'school_info_id', 'version', 'status');
+            }])
+            ->get()
+            ->map(function ($school) {
+                return [
+                    'schoolCode' => $school->schoolCode,
+                    'schoolName' => $school->schoolName,
+                    'schoolOfficer' => $school->schoolOfficer,
+                    'state' => $school->state,
+                    'schoolVersion' => $school->schoolVersion->version ?? '-',
+                    'status' => $school->schoolVersion->status ?? 'Null',
+                ];
+            });
+
         return Inertia::render('2-StateAdmin/SchoolVersionStatus/listSchool', [
-            'schoolInfo' => $schoolInfo, 
+            'schools' => $schools,
         ]);
     }
 
     public function tvpssInfoView($schoolCode)
     {
-        $schoolInfo = SchoolInfo::where('schoolCode', $schoolCode)->first();
-        if (!$schoolInfo) {
+        $school = SchoolInfo::with('schoolVersion')->where('schoolCode', $schoolCode)->first();
+
+        if (!$school) {
             return redirect()->route('schoolInfo.tvpssInfoIndex')->with('error', 'School not found.');
         }
 
-        return Inertia::render('2-StateAdmin/SchoolVersionStatus/', [
-            'schoolInfo' => $schoolInfo,
+        $currentVersion = $school->schoolVersion->version?->value ?? 0;
+
+        $tvpssData = [
+            'schoolName' => $school->schoolName . " (" . $school->schoolCode . ")",
+            'officer' => $school->schoolOfficer,
+            'info' => [
+                'isTvpssLogo' => $school->schoolVersion->isTvpssLogo ?? 'TIADA',
+                'studio' => $school->schoolVersion->tvpssStudio ?? 'TIADA',
+                'youtube' => $school->schoolVersion->isUploadYoutube ?? 'TIADA',
+                'inSchoolRecording' => $school->schoolVersion->recInSchool ?? 'TIADA',
+                'outSchoolRecording' => $school->schoolVersion->recInOutSchool ?? 'TIADA',
+                'collaboration' => $school->schoolVersion->isCollabAgency ?? 'TIADA',
+                'greenScreen' => $school->schoolVersion->greenScreen ?? 'TIADA',
+            ],
+            'currentVersion' => $currentVersion,
+            'nextVersion' => $currentVersion < 4 ? $currentVersion + 1 : 'Versi Dipenuhi',
+        ];
+
+        return Inertia::render('2-StateAdmin/SchoolVersionStatus/approveTVPSS', [
+            'tvpssData' => $tvpssData,
         ]);
     }
 }

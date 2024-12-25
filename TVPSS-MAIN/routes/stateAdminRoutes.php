@@ -25,4 +25,7 @@ Route::get('/generateCertificate',  fn() => Inertia::render('2-StateAdmin/Studen
 
 // TVPSS VERSION UPDATE
 Route::get('/tvpssInfo', [StateAdminController::class, 'tvpssInfoIndex'])->name('schoolInfo.tvpssInfoIndex');
+Route::get('/stateAdmin/schools', [StateAdminController::class, 'tvpssInfoIndex'])->name('schoolInfo.tvpssInfoIndex');
+Route::get('/stateAdmin/school/{schoolCode}/edit', [StateAdminController::class, 'tvpssInfoView'])->name('schoolInfo.tvpssInfoView');
+
 
