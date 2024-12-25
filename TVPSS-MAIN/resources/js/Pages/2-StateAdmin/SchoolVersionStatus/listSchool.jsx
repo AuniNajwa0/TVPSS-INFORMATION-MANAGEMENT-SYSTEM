@@ -4,7 +4,7 @@ import { router, Head } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import StateAdminSideBar from "../StateAdminSideBar";
 
-export default function ListSchool({ schools }) {
+export default function ListSchool({ schools = [] }) {
     const [searchQuery, setSearchQuery] = useState("");
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
@@ -215,7 +215,7 @@ export default function ListSchool({ schools }) {
                                                 className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
                                                 onClick={() =>
                                                     router.visit(
-                                                        `/stateAdmin/school/${school.schoolCode}/edit`
+                                                        `/tvpssInfoState/${school.schoolCode}/edit`
                                                     )
                                                 }
                                             >
@@ -240,6 +240,7 @@ export default function ListSchool({ schools }) {
                     {/* Pagination */}
                     <div className="flex justify-between items-center mt-6">
                         <button
+                            aria-label="Previous page"
                             onClick={handlePrevPage}
                             className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
                             disabled={currentPage === 1}
@@ -250,6 +251,7 @@ export default function ListSchool({ schools }) {
                             Page {currentPage} of {totalPages}
                         </span>
                         <button
+                            aria-label="Next page"
                             onClick={handleNextPage}
                             className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
                             disabled={currentPage === totalPages}
