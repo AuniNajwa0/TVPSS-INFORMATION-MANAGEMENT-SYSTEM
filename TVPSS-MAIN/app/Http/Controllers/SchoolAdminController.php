@@ -594,7 +594,14 @@ class SchoolAdminController extends Controller
 
     public function studentList(Request $request)
     {
-        $students = Student::all();
+        $user = $request->user();
+        $schoolInfo = SchoolInfo::where('user_id', $user->id)->first();
+
+        if (!$schoolInfo) {
+            return redirect()->route('school.edit')->with('error', 'Please complete your school information first.');
+        }
+
+        $students = Student::where('school_info_id', $schoolInfo->id)->get();
 
         return Inertia::render('4-SchoolAdmin/StudentManagement/studentList', [
             'students' => $students,
@@ -606,6 +613,10 @@ class SchoolAdminController extends Controller
         $user = $request->user(); 
         $schoolInfo = SchoolInfo::where('user_id', $user->id)->first();
 
+        if (!$schoolInfo) {
+            return redirect()->route('school.edit')->with('error', 'Please complete your school information first.');
+        }
+
         return Inertia::render('4-SchoolAdmin/StudentManagement/addStudent', [
             'schoolInfo' => $schoolInfo,
         ]);
@@ -613,17 +624,21 @@ class SchoolAdminController extends Controller
 
     public function storeStudent(Request $request)
     {
+        $user = $request->user();
+        $schoolInfo = SchoolInfo::where('user_id', $user->id)->first();
+
+        if (!$schoolInfo) {
+            return redirect()->route('school.edit')->with('error', 'Please complete your school information first.');
+        }
+
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'ic_num' => 'required|string|unique:students,ic_num',
             'email' => 'required|email|unique:students,email',
             'crew' => 'nullable|string|max:255',
-            'school_info_id' => 'required|exists:schoolinfo,id',
         ]);
 
         try {
-            $schoolInfo = SchoolInfo::findOrFail($validatedData['school_info_id']);
-
             Student::create([
                 'name' => $validatedData['name'],
                 'ic_num' => $validatedData['ic_num'],
@@ -643,7 +658,8 @@ class SchoolAdminController extends Controller
 
     public function studentEdit($id)
     {
-        $student = Student::findOrFail($id);
+        $user = request()->user();
+        $student = Student::where('id', $id)->where('school_info_id', SchoolInfo::where('user_id', $user->id)->value('id'))->firstOrFail();
         $schoolInfo = SchoolInfo::findOrFail($student->school_info_id);
 
         return Inertia::render('4-SchoolAdmin/StudentManagement/updateStudent', [
@@ -654,16 +670,21 @@ class SchoolAdminController extends Controller
 
     public function updateStudent(Request $request, $id)
     {
+        $user = $request->user();
+        $schoolInfo = SchoolInfo::where('user_id', $user->id)->first();
+
+        if (!$schoolInfo) {
+            return redirect()->route('school.edit')->with('error', 'Please complete your school information first.');
+        }
+
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'ic_num' => 'required|string|unique:students,ic_num,' . $id,
             'email' => 'required|email|unique:students,email,' . $id,
             'crew' => 'nullable|string|max:255',
-            'school_info_id' => 'required|exists:schoolinfo,id',
         ]);
 
-        $student = Student::findOrFail($id);
-        $schoolInfo = SchoolInfo::findOrFail($validatedData['school_info_id']);
+        $student = Student::where('id', $id)->where('school_info_id', $schoolInfo->id)->firstOrFail();
 
         $student->update([
             'name' => $validatedData['name'],
@@ -681,7 +702,8 @@ class SchoolAdminController extends Controller
 
     public function deleteStudent($id)
     {
-        $student = Student::findOrFail($id);
+        $user = request()->user();
+        $student = Student::where('id', $id)->where('school_info_id', SchoolInfo::where('user_id', $user->id)->value('id'))->firstOrFail();
         $student->delete();
 
         return redirect()->route('student.studentList')->with('success', 'Student deleted successfully!');
