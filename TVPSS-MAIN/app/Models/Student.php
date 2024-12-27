@@ -24,4 +24,9 @@ class Student extends Model
     {
         return $this->belongsTo(SchoolInfo::class, 'school_info_id');
     }
+
+    public function studcrew()
+    {
+        return $this->hasMany(Studcrew::class);
+    }
 }
