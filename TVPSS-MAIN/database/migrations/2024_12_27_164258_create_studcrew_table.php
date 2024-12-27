@@ -13,7 +13,12 @@ return new class extends Migration
     {
         Schema::create('studcrew', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('student_id');
+            $table->string('jawatan')->nullable();
+            $table->string('status')>enum('status', ['Permohonan Lulus', 'Permohonan Ditolak', 'Permohonan Belum Diproses'])->default('Permohonan Belum Diproses');
             $table->timestamps();
+
+            $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade');
         });
     }
 
