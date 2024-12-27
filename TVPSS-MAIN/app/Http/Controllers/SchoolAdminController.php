@@ -676,43 +676,32 @@ class SchoolAdminController extends Controller
 
     public function updateStudent(Request $request, $id)
     {
+        $user = $request->user();
+        $schoolInfo = SchoolInfo::where('user_id', $user->id)->firstOrFail();
+
+        $student = Student::where('id', $id)
+            ->where('school_info_id', $schoolInfo->id)
+            ->firstOrFail();
+
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'ic_num' => 'required|string|unique:students,ic_num,' . $id,
             'email' => 'required|email|unique:students,email,' . $id,
             'crew' => 'nullable|string|max:255',
-            'school_info_id' => 'required|exists:schoolInfo,id',
         ]);
 
-        $user = $request->user();
+        $student->update([
+            'name' => $validatedData['name'],
+            'ic_num' => $validatedData['ic_num'],
+            'email' => $validatedData['email'],
+            'crew' => $validatedData['crew'],
+            'state' => $schoolInfo->state,
+            'district' => $schoolInfo->district,
+            'schoolName' => $schoolInfo->schoolName,
+            'school_info_id' => $schoolInfo->id,
+        ]);
 
-        // Validate ownership: Ensure the school_info_id belongs to the logged-in user
-        $schoolInfo = SchoolInfo::where('id', $validatedData['school_info_id'])
-            ->where('user_id', $user->id)
-            ->firstOrFail();
-
-        // Validate ownership: Ensure the student belongs to the selected school
-        $student = Student::where('id', $id)
-            ->where('school_info_id', $schoolInfo->id)
-            ->firstOrFail();
-
-        try {
-            // Update the student record
-            $student->update([
-                'name' => $validatedData['name'],
-                'ic_num' => $validatedData['ic_num'],
-                'email' => $validatedData['email'],
-                'crew' => $validatedData['crew'],
-                'state' => $schoolInfo->state,        // Include these if needed in the Student model
-                'district' => $schoolInfo->district, // Include these if needed in the Student model
-                'schoolName' => $schoolInfo->schoolName, // Include these if needed in the Student model
-                'school_info_id' => $schoolInfo->id,
-            ]);
-
-            return redirect()->route('student.studentList')->with('success', 'Student updated successfully!');
-        } catch (\Exception $e) {
-            return back()->with('error', 'An error occurred while updating the student.');
-        }
+        return redirect()->route('student.studentList')->with('success', 'Student updated successfully!');
     }
 
     public function deleteStudent($id)
