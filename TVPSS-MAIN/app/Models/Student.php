@@ -20,10 +20,6 @@ class Student extends Model
         'school_info_id',
     ];
 
-    /**
-     * Relationship with the SchoolInfo model.
-     * This links a student to their school.
-     */
     public function schoolInfo()
     {
         return $this->belongsTo(SchoolInfo::class, 'school_info_id');
