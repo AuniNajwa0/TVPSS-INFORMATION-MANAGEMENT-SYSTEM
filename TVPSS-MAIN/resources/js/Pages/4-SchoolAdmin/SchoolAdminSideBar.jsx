@@ -71,10 +71,10 @@ function SchoolAdminSideBar() {
                     />
 
                     <SidebarLink
-                        href="/pencapaianPelajar"
+                        href="/listAchievement"
                         icon={<FaCheckCircle size={20} />}
                         label="Pencapaian Pelajar"
-                        active={url.startsWith("/pencapaianPelajar")}
+                        active={url.startsWith("/listAchievement")}
                     />
 
                     <SidebarLink
