@@ -1,6 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
-import { useState, useEffect } from 'react';
-import { ArrowRight, Play, Users, BookOpen, Award, Lock, UserPlus } from 'lucide-react';
+import { ArrowRight, Award, BookOpen, Lock, Play, Users } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 export default function Welcome({ auth, laravelVersion, phpVersion }) {
     const [currentSlide, setCurrentSlide] = useState(0);
