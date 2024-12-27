@@ -5,14 +5,14 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, router, usePage } from "@inertiajs/react";
 
 const StudentList = () => {
-    const { students } = usePage().props;
+    const { students } = usePage().props; 
     const [searchQuery, setSearchQuery] = useState("");
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
-    const [filteredStudents, setFilteredStudents] = useState(students);
+    const [filteredStudents, setFilteredStudents] = useState(students.data || []);
 
     useEffect(() => {
-        const results = students.filter(
+        const results = (students.data || []).filter(
             (student) =>
                 student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 student.ic_num.includes(searchQuery)
@@ -27,7 +27,7 @@ const StudentList = () => {
 
     const handleRowsPerPageChange = (e) => {
         setRowsPerPage(Number(e.target.value));
-        setCurrentPage(1); // Reset to first page when changing rows per page
+        setCurrentPage(1); 
     };
 
     const handlePrevPage = () => {
@@ -43,7 +43,7 @@ const StudentList = () => {
     };
 
     const handleTambahPelajar = () => {
-        router.visit('/students/create'); 
+        router.visit("/students/create");
     };
 
     const paginatedData = filteredStudents.slice(
@@ -60,9 +60,7 @@ const StudentList = () => {
                 </div>
 
                 <div className="flex-1 p-6 bg-white min-h-screen">
-                    <h1 className="text-2xl font-semibold mb-6">
-                        Student Management
-                    </h1>
+                    <h1 className="text-2xl font-semibold mb-6">Pengurusan Pelajar</h1>
 
                     {/* Search and Actions */}
                     <div className="flex justify-between items-center mb-4 space-x-4">
@@ -91,9 +89,7 @@ const StudentList = () => {
                                 Export
                             </button>
                             <div className="flex items-center space-x-2">
-                                <span className="text-sm font-medium">
-                                    Show
-                                </span>
+                                <span className="text-sm font-medium">Show</span>
                                 <select
                                     value={rowsPerPage}
                                     onChange={handleRowsPerPageChange}
@@ -105,9 +101,7 @@ const StudentList = () => {
                                     <option value={50}>50</option>
                                     <option value={100}>100</option>
                                 </select>
-                                <span className="text-sm font-medium">
-                                    Entries
-                                </span>
+                                <span className="text-sm font-medium">Entries</span>
                             </div>
                         </div>
                     </div>
@@ -131,16 +125,10 @@ const StudentList = () => {
                                         className="hover:bg-gray-50 border-b"
                                     >
                                         <td className="p-4">
-                                            {index +
-                                                1 +
-                                                (currentPage - 1) * rowsPerPage}
+                                            {index + 1 + (currentPage - 1) * rowsPerPage}
                                         </td>
-                                        <td className="p-4">
-                                            {student.name}
-                                        </td>
-                                        <td className="p-4">
-                                            {student.ic_num}
-                                        </td>
+                                        <td className="p-4">{student.name}</td>
+                                        <td className="p-4">{student.ic_num}</td>
                                         <td className="p-4">{student.email}</td>
                                         <td className="p-4 flex space-x-2">
                                             <button
@@ -164,10 +152,7 @@ const StudentList = () => {
                                 ))
                             ) : (
                                 <tr>
-                                    <td
-                                        colSpan="5"
-                                        className="text-center py-4"
-                                    >
+                                    <td colSpan="5" className="text-center py-4">
                                         No data found
                                     </td>
                                 </tr>
