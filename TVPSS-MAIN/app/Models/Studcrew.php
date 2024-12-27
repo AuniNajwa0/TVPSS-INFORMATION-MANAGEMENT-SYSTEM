@@ -14,5 +14,13 @@ class Studcrew extends Model
 
     protected $guarded = [
         'id',
+        'jawatan',
+        'status',
+        'student_id',
     ];
+
+    public function student()
+    {
+        return $this->belongsTo(Student::class);
+    }
 }
