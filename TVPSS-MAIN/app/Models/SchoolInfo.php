@@ -43,6 +43,11 @@ class SchoolInfo extends Model
         return $this->hasOne(TVPSSVersion::class, 'school_info_id');
     }
 
+    public function students()
+    {
+        return $this->hasMany(Student::class);
+    }
+
     public function updateLogo($file)
     {
         if ($file) {

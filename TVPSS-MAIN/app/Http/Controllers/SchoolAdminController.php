@@ -425,7 +425,7 @@ class SchoolAdminController extends Controller
         $greenScreen = $schoolVersion->greenScreen?->value ?? 'Tiada'; 
 
         // Debugging logs
-        \Log::info("Check TVPSS Version", [
+        Log::info("Check TVPSS Version", [
             'isFillSchoolName' => $isFillSchoolName,
             'isTvpssLogo' => $isTvpssLogo,
             'tvpssStudio' => $tvpssStudio,
@@ -595,26 +595,31 @@ class SchoolAdminController extends Controller
     public function studentList(Request $request)
     {
         $user = $request->user();
-        $schoolInfo = SchoolInfo::where('user_id', $user->id)->first();
 
-        if (!$schoolInfo) {
-            return redirect()->route('school.edit')->with('error', 'Please complete your school information first.');
+        $school = SchoolInfo::where('user_id', $user->id)->first();
+        $query = Student::where('school_info_id', $school->id);
+
+        if ($request->has('search')) {
+            $query->where('name', 'like', '%' . $request->input('search') . '%')
+                ->orWhere('ic_num', 'like', '%' . $request->input('search') . '%');
         }
 
-        $students = Student::where('school_info_id', $schoolInfo->id)->get();
+        $students = $query->paginate(10);
 
         return Inertia::render('4-SchoolAdmin/StudentManagement/studentList', [
             'students' => $students,
+            'school' => $school,
         ]);
     }
 
     public function studentCreate(Request $request)
     {
-        $user = $request->user(); 
+        $user = $request->user();
+
         $schoolInfo = SchoolInfo::where('user_id', $user->id)->first();
 
         if (!$schoolInfo) {
-            return redirect()->route('school.edit')->with('error', 'Please complete your school information first.');
+            return redirect()->back()->with('error', 'No associated school found for this user.');
         }
 
         return Inertia::render('4-SchoolAdmin/StudentManagement/addStudent', [
@@ -624,21 +629,16 @@ class SchoolAdminController extends Controller
 
     public function storeStudent(Request $request)
     {
-        $user = $request->user();
-        $schoolInfo = SchoolInfo::where('user_id', $user->id)->first();
-
-        if (!$schoolInfo) {
-            return redirect()->route('school.edit')->with('error', 'Please complete your school information first.');
-        }
-
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'ic_num' => 'required|string|unique:students,ic_num',
-            'email' => 'required|email|unique:students,email',
-            'crew' => 'nullable|string|max:255',
-        ]);
-
         try {
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255',
+                'ic_num' => 'required|string|unique:students,ic_num',
+                'email' => 'required|email|unique:students,email',
+                'crew' => 'nullable|string|max:255',
+            ]);
+
+            $schoolInfo = SchoolInfo::where('user_id', $request->user()->id)->firstOrFail();
+
             Student::create([
                 'name' => $validatedData['name'],
                 'ic_num' => $validatedData['ic_num'],
@@ -651,6 +651,8 @@ class SchoolAdminController extends Controller
             ]);
 
             return redirect()->route('student.studentList')->with('success', 'Student added successfully!');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->back()->withErrors($e->validator->errors())->withInput();
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Failed to add student. Please try again.');
         }
@@ -659,51 +661,70 @@ class SchoolAdminController extends Controller
     public function studentEdit($id)
     {
         $user = request()->user();
-        $student = Student::where('id', $id)->where('school_info_id', SchoolInfo::where('user_id', $user->id)->value('id'))->firstOrFail();
-        $schoolInfo = SchoolInfo::findOrFail($student->school_info_id);
+
+        $student = Student::where('id', $id)
+            ->whereHas('schoolInfo', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })
+            ->firstOrFail();
 
         return Inertia::render('4-SchoolAdmin/StudentManagement/updateStudent', [
             'student' => $student,
-            'schoolInfo' => $schoolInfo,
+            'schoolInfo' => $student->schoolInfo,
         ]);
     }
 
     public function updateStudent(Request $request, $id)
     {
-        $user = $request->user();
-        $schoolInfo = SchoolInfo::where('user_id', $user->id)->first();
-
-        if (!$schoolInfo) {
-            return redirect()->route('school.edit')->with('error', 'Please complete your school information first.');
-        }
-
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'ic_num' => 'required|string|unique:students,ic_num,' . $id,
             'email' => 'required|email|unique:students,email,' . $id,
             'crew' => 'nullable|string|max:255',
+            'school_info_id' => 'required|exists:schoolInfo,id',
         ]);
 
-        $student = Student::where('id', $id)->where('school_info_id', $schoolInfo->id)->firstOrFail();
+        $user = $request->user();
 
-        $student->update([
-            'name' => $validatedData['name'],
-            'ic_num' => $validatedData['ic_num'],
-            'email' => $validatedData['email'],
-            'crew' => $validatedData['crew'],
-            'state' => $schoolInfo->state,
-            'district' => $schoolInfo->district,
-            'schoolName' => $schoolInfo->schoolName,
-            'school_info_id' => $schoolInfo->id,
-        ]);
+        // Validate ownership: Ensure the school_info_id belongs to the logged-in user
+        $schoolInfo = SchoolInfo::where('id', $validatedData['school_info_id'])
+            ->where('user_id', $user->id)
+            ->firstOrFail();
 
-        return redirect()->route('student.studentList')->with('success', 'Student updated successfully!');
+        // Validate ownership: Ensure the student belongs to the selected school
+        $student = Student::where('id', $id)
+            ->where('school_info_id', $schoolInfo->id)
+            ->firstOrFail();
+
+        try {
+            // Update the student record
+            $student->update([
+                'name' => $validatedData['name'],
+                'ic_num' => $validatedData['ic_num'],
+                'email' => $validatedData['email'],
+                'crew' => $validatedData['crew'],
+                'state' => $schoolInfo->state,        // Include these if needed in the Student model
+                'district' => $schoolInfo->district, // Include these if needed in the Student model
+                'schoolName' => $schoolInfo->schoolName, // Include these if needed in the Student model
+                'school_info_id' => $schoolInfo->id,
+            ]);
+
+            return redirect()->route('student.studentList')->with('success', 'Student updated successfully!');
+        } catch (\Exception $e) {
+            return back()->with('error', 'An error occurred while updating the student.');
+        }
     }
 
     public function deleteStudent($id)
     {
         $user = request()->user();
-        $student = Student::where('id', $id)->where('school_info_id', SchoolInfo::where('user_id', $user->id)->value('id'))->firstOrFail();
+
+        $student = Student::where('id', $id)
+            ->whereHas('schoolInfo', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })
+            ->firstOrFail();
+
         $student->delete();
 
         return redirect()->route('student.studentList')->with('success', 'Student deleted successfully!');
