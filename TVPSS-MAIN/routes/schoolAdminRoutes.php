@@ -54,6 +54,6 @@ Route::delete('/students/{id}', [SchoolAdminController::class, 'deleteStudent'])
 Route::get('/listAchievement', [SchoolAdminController::class, 'achievementList'])->name('achievement.achievementList');
 Route::get('/achievements/create', [SchoolAdminController::class, 'achievementCreate'])->name('achievement.create');
 Route::post('/achievements', [SchoolAdminController::class, 'storeAchievement'])->name('achievement.store');
-Route::get('/achievements/{id}/edit', [SchoolAdminController::class, 'achievementEdit'])->name('achievement.edit');
+Route::get('/achievements/{id}', [SchoolAdminController::class, 'achievementEdit'])->name('achievement.edit');
 Route::put('/achievements/{id}', [SchoolAdminController::class, 'updateAchievement'])->name('achievement.update');
 Route::delete('/achievements/{id}', [SchoolAdminController::class, 'deleteAchievement'])->name('achievement.delete');
