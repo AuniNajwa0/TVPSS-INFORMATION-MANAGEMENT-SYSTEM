@@ -18,9 +18,11 @@ return new class extends Migration
             $table->date('date'); 
             $table->text('details'); 
             $table->string('supporting_file')->nullable(); 
-            $table->unsignedBigInteger('student_id')->nullable(); 
-            $table->string('ic_num'); 
-            $table->string('student_name'); 
+            $table->json('students');
+            //$table->unsignedBigInteger('student_id')->nullable(); 
+            //$table->string('ic_num'); 
+            //$table->string('student_name'); 
+            $table->unsignedBigInteger('school_info_id');
             $table->string('status');
             $table->timestamps(); 
 
