@@ -24,7 +24,7 @@ export default function AddAchievement({ students = [] }) {
             setFormData((prevData) => ({
                 ...prevData,
                 [name]: value,
-                ic_num: value === "Individu" ? [""] : [""], 
+                ic_num: value === "Individu" ? [""] : [""],
             }));
         } else {
             setFormData((prevData) => ({ ...prevData, [name]: value }));
@@ -42,7 +42,7 @@ export default function AddAchievement({ students = [] }) {
                 student.ic_num.startsWith(value)
             );
             setSuggestions(filteredSuggestions);
-            setActiveSuggestionIndex(index); 
+            setActiveSuggestionIndex(index); // Track which input field the suggestions are for
         } else {
             setSuggestions([]);
             setActiveSuggestionIndex(null);
@@ -54,8 +54,8 @@ export default function AddAchievement({ students = [] }) {
         updatedICs[index] = suggestion.ic_num;
 
         setFormData((prevData) => ({ ...prevData, ic_num: updatedICs }));
-        setSuggestions([]); 
-        setActiveSuggestionIndex(null); 
+        setSuggestions([]); // Clear suggestions
+        setActiveSuggestionIndex(null); // Reset active field
     };
 
     const addICField = () => {
