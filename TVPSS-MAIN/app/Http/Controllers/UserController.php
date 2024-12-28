@@ -14,7 +14,7 @@ class UserController extends Controller
     public function index()
     {
         $role = request()->get('role', ''); 
-        $rowsPerPage = request()->get('rowsPerPage', 10); 
+        $rowsPerPage = request()->get('rowsPerPage', 50); 
 
         $usersQuery = User::query();
 
@@ -43,6 +43,8 @@ class UserController extends Controller
 
     public function store(StoreUserRequest $request)
     {
+        Log::info('Storing new user:', $request->all());
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
@@ -52,18 +54,25 @@ class UserController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        $role = (int) $validated['role'];  
+        try {
+            $role = (int) $validated['role'];  
 
-        User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'role' => $role,
-            'state' => $validated['state'],
-            'district' => $validated['district'],
-            'password' => Hash::make($validated['password']),
-        ]);
+            User::create([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'role' => $role,
+                'state' => $validated['state'],
+                'district' => $validated['district'],
+                'password' => Hash::make($validated['password']),
+            ]);
 
-        return redirect()->route('users.index')->with('success', 'Pengguna berjaya ditambah.');
+            Log::info('User created successfully:', $validated);
+
+            return redirect()->route('users.index')->with('success', 'Pengguna berjaya ditambah.');
+        } catch (\Exception $e) {
+            Log::error('Failed to store user:', ['error' => $e->getMessage()]);
+            return back()->with('error', 'Failed to add user.');
+        }
     }
 
     public function show(User $user)

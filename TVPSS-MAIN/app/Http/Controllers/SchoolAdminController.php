@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 use App\Http\Requests\Equipment\StoreEquipmentRequest;
 use App\Http\Requests\Equipment\UpdateEquipmentRequest;
 use Inertia\Inertia;
@@ -11,6 +10,8 @@ use App\Models\Equipment;
 use App\Models\EqLocation;
 use App\Models\SchoolInfo;
 use App\Models\TVPSSVersion;
+use App\Models\Student;
+use App\Models\StudentAchievement;
 use App\Enums\StatusEnum;
 use App\Enums\versionEnum;
 use App\Enums\ApprovalStatusEnum;
@@ -230,6 +231,7 @@ class SchoolAdminController extends Controller
             'schoolAddress2'=> 'nullable|string|max:255',
             'postcode'      => 'required|string|max:10',
             'state'         => 'required|string|max:100',
+            'district'      => 'required|string|max:100',
             'noPhone'       => 'required|string|max:20',
             'noFax'         => 'nullable|string|max:20',
             'linkYoutube'   => 'nullable|url|max:255',
@@ -237,6 +239,8 @@ class SchoolAdminController extends Controller
         ]);
 
         $schoolInfo = SchoolInfo::firstOrNew(['user_id' => $user->id]);
+        $currentSchoolLogo = $schoolInfo->schoolLogo;
+        $schoolInfo->schoolOfficer = $user->name;
         $schoolInfo->fill($validated);
 
         if ($request->hasFile('schoolLogo')) {
@@ -255,10 +259,10 @@ class SchoolAdminController extends Controller
             } catch (\Exception $e) {
                 return back()->with('error', 'Error uploading the logo. Please try again.');
             }
+        } else {
+            $schoolInfo->schoolLogo = $currentSchoolLogo;
         }
 
-        // Save the record
-        $schoolInfo->user_id = $user->id;
         $schoolInfo->save();
 
         return redirect()->route('school.edit')->with('success', 'School information updated successfully!');
@@ -292,6 +296,7 @@ class SchoolAdminController extends Controller
             'schoolAddress2'=> 'nullable|string|max:255',
             'postcode'      => 'required|string|max:10',
             'state'         => 'required|string|max:100',
+            'district'      => 'required|string|max:100',
             'noPhone'       => 'required|string|max:20',
             'noFax'         => 'nullable|string|max:20',
             'linkYoutube'   => 'nullable|url|max:255',
@@ -299,13 +304,15 @@ class SchoolAdminController extends Controller
         ]);
 
         $schoolInfo = SchoolInfo::where('user_id', $user->id)->first();
+        $schoolInfo->schoolOfficer = $user->name;
 
         if (!$schoolInfo) {
             return back()->with('error', 'No school information found for your account.');
         }
 
-        $currentSchoolLogo = $schoolInfo->schoolLogo;
+        //$schoolInfo->schoolOfficer = $user->name;
 
+        $currentSchoolLogo = $schoolInfo->schoolLogo;
         $schoolInfo->fill($validated);
 
         if ($request->hasFile('schoolLogo')) {
@@ -349,7 +356,7 @@ class SchoolAdminController extends Controller
         $user = $request->user();
 
         $validated = $request->validate([
-            'version' => 'nullable|string|max:255',
+            'version' => 'nullable|integer', 
             'agency1_name' => 'required|string|max:255',
             'agency1Manager_name' => 'nullable|string|max:255',
             'agency2_name' => 'nullable|string|max:255',
@@ -384,7 +391,7 @@ class SchoolAdminController extends Controller
         $schoolVersion->isCollabAgency = ($validated['agency1_name'] || $validated['agency2_name']) ? 'Ada' : 'Tiada';
 
         $schoolVersion->fill([
-            'version' => $validated['version'] ?? null,
+            'version' => $validated['version'] ?? $schoolVersion->version, 
             'agency1_name' => $validated['agency1_name'],
             'agencyManager1_name' => $validated['agency1Manager_name'],
             'agency2_name' => $validated['agency2_name'],
@@ -396,10 +403,10 @@ class SchoolAdminController extends Controller
             'greenScreen' => $validated['greenScreen'],
         ]);
 
-        $schoolVersion->status = ApprovalStatusEnum::PENDING; 
-        $schoolVersion->ppd_approval = false; 
-        $schoolVersion->state_approval = false; 
-        $schoolVersion->version = $this->checkTVPSSVersion($schoolInfo, $schoolVersion); 
+        $schoolVersion->status = ApprovalStatusEnum::PENDING;
+        $schoolVersion->ppd_approval = false;
+        $schoolVersion->state_approval = false;
+        $schoolVersion->version = $this->checkTVPSSVersion($schoolInfo, $schoolVersion);
 
         $schoolVersion->school_info_id = $schoolInfo->id;
         $schoolVersion->save();
@@ -416,37 +423,64 @@ class SchoolAdminController extends Controller
         $isUploadYoutube = $schoolInfo->linkYoutube ? 'Ada' : 'Tiada';
         $recInOutSchool = $schoolVersion->recInOutSchool ?? 'Tiada';
         $isCollabAgency = ($schoolVersion->agency1_name || $schoolVersion->agency2_name) ? 'Ada' : 'Tiada';
-        $greenScreen = $schoolVersion->greenScreen ?? 'Tiada';
+        $greenScreen = $schoolVersion->greenScreen?->value ?? 'Tiada'; 
+
+        // Debugging logs
+        Log::info("Check TVPSS Version", [
+            'isFillSchoolName' => $isFillSchoolName,
+            'isTvpssLogo' => $isTvpssLogo,
+            'tvpssStudio' => $tvpssStudio,
+            'recInSchool' => $recInSchool,
+            'isUploadYoutube' => $isUploadYoutube,
+            'recInOutSchool' => $recInOutSchool,
+            'isCollabAgency' => $isCollabAgency,
+            'greenScreen' => $greenScreen,
+        ]);
+
+        if (
+            $isFillSchoolName === 'Ada' &&
+            $isTvpssLogo === 'Ada' &&
+            $tvpssStudio === 'Ada' &&
+            $recInSchool === 'Ada' &&
+            $isUploadYoutube === 'Ada' &&
+            $recInOutSchool === 'Ada' &&
+            $isCollabAgency === 'Ada' &&
+            $greenScreen === 'Ada'
+        ) {
+            return versionEnum::V4->value;
+        }
+
+        if (
+            $isFillSchoolName === 'Ada' &&
+            $isTvpssLogo === 'Ada' &&
+            $tvpssStudio === 'Ada' &&
+            $recInSchool === 'Ada' &&
+            $isUploadYoutube === 'Ada' &&
+            $recInOutSchool === 'Ada' &&
+            $isCollabAgency === 'Ada'
+        ) {
+            return versionEnum::V3->value;
+        }
+
+        if (
+            $isFillSchoolName === 'Ada' &&
+            $isTvpssLogo === 'Ada' &&
+            $tvpssStudio === 'Ada' &&
+            $recInSchool === 'Ada' &&
+            $isUploadYoutube === 'Ada'
+        ) {
+            return versionEnum::V2->value;
+        }
 
         if (
             $isFillSchoolName === 'Ada' &&
             $isTvpssLogo === 'Ada' &&
             $tvpssStudio === 'Ada'
         ) {
-            $version = 1;
-
-            if (
-                $recInSchool === 'Ada' &&
-                $isUploadYoutube === 'Ada'
-            ) {
-                $version = 2;
-
-                if (
-                    $recInOutSchool === 'Ada' &&
-                    $isCollabAgency === 'Ada'
-                ) {
-                    $version = 3;
-
-                    if ($greenScreen === 'Ada') {
-                        $version = 4;
-                    }
-                }
-            }
-        } else {
-            $version = 0; 
+            return versionEnum::V1->value;
         }
 
-        return $version;
+        return versionEnum::NOT_SATISFIED->value;
     }
 
     public function eqLocCreate(){
@@ -544,6 +578,322 @@ class SchoolAdminController extends Controller
         $locations = EqLocation::where('school_info_id', $school->id)->get();
 
         return response()->json(['locations' => $locations]);
+    }
+
+    public function getTVPSSVersion(Request $request)
+    {
+        $user = $request->user();
+
+        $schoolInfo = SchoolInfo::with('schoolVersion')->where('user_id', $user->id)->first();
+
+        if (!$schoolInfo || !$schoolInfo->schoolVersion) {
+            return response()->json(['version' => '-']);
+        }
+
+        return response()->json(['version' => $schoolInfo->schoolVersion->version]);
+    }
+
+    public function studentList(Request $request)
+    {
+        $user = $request->user();
+
+        $school = SchoolInfo::where('user_id', $user->id)->first();
+        $query = Student::where('school_info_id', $school->id);
+
+        if ($request->has('search')) {
+            $query->where('name', 'like', '%' . $request->input('search') . '%')
+                ->orWhere('ic_num', 'like', '%' . $request->input('search') . '%');
+        }
+
+        $students = $query->paginate(10);
+
+        return Inertia::render('4-SchoolAdmin/StudentManagement/studentList', [
+            'students' => $students,
+            'school' => $school,
+        ]);
+    }
+
+    public function studentCreate(Request $request)
+    {
+        $user = $request->user();
+
+        $schoolInfo = SchoolInfo::where('user_id', $user->id)->first();
+
+        if (!$schoolInfo) {
+            return redirect()->back()->with('error', 'No associated school found for this user.');
+        }
+
+        return Inertia::render('4-SchoolAdmin/StudentManagement/addStudent', [
+            'schoolInfo' => $schoolInfo,
+        ]);
+    }
+
+    public function storeStudent(Request $request)
+    {
+        try {
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255',
+                'ic_num' => 'required|string|unique:students,ic_num',
+                'email' => 'required|email|unique:students,email',
+                'crew' => 'nullable|string|max:255',
+            ]);
+
+            $schoolInfo = SchoolInfo::where('user_id', $request->user()->id)->firstOrFail();
+
+            Student::create([
+                'name' => $validatedData['name'],
+                'ic_num' => $validatedData['ic_num'],
+                'email' => $validatedData['email'],
+                'crew' => $validatedData['crew'],
+                'state' => $schoolInfo->state,
+                'district' => $schoolInfo->district,
+                'schoolName' => $schoolInfo->schoolName,
+                'school_info_id' => $schoolInfo->id,
+            ]);
+
+            return redirect()->route('student.studentList')->with('success', 'Student added successfully!');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->back()->withErrors($e->validator->errors())->withInput();
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to add student. Please try again.');
+        }
+    }
+
+    public function studentEdit($id)
+    {
+        $user = request()->user();
+
+        $student = Student::where('id', $id)
+            ->whereHas('schoolInfo', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })
+            ->firstOrFail();
+
+        return Inertia::render('4-SchoolAdmin/StudentManagement/updateStudent', [
+            'student' => $student,
+            'schoolInfo' => $student->schoolInfo,
+        ]);
+    }
+
+    public function updateStudent(Request $request, $id)
+    {
+        $user = $request->user();
+        $schoolInfo = SchoolInfo::where('user_id', $user->id)->firstOrFail();
+
+        $student = Student::where('id', $id)
+            ->where('school_info_id', $schoolInfo->id)
+            ->firstOrFail();
+
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'ic_num' => 'required|string|unique:students,ic_num,' . $id,
+            'email' => 'required|email|unique:students,email,' . $id,
+            'crew' => 'nullable|string|max:255',
+        ]);
+
+        $student->update([
+            'name' => $validatedData['name'],
+            'ic_num' => $validatedData['ic_num'],
+            'email' => $validatedData['email'],
+            'crew' => $validatedData['crew'],
+            'state' => $schoolInfo->state,
+            'district' => $schoolInfo->district,
+            'schoolName' => $schoolInfo->schoolName,
+            'school_info_id' => $schoolInfo->id,
+        ]);
+
+        return redirect()->route('student.studentList')->with('success', 'Student updated successfully!');
+    }
+
+    public function deleteStudent($id)
+    {
+        $user = request()->user();
+
+        $student = Student::where('id', $id)
+            ->whereHas('schoolInfo', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })
+            ->firstOrFail();
+
+        $student->delete();
+
+        return redirect()->route('student.studentList')->with('success', 'Student deleted successfully!');
+    }
+
+
+    public function achievementList(Request $request)
+    {
+        try {
+            $user = $request->user();
+            $school = SchoolInfo::where('user_id', $user->id)->firstOrFail();
+
+            $achievements = StudentAchievement::whereHas('student', function ($query) use ($school) {
+                $query->where('school_info_id', $school->id);
+            })->get();
+
+            return inertia('4-SchoolAdmin/StudentAchievement/achievementList', [
+                'achievements' => $achievements,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Failed to retrieve achievements', ['error' => $e->getMessage()]);
+            return redirect()->back()->with('error', 'Failed to retrieve achievements. Please try again.');
+        }
+    }
+
+    public function achievementCreate(Request $request)
+    {
+        $user = $request->user();
+        $schoolInfo = SchoolInfo::where('user_id', $user->id)->first();
+
+        if (!$schoolInfo) {
+            return redirect()->back()->with('error', 'No associated school found for this user.');
+        }
+
+        $students = Student::where('school_info_id', $schoolInfo->id)->get(['ic_num', 'name']);
+
+        return Inertia::render('4-SchoolAdmin/StudentAchievement/addAchievement', [
+            'students' => $students,
+        ]);
+    }
+
+    public function storeAchievement(Request $request)
+    {
+        try {
+            $user = $request->user();
+            $school = SchoolInfo::where('user_id', $user->id)->firstOrFail();
+
+            $validatedData = $request->validate([
+                'type_of_achievement' => 'required|string|max:255',
+                'type_of_application' => 'required|string|in:solo,group',
+                'date' => 'required|date',
+                'details' => 'required|string',
+                'supporting_file' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+                'ic_num.*' => 'required|string|exists:students,ic_num',
+            ]);
+
+            // Handle file upload
+            $filePath = $request->file('supporting_file') 
+                ? $request->file('supporting_file')->move(
+                    public_path('documents/studentachievement'),
+                    time() . '_' . $request->file('supporting_file')->getClientOriginalName()
+                )
+                : null;
+
+            foreach ($validatedData['ic_num'] as $ic) {
+                $student = Student::where('ic_num', $ic)
+                    ->where('school_info_id', $school->id)
+                    ->firstOrFail();
+
+                // Generate Achievement ID (Fixing the Prefix and Increment Logic)
+                $achievementCount = StudentAchievement::count();
+                $achievementId = 'PS' . str_pad($achievementCount + 1, 4, '0', STR_PAD_LEFT);
+
+                StudentAchievement::create([
+                    'id' => $achievementId,
+                    'type_of_achievement' => $validatedData['type_of_achievement'],
+                    'type_of_application' => $validatedData['type_of_application'],
+                    'date' => $validatedData['date'],
+                    'details' => $validatedData['details'],
+                    'supporting_file' => $filePath ? 'documents/studentachievement/' . basename($filePath) : null,
+                    'student_id' => $student->id,
+                    'ic_num' => $student->ic_num,
+                    'student_name' => $student->name,
+                    'status' => ApprovalStatusEnum::PENDING->value,
+                ]);
+            }
+
+            return redirect()->route('achievement.achievementList')->with('success', 'Achievement submitted successfully!');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::warning('Validation failed for achievement submission', ['errors' => $e->errors()]);
+            return redirect()->back()->withErrors($e->errors())->withInput();
+        } catch (\Exception $e) {
+            Log::error('Failed to store achievement', ['error' => $e->getMessage()]);
+            return redirect()->back()->with('error', 'Failed to submit achievement. Please try again.');
+        }
+    }
+
+    public function achievementEdit($id, Request $request)
+    {
+        try {
+            $user = $request->user();
+            $school = SchoolInfo::where('user_id', $user->id)->firstOrFail();
+
+            $achievement = StudentAchievement::where('id', $id)
+                ->whereHas('student', function ($query) use ($school) {
+                    $query->where('school_info_id', $school->id);
+                })
+                ->firstOrFail();
+
+            return inertia('4-SchoolAdmin/StudentAchievement/updateAchievement', [
+                'achievement' => $achievement,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Failed to load achievement edit page', ['error' => $e->getMessage()]);
+            return redirect()->back()->with('error', 'Failed to load the achievement edit page. Please try again.');
+        }
+    }
+
+    public function updateAchievement(Request $request, $id)
+    {
+        try {
+            $user = $request->user();
+            $school = SchoolInfo::where('user_id', $user->id)->firstOrFail();
+
+            $achievement = StudentAchievement::where('id', $id)
+                ->whereHas('student', function ($query) use ($school) {
+                    $query->where('school_info_id', $school->id);
+                })
+                ->firstOrFail();
+
+            $validatedData = $request->validate([
+                'type_of_achievement' => 'required|string|max:255',
+                'type_of_application' => 'required|string|in:solo,group',
+                'date' => 'required|date',
+                'details' => 'required|string',
+                'supporting_file' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            ]);
+
+            $filePath = $request->file('supporting_file')
+                ? $request->file('supporting_file')->store('achievements', 'public')
+                : $achievement->supporting_file;
+
+            $achievement->update([
+                'type_of_achievement' => $validatedData['type_of_achievement'],
+                'type_of_application' => $validatedData['type_of_application'],
+                'date' => $validatedData['date'],
+                'details' => $validatedData['details'],
+                'supporting_file' => $filePath,
+            ]);
+
+            return redirect()->route('achievements.achievementList')->with('success', 'Achievement updated successfully!');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::warning('Validation failed for achievement update', ['errors' => $e->errors()]);
+            return redirect()->back()->withErrors($e->errors())->withInput();
+        } catch (\Exception $e) {
+            Log::error('Failed to update achievement', ['error' => $e->getMessage()]);
+            return redirect()->back()->with('error', 'Failed to update achievement. Please try again.');
+        }
+    }
+
+    public function deleteAchievement($id, Request $request)
+    {
+        try {
+            $user = $request->user();
+            $school = SchoolInfo::where('user_id', $user->id)->firstOrFail();
+
+            $achievement = StudentAchievement::where('id', $id)
+                ->whereHas('student', function ($query) use ($school) {
+                    $query->where('school_info_id', $school->id);
+                })
+                ->firstOrFail();
+
+            $achievement->delete();
+
+            return redirect()->route('achievements.index')->with('success', 'Achievement deleted successfully!');
+        } catch (\Exception $e) {
+            Log::error('Failed to delete achievement', ['error' => $e->getMessage()]);
+            return redirect()->back()->with('error', 'Failed to delete achievement. Please try again.');
+        }
     }
 
 }

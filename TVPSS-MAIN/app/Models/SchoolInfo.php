@@ -14,10 +14,12 @@ class SchoolInfo extends Model
     protected $fillable = [
         'schoolCode',
         'user_id',
+        'schoolOfficer', 
         'schoolName',
         'schoolEmail',
         'schoolAddress1',
         'schoolAddress2',
+        'district',
         'postcode',
         'state',
         'noPhone',
@@ -39,6 +41,11 @@ class SchoolInfo extends Model
     public function schoolVersion()
     {
         return $this->hasOne(TVPSSVersion::class, 'school_info_id');
+    }
+
+    public function students()
+    {
+        return $this->hasMany(Student::class);
     }
 
     public function updateLogo($file)

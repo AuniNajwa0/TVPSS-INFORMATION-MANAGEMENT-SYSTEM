@@ -14,11 +14,13 @@ return new class extends Migration
         Schema::create('schoolinfo', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable(); 
+            $table->string('schoolOfficer')->nullable();
             $table->string('schoolCode');
             $table->string('schoolName');
             $table->string('schoolEmail');
             $table->string('schoolAddress1');
             $table->string('schoolAddress2')->nullable();
+            $table->string('district');
             $table->string('postcode');
             $table->string('state');
             $table->string('noPhone');
