@@ -16,6 +16,7 @@ use App\Enums\StatusEnum;
 use App\Enums\versionEnum;
 use App\Enums\ApprovalStatusEnum;
 use Illuminate\Support\Facades\Log;
+use MongoDB\BSON\ObjectId;
 
 
 class SchoolAdminController extends Controller
@@ -727,9 +728,7 @@ class SchoolAdminController extends Controller
             $user = $request->user();
             $school = SchoolInfo::where('user_id', $user->id)->firstOrFail();
 
-            $achievements = StudentAchievement::whereHas('student', function ($query) use ($school) {
-                $query->where('school_info_id', $school->id);
-            })->get();
+            $achievements = StudentAchievement::where('school_info_id', $school->id)->get();
 
             return inertia('4-SchoolAdmin/StudentAchievement/achievementList', [
                 'achievements' => $achievements,
@@ -759,52 +758,56 @@ class SchoolAdminController extends Controller
     public function storeAchievement(Request $request)
     {
         try {
-            $user = $request->user();
-            $school = SchoolInfo::where('user_id', $user->id)->firstOrFail();
-
             $validatedData = $request->validate([
                 'type_of_achievement' => 'required|string|max:255',
-                'type_of_application' => 'required|string|in:solo,group',
+                'type_of_application' => 'required|string|in:Individu,Berkumpulan',
                 'date' => 'required|date',
                 'details' => 'required|string',
                 'supporting_file' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+                'ic_num' => 'required|array|min:1',
                 'ic_num.*' => 'required|string|exists:students,ic_num',
             ]);
 
-            // Handle file upload
-            $filePath = $request->file('supporting_file') 
-                ? $request->file('supporting_file')->move(
-                    public_path('documents/studentachievement'),
-                    time() . '_' . $request->file('supporting_file')->getClientOriginalName()
+            $user = $request->user();
+            $school = SchoolInfo::where('user_id', $user->id)->firstOrFail();
+
+            $filePath = $request->file('supporting_file')
+                ? $request->file('supporting_file')->storeAs(
+                    'documents/studentachievement',
+                    time() . '_' . $request->file('supporting_file')->getClientOriginalName(),
+                    'public'
                 )
                 : null;
 
+            $achievementId = 'PS' . str_pad(StudentAchievement::count() + 1, 4, '0', STR_PAD_LEFT);
+
+            $students = [];
             foreach ($validatedData['ic_num'] as $ic) {
                 $student = Student::where('ic_num', $ic)
                     ->where('school_info_id', $school->id)
                     ->firstOrFail();
 
-                // Generate Achievement ID (Fixing the Prefix and Increment Logic)
-                $achievementCount = StudentAchievement::count();
-                $achievementId = 'PS' . str_pad($achievementCount + 1, 4, '0', STR_PAD_LEFT);
-
-                StudentAchievement::create([
-                    'id' => $achievementId,
-                    'type_of_achievement' => $validatedData['type_of_achievement'],
-                    'type_of_application' => $validatedData['type_of_application'],
-                    'date' => $validatedData['date'],
-                    'details' => $validatedData['details'],
-                    'supporting_file' => $filePath ? 'documents/studentachievement/' . basename($filePath) : null,
+                $students[] = [
                     'student_id' => $student->id,
                     'ic_num' => $student->ic_num,
-                    'student_name' => $student->name,
-                    'status' => ApprovalStatusEnum::PENDING->value,
-                ]);
+                    'name' => $student->name,
+                ];
             }
+
+            StudentAchievement::create([
+                'id' => $achievementId,
+                'type_of_achievement' => $validatedData['type_of_achievement'],
+                'type_of_application' => $validatedData['type_of_application'],
+                'date' => $validatedData['date'],
+                'details' => $validatedData['details'],
+                'supporting_file' => $filePath,
+                'students' => $students, 
+                'school_info_id' => $school->id, 
+                'status' => ApprovalStatusEnum::PENDING->value,
+            ]);
 
             return redirect()->route('achievement.achievementList')->with('success', 'Achievement submitted successfully!');
         } catch (\Illuminate\Validation\ValidationException $e) {
-            Log::warning('Validation failed for achievement submission', ['errors' => $e->errors()]);
             return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
             Log::error('Failed to store achievement', ['error' => $e->getMessage()]);
@@ -817,61 +820,17 @@ class SchoolAdminController extends Controller
         try {
             $user = $request->user();
             $school = SchoolInfo::where('user_id', $user->id)->firstOrFail();
-
+    
             $achievement = StudentAchievement::where('id', $id)
-                ->whereHas('student', function ($query) use ($school) {
-                    $query->where('school_info_id', $school->id);
-                })
+                ->where('school_info_id', $school->id)
                 ->firstOrFail();
-
-            return inertia('4-SchoolAdmin/StudentAchievement/updateAchievement', [
+    
+            return inertia('4-SchoolAdmin/StudentAchievement/viewAchievement', [
                 'achievement' => $achievement,
             ]);
         } catch (\Exception $e) {
-            Log::error('Failed to load achievement edit page', ['error' => $e->getMessage()]);
-            return redirect()->back()->with('error', 'Failed to load the achievement edit page. Please try again.');
-        }
-    }
-
-    public function updateAchievement(Request $request, $id)
-    {
-        try {
-            $user = $request->user();
-            $school = SchoolInfo::where('user_id', $user->id)->firstOrFail();
-
-            $achievement = StudentAchievement::where('id', $id)
-                ->whereHas('student', function ($query) use ($school) {
-                    $query->where('school_info_id', $school->id);
-                })
-                ->firstOrFail();
-
-            $validatedData = $request->validate([
-                'type_of_achievement' => 'required|string|max:255',
-                'type_of_application' => 'required|string|in:solo,group',
-                'date' => 'required|date',
-                'details' => 'required|string',
-                'supporting_file' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            ]);
-
-            $filePath = $request->file('supporting_file')
-                ? $request->file('supporting_file')->store('achievements', 'public')
-                : $achievement->supporting_file;
-
-            $achievement->update([
-                'type_of_achievement' => $validatedData['type_of_achievement'],
-                'type_of_application' => $validatedData['type_of_application'],
-                'date' => $validatedData['date'],
-                'details' => $validatedData['details'],
-                'supporting_file' => $filePath,
-            ]);
-
-            return redirect()->route('achievements.achievementList')->with('success', 'Achievement updated successfully!');
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            Log::warning('Validation failed for achievement update', ['errors' => $e->errors()]);
-            return redirect()->back()->withErrors($e->errors())->withInput();
-        } catch (\Exception $e) {
-            Log::error('Failed to update achievement', ['error' => $e->getMessage()]);
-            return redirect()->back()->with('error', 'Failed to update achievement. Please try again.');
+            Log::error('Failed to fetch achievement details', ['error' => $e->getMessage()]);
+            return redirect()->back()->with('error', 'Failed to fetch achievement details. Please try again.');
         }
     }
 
@@ -882,14 +841,15 @@ class SchoolAdminController extends Controller
             $school = SchoolInfo::where('user_id', $user->id)->firstOrFail();
 
             $achievement = StudentAchievement::where('id', $id)
-                ->whereHas('student', function ($query) use ($school) {
-                    $query->where('school_info_id', $school->id);
-                })
+                ->where('school_info_id', $school->id)
                 ->firstOrFail();
 
             $achievement->delete();
 
-            return redirect()->route('achievements.index')->with('success', 'Achievement deleted successfully!');
+            return redirect()->route('achievement.achievementList')->with('success', 'Achievement deleted successfully!');
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            Log::warning('Achievement not found or unauthorized access', ['id' => $id, 'error' => $e->getMessage()]);
+            return redirect()->back()->with('error', 'Achievement not found or you do not have permission to delete it.');
         } catch (\Exception $e) {
             Log::error('Failed to delete achievement', ['error' => $e->getMessage()]);
             return redirect()->back()->with('error', 'Failed to delete achievement. Please try again.');

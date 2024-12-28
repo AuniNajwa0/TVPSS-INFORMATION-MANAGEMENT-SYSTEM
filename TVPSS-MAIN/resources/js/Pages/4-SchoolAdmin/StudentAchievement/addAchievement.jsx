@@ -24,7 +24,7 @@ export default function AddAchievement({ students = [] }) {
             setFormData((prevData) => ({
                 ...prevData,
                 [name]: value,
-                ic_num: value === "solo" ? [""] : [""], 
+                ic_num: value === "Individu" ? [""] : [""],
             }));
         } else {
             setFormData((prevData) => ({ ...prevData, [name]: value }));
@@ -134,7 +134,7 @@ export default function AddAchievement({ students = [] }) {
                         {formData.ic_num.map((ic, index) => (
                             <div key={index} className="mb-4 relative">
                                 <label className="block text-sm font-medium text-gray-700">
-                                    Kad Pengenalan {index + 1}
+                                    Kad Pengenalan Pelajar {index + 1}
                                 </label>
                                 <input
                                     type="text"
@@ -161,7 +161,7 @@ export default function AddAchievement({ students = [] }) {
                             </div>
                         ))}
 
-                        {formData.type_of_application === "group" && (
+                        {formData.type_of_application === "Berkumpulan" && (
                             <button
                                 type="button"
                                 onClick={addICField}
