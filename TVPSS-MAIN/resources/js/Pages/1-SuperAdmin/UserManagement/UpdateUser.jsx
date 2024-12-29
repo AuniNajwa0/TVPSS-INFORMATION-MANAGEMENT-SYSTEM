@@ -2,7 +2,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import SuperAdminSideBar from '../SuperAdminSideBar';
 import { useState, useEffect } from 'react';
-import { FiUser, FiMail, FiUserCheck, FiLock, FiMapPin } from 'react-icons/fi';
+import { User, Mail, Lock, Shield, MapPin, Map, School, Landmark, Layers } from "lucide-react";
 import { Inertia } from '@inertiajs/inertia';
 
 export default function UpdateUser({ user, roles }) {
@@ -13,7 +13,7 @@ export default function UpdateUser({ user, roles }) {
         state: user.state || '',
         district: user.district || '', 
         password: user.password || '',
-        password_confirmation: user.password || '',
+        password_confirmation: '',
     });
 
     const [message, setMessage] = useState('');
@@ -27,20 +27,118 @@ export default function UpdateUser({ user, roles }) {
     ];
 
     const districts = {
-        Johor: ['Johor Bahru', 'Muar', 'Kluang', 'Segamat','Mersing','Kota Tinggi','Batu Pahat','Pontian','Pasir Gudang','Tangkak','Kulaijaya'],
-        Pahang: ['Kuantan', 'Temerloh', 'Bera', 'Pekan', 'Rompin', 'Maran', 'Jerantut', 'Bentong'],
-        'Wilayah Persekutuan Kuala Lumpur': ['Kuala Lumpur'],
-        Selangor: ['Petaling', 'Hulu Langat', 'Sepang', 'Klang', 'Gombak', 'Kuala Selangor', 'Sabak Bernam', 'Selayang'],
-        'Negeri Sembilan': ['Seremban', 'Port Dickson', 'Rembau', 'Jelebu', 'Tampin', 'Gemenceh'],
-        Perak: ['Ipoh', 'Kuala Kangsar', 'Taiping', 'Teluk Intan', 'Sitiawan', 'Parit Buntar', 'Tanjung Malim', 'Kampar'],
-        Kedah: ['Alor Setar', 'Sungai Petani', 'Kuala Kedah', 'Kulim', 'Baling', 'Langkawi', 'Pokok Sena', 'Kubang Pasu'],
-        'Pulau Pinang': ['Georgetown', 'Bukit Mertajam', 'Nibong Tebal', 'Balik Pulau'],
-        Perlis: ['Kangar', 'Arau'],
-        Kelantan: ['Kota Bharu', 'Tumpat', 'Pasir Mas', 'Machang', 'Tanah Merah', 'Gua Musang', 'Kuala Krai'],
-        Terengganu: ['Kuala Terengganu', 'Dungun', 'Kemaman', 'Besut', 'Hulu Terengganu', 'Marang'],
-        Sabah: ['Kota Kinabalu', 'Sandakan', 'Tawau', 'Keningau', 'Beaufort', 'Lahad Datu', 'Semporna', 'Ranau', 'Papar'],
-        Sarawak: ['Kuching', 'Sibu', 'Miri', 'Bintulu', 'Sri Aman', 'Mukah', 'Betong', 'Limbang'],
+        Johor: [
+            "Johor Bahru", 
+            "Muar", 
+            "Kluang", 
+            "Segamat", 
+            "Mersing", 
+            "Kota Tinggi", 
+            "Batu Pahat", 
+            "Pontian", 
+            "Pasir Gudang", 
+            "Tangkak", 
+            "Kulaijaya"
+        ],
+        Pahang: [
+            "Kuantan", 
+            "Temerloh", 
+            "Bera", 
+            "Pekan", 
+            "Rompin", 
+            "Maran", 
+            "Jerantut", 
+            "Bentong"
+        ],
+        "Wilayah Persekutuan Kuala Lumpur": ["Kuala Lumpur"],
+        Selangor: [
+            "Petaling", 
+            "Hulu Langat", 
+            "Sepang", 
+            "Klang", 
+            "Gombak", 
+            "Kuala Selangor", 
+            "Sabak Bernam", 
+            "Selayang"
+        ],
+        "Negeri Sembilan": [
+            "Seremban", 
+            "Port Dickson", 
+            "Rembau", 
+            "Jelebu", 
+            "Tampin", 
+            "Gemenceh"
+        ],
+        Perak: [
+            "Ipoh", 
+            "Kuala Kangsar", 
+            "Taiping", 
+            "Teluk Intan", 
+            "Sitiawan", 
+            "Parit Buntar", 
+            "Tanjung Malim", 
+            "Kampar"
+        ],
+        Kedah: [
+            "Alor Setar", 
+            "Sungai Petani", 
+            "Kuala Kedah", 
+            "Kulim", 
+            "Baling", 
+            "Langkawi", 
+            "Pokok Sena", 
+            "Kubang Pasu"
+        ],
+        "Pulau Pinang": [
+            "Georgetown", 
+            "Bukit Mertajam", 
+            "Nibong Tebal", 
+            "Balik Pulau"
+        ],
+        Perlis: [
+            "Kangar", 
+            "Arau"
+        ],
+        Kelantan: [
+            "Kota Bharu", 
+            "Tumpat", 
+            "Pasir Mas", 
+            "Machang", 
+            "Tanah Merah", 
+            "Gua Musang",
+             "Kuala Krai"
+            ],
+        Terengganu: [
+            "Kuala Terengganu", 
+            "Dungun", 
+            "Kemaman", 
+            "Besut", 
+            "Hulu Terengganu", 
+            "Marang"
+        ],
+        Sabah: [
+            "Kota Kinabalu", 
+            "Sandakan", 
+            "Tawau", 
+            "Keningau", 
+            "Beaufort", 
+            "Lahad Datu", 
+            "Semporna", 
+            "Ranau", 
+            "Papar"
+        ],
+        Sarawak: [
+            "Kuching", 
+            "Sibu", 
+            "Miri", 
+            "Bintulu", 
+            "Sri Aman", 
+            "Mukah", 
+            "Betong", 
+            "Limbang"
+        ],
     };
+
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -104,184 +202,235 @@ export default function UpdateUser({ user, roles }) {
     };
 
     return (
-        <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Kemas Kini Pengguna
-                </h2>
-            }
-        >
-            <Head title="TVPSS | Kemas Kini Pengguna" />
-            <div className="flex">
-                <div className="w-1/6 p-8 text-white min-h-screen">
-                    <SuperAdminSideBar />
+        <AuthenticatedLayout>
+        <Head title="TVPSS | Pengurusan Pengguna" />
+        <div className="flex flex-col md:flex-row min-h-screen bg-white">
+            <div className="w-1/5 bg-white">
+                <SuperAdminSideBar />
+            </div>
+            
+            <div className="flex-1 p-6">
+            <h2 className="text-3xl font-bold text-gray-900 bg-clip-text mb-6">
+                                <a
+                                    href="/listUsers"
+                                    className="text-[#455185] hover:underline"
+                                >
+                                    Pengurusan Pengguna
+                                </a>
+                                <span className="mx-2 text-gray-500">{'>'}</span>
+                                <a
+                                    href="/addUser"
+                                    className="text-gray-700 "
+                                >
+                                    Kemas Kini Pengguna
+                                </a>
+                            </h2>
+
+                <div className="max-w-4xl mx-auto bg-white p-8 shadow border rounded-lg">
+                    <h2 className="text-2xl font-bold mb-6 text-gray-700">Kemas Kini Pengguna</h2>
+
+                    {message && (
+                        <div
+                            className={`text-white px-4 py-2 rounded mb-4 ${
+                                message.includes("berjaya") ? "bg-green-500" : "bg-red-500"
+                            }`}
+                        >
+                            {message}
+                        </div>
+                    )}
+
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                
+                        {/* Role Field */}
+                        <div className="flex flex-col space-y-2">
+    <label htmlFor="role" className="font-medium text-gray-600  flex items-center gap-2">
+        <Shield className="w-5 h-5" />
+        Peranan
+    </label>
+    <div className="flex flex-wrap gap-4">
+        {roles.map((role) => (
+            <label
+                key={role.id}
+                className={`flex items-center space-x-2 p-4 rounded-lg border cursor-pointer transition duration-200 ${
+                    formData.role === String(role.id)
+                        ? "bg-blue-100 border-blue-500"
+                        : "bg-white border-gray-300 hover:bg-gray-100"
+                }`}
+            >
+                <input
+                    type="radio"
+                    name="role"
+                    value={role.id}
+                    checked={formData.role === String(role.id)}
+                    onChange={handleInputChange}
+                    className="hidden"
+                />
+                <div className="flex items-center space-x-2">
+                    {role.id === 0 && <Shield className="w-5 h-5 text-purple-500" />}
+                    {role.id === 1 && <Layers className="w-5 h-5 text-[#5c63f6]" />}
+                    {role.id === 2 && <Landmark className="w-5 h-5 text-[#17bae]" />}
+                    {role.id === 3 && <School className="w-5 h-5 text-[#e99341]" />}
+                    <span className="text-gray-700 font-medium">{role.name}</span>
                 </div>
+            </label>
+        ))}
+    </div>
+    {errors.role && <p className="text-red-500 text-sm">{errors.role}</p>}
+</div>
 
-                <div className="flex-1 p-6">
-                    <div className="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-md border border-gray-200">
-                        <h3 className="text-2xl font-semibold text-gray-800 mb-6">
-                            Kemas Kini Pengguna
-                        </h3>
+                        {/* Name Field */}
+                        <div className="flex flex-col space-y-1">
+                            <label htmlFor="name" className="font-medium text-gray-600 flex items-center gap-2">
+                                <User className="w-5 h-5" />
+                                Nama
+                            </label>
+                            <input
+                                type="text"
+                                name="name"
+                                id="name"
+                                value={formData.name}
+                                onChange={handleInputChange}
+                                className={`border border-gray-300 bg-gray-100 shadow rounded-lg p-2 focus:ring focus:ring-blue-500 focus:outline-none ${
+                                    errors.name && "border-red-500"
+                                }`}
+                            />
+                            {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+                        </div>
 
-                        {/* Feedback message */}
-                        {message && (
-                            <div className={`text-${message.includes('berjaya') ? 'green' : 'red'}-500 mb-4`}>
-                                {message}
-                            </div>
-                        )}
+                        {/* Email Field */}
+                        <div className="flex flex-col space-y-1">
+                            <label htmlFor="email" className="font-medium text-gray-600  flex items-center gap-2">
+                                <Mail className="w-5 h-5" />
+                                Alamat Email
+                            </label>
+                            <input
+                                type="email"
+                                name="email"
+                                id="email"
+                                value={formData.email}
+                                onChange={handleInputChange}
+                                className={`border border-gray-300 bg-gray-100 rounded-lg p-2 shadow focus:ring focus:ring-blue-500 focus:outline-none ${
+                                    errors.email && "border-red-500"
+                                }`}
+                            />
+                            {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+                        </div>
 
-                        {/* Form */}
-                        <form onSubmit={handleSubmit}>
-                            <div className="space-y-6">
-                                {/* Name Field */}
-                                <div className="flex items-center border border-[#455185] rounded-lg">
-                                    <FiUser className="text-[#455185] ml-4" size={20} />
-                                    <input
-                                        type="text"
-                                        id="name"
-                                        name="name"
-                                        value={formData.name}
-                                        onChange={handleInputChange}
-                                        className="mt-1 block w-full px-4 py-2 border-none focus:ring-2 focus:ring-blue-500 rounded-r-lg"
-                                        placeholder="Masukkan Nama"
-                                    />
-                                </div>
-                                {errors.name && <div className="text-red-500 text-sm">{errors.name}</div>}
+                        {/* Password Field */}
+                        <div className="flex flex-col space-y-1">
+                            <label htmlFor="password" className="font-medium text-gray-600  flex items-center gap-2">
+                                <Lock className="w-5 h-5" />
+                                Kata Laluan
+                            </label>
+                            <input
+                                type="password"
+                                name="password"
+                                id="password"
+                                value={formData.password} 
+                                onChange={handleInputChange}
+                                className={`border border-gray-300 bg-gray-100 rounded-lg p-2 shadow focus:ring focus:ring-blue-500 focus:outline-none ${
+                                    errors.password && "border-red-500"
+                                }`}
+                            />
+                            {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+                        </div>
 
-                                {/* Email Field */}
-                                <div className="flex items-center border border-[#455185] rounded-lg">
-                                    <FiMail className="text-[#455185] ml-4" size={20} />
-                                    <input
-                                        type="email"
-                                        id="email"
-                                        name="email"
-                                        value={formData.email}
-                                        onChange={handleInputChange}
-                                        className="mt-1 block w-full px-4 py-2 border-none focus:ring-2 focus:ring-blue-500 rounded-r-lg"
-                                        placeholder="Masukkan Email"
-                                    />
-                                </div>
-                                {errors.email && <div className="text-red-500 text-sm">{errors.email}</div>}
+                        {/* Password Confirmation Field */}
+                        <div className="flex flex-col space-y-1">
+                            <label
+                                htmlFor="password_confirmation"
+                                className="font-medium text-gray-600  flex items-center gap-2"
+                            >
+                                <Lock className="w-5 h-5" />
+                                Sahkan Kata Laluan
+                            </label>
+                            <input
+                                type="password"
+                                name="password_confirmation"
+                                id="password_confirmation"
+                                value={formData.password_confirmation}
+                                onChange={handleInputChange}
+                                className={`border border-gray-300 bg-gray-100 rounded-lg p-2 shadow focus:ring focus:ring-blue-500 focus:outline-none ${
+                                    errors.password_confirmation && "border-red-500"
+                                }`}
+                            />
+                            {errors.password_confirmation && (
+                                <p className="text-red-500 text-sm">{errors.password_confirmation}</p>
+                            )}
+                        </div>
 
-                                {/* Password Field */}
-                                <div className="flex items-center border border-[#455185] rounded-lg">
-                                    <FiLock className="text-[#455185] ml-4" size={20} />
-                                    <input
-                                        type="password"
-                                        id="password"
-                                        name="password"
-                                        value={formData.password}
-                                        onChange={handleInputChange}
-                                        className="mt-1 block w-full px-4 py-2 border-none focus:ring-2 focus:ring-blue-500 rounded-r-lg"
-                                        placeholder="Masukkan Kata Laluan (Jika mahu)"
-                                    />
-                                </div>
-                                {errors.password && <div className="text-red-500 text-sm">{errors.password}</div>}
 
-                                {/* Password Confirmation Field */}
-                                <div className="flex items-center border border-[#455185] rounded-lg">
-                                    <FiLock className="text-[#455185] ml-4" size={20} />
-                                    <input
-                                        type="password"
-                                        id="password_confirmation"
-                                        name="password_confirmation"
-                                        value={formData.password_confirmation}
-                                        onChange={handleInputChange}
-                                        className="mt-1 block w-full px-4 py-2 border-none focus:ring-2 focus:ring-blue-500 rounded-r-lg"
-                                        placeholder="Sahkan Katalaluan"
-                                    />
-                                </div>
-                                {errors.password_confirmation && <div className="text-red-500 text-sm">{errors.password_confirmation}</div>}
+                        {/* State Field */}
+                        <div className="flex flex-col space-y-1">
+                            <label htmlFor="state" className="font-medium text-gray-600  flex items-center gap-2">
+                                <Map className="w-5 h-5" />
+                                Negeri
+                            </label>
+                            <select
+                                name="state"
+                                id="state"
+                                value={formData.state}
+                                onChange={handleInputChange}
+                                className={`border border-gray-300 bg-gray-100 rounded-lg p-2 shadow focus:ring focus:ring-blue-500 focus:outline-none ${
+                                    errors.state && "border-red-500"
+                                }`}
+                            >
+                                <option value="">Pilih Negeri</option>
+                                {states.map((state) => (
+                                    <option key={state} value={state}>
+                                        {state}
+                                    </option>
+                                ))}
+                            </select>
+                            {errors.state && <p className="text-red-500 text-sm">{errors.state}</p>}
+                        </div>
 
-                                {/* Role Dropdown */}
-                                <div className="flex items-center border border-[#455185] rounded-lg">
-                                    <FiUserCheck className="text-[#455185] ml-4" size={20} />
-                                    <select
-                                        id="role"
-                                        name="role"
-                                        value={formData.role}
-                                        onChange={handleInputChange}
-                                        className="mt-1 block w-full px-4 py-2 border-none focus:ring-2 focus:ring-blue-500 rounded-r-lg"
-                                    >
-                                        <option value="">Pilih Jenis Pengguna</option>
-                                        {roles.map((role) => (
-                                            <option key={role.id} value={role.id}>
-                                                {role.name}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-                                {errors.role && <div className="text-red-500 text-sm">{errors.role}</div>}
+                        {/* District Field */}
+                        <div className="flex flex-col space-y-1">
+                            <label htmlFor="district" className="font-medium text-gray-600  flex items-center gap-2">
+                                <MapPin className="w-5 h-5" />
+                                Daerah
+                            </label>
+                            <select
+                                name="district"
+                                id="district"
+                                value={formData.district}
+                                onChange={handleInputChange}
+                                className={`border border-gray-300 bg-gray-100 rounded-lg p-2 shadow focus:ring focus:ring-blue-500 focus:outline-none ${
+                                    errors.district && "border-red-500"
+                                }`}
+                                disabled={!formData.state}
+                            >
+                                <option value="">Pilih Daerah</option>
+                                {formData.state &&
+                                    districts[formData.state]?.map((district) => (
+                                        <option key={district} value={district}>
+                                            {district}
+                                        </option>
+                                    ))}
+                            </select>
+                            {errors.district && <p className="text-red-500 text-sm">{errors.district}</p>}
+                        </div>
 
-                                {/* State Dropdown */}
-                                <div className="flex items-center border border-[#455185] rounded-lg">
-                                    <select
-                                        id="state"
-                                        name="state"
-                                        value={formData.state}
-                                        onChange={handleInputChange}
-                                        className="mt-1 block w-full px-4 py-2 border-none focus:ring-2 focus:ring-blue-500 rounded-r-lg"
-                                    >
-                                        <option value="">Pilih Negeri</option>
-                                        <option value="Johor">Johor</option>
-                                        <option value="Melaka">Melaka</option>
-                                        <option value="Pahang">Pahang</option>
-                                        <option value="Wilayah Persekutuan Kuala Lumpur">Wilayah Persekutuan Kuala Lumpur</option>
-                                        <option value="Selangor">Selangor</option>
-                                        <option value="Negeri Sembilan">Negeri Sembilan</option>
-                                        <option value="Perak">Perak</option>
-                                        <option value="Kedah">Kedah</option>
-                                        <option value="Pulau Pinang">Pulau Pinang</option>
-                                        <option value="Perlis">Perlis</option>
-                                        <option value="Kelantan">Kelantan</option>
-                                        <option value="Terengganu">Terengganu</option>
-                                        <option value="Sabah">Sabah</option>
-                                        <option value="Sarawak">Sarawak</option>
-                                    </select>
-                                </div>
-                                {errors.state && <div className="text-red-500 text-sm">{errors.state}</div>}
-
-                                {/* District Dropdown */}
-                                <div className="flex items-center border border-[#455185] rounded-lg">
-                                    <FiMapPin className="text-[#455185] ml-4" size={20} />
-                                    <select
-                                        id="district"
-                                        name="district"
-                                        value={formData.district}
-                                        onChange={handleInputChange}
-                                        className="mt-1 block w-full px-4 py-2 border-none focus:ring-2 focus:ring-blue-500 rounded-r-lg"
-                                    >
-                                        <option value="">Pilih Daerah</option>
-                                        {formData.state && districts[formData.state] && districts[formData.state].map((district, index) => (
-                                            <option key={index} value={district}>
-                                                {district}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-                                {errors.district && <div className="text-red-500 text-sm">{errors.district}</div>}
-
-                                {/* Buttons */}
-                                <div className="flex space-x-6 mt-8">
-                                    <button
-                                        type="button"
-                                        onClick={handleCancel}
-                                        className="px-6 py-2 bg-gray-500 text-white rounded-md shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 transition"
-                                    >
-                                        Batal
-                                    </button>
+                        {/* Submit and Cancel Buttons */}
+                        <div className="flex justify-end space-x-4">
+                        <a
+                                href="/users"
+                                className="px-4 py-2 bg-gray-200 text-gray-700 font-bold rounded-lg hover:bg-gray-300 focus:ring focus:ring-blue-500"
+                            >
+                                Batal
+                            </a>
                                     <button
                                         type="submit"
-                                        className="px-6 py-2 bg-[#455185] text-white rounded-md shadow-md hover:bg-[#3d4674] focus:outline-none focus:ring-2 focus:ring-[#455185] transition"
+                                        className="px-4 py-2 bg-[#4158A6] font-bold text-white shadow rounded-lg hover:bg-[#3C4565] focus:ring focus:ring-blue-500"
                                     >
                                         {isLoading ? 'Mengemaskini...' : 'Kemaskini'}
                                     </button>
                                 </div>
-                            </div>
-                        </form>
-                    </div>
+                    </form>
                 </div>
             </div>
-        </AuthenticatedLayout>
+        </div>
+    </AuthenticatedLayout>
     );
 }
