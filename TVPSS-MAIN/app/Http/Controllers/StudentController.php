@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia; // Import the Inertia facade
 use App\Models\Student;
+use App\Models\Studcrew;
 
 class StudentController extends Controller
 {
@@ -35,20 +36,20 @@ class StudentController extends Controller
     public function index()
     {
         // Return the Inertia render for StudentPage
-        return Inertia::render('5-Students/StudentPage');    
+        return Inertia::render('5-Students/StudentPage');
     }
 
     // Renamed second index method to applyCrew
     public function applyCrew()
     {
         // Return the Inertia render for ApplyCrew
-        return Inertia::render('5-Students/ApplyCrew');    
+        return Inertia::render('5-Students/ApplyCrew');
     }
 
     public function resultApply()
     {
         // Return the Inertia render for ApplyCrew
-        return Inertia::render('5-Students/ResultApply');    
+        return Inertia::render('5-Students/ResultApply');
     }
 
     // Show method for viewing a student by ID

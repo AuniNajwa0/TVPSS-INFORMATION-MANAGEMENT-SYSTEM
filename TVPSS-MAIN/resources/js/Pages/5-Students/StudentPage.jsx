@@ -101,11 +101,13 @@ function ToggleButton() {
           </div>
           <button
             style={buttonStyle}
-            onMouseEnter={(e) => e.target.style.backgroundColor = buttonHoverStyle.backgroundColor}
-            onMouseLeave={(e) => e.target.style.backgroundColor = buttonStyle.backgroundColor}
+            onMouseEnter={(e) => (e.target.style.backgroundColor = buttonHoverStyle.backgroundColor)}
+            onMouseLeave={(e) => (e.target.style.backgroundColor = buttonStyle.backgroundColor)}
+            onClick={() => Inertia.visit(route('student.applyCrew'))}
           >
             Mohon Sekarang
           </button>
+
         </div>
 
         {/* Placeholder Image Section */}
@@ -149,13 +151,14 @@ function ToggleButton() {
 
         {/* "Mohon Sekarang" Button below Steps */}
         <div style={{ marginTop: '40px' }}>
-          <button
-            style={buttonStyle}
-            onMouseEnter={(e) => e.target.style.backgroundColor = buttonHoverStyle.backgroundColor}
-            onMouseLeave={(e) => e.target.style.backgroundColor = buttonStyle.backgroundColor}
-          >
-            Mohon Sekarang
-          </button>
+        <button
+          style={buttonStyle}
+          onMouseEnter={(e) => (e.target.style.backgroundColor = buttonHoverStyle.backgroundColor)}
+          onMouseLeave={(e) => (e.target.style.backgroundColor = buttonStyle.backgroundColor)}
+          onClick={() => Inertia.visit(route('student.applyCrew'))}
+        >
+          Mohon Sekarang
+        </button>
         </div>
       </div>
     </div>
