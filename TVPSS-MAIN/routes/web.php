@@ -46,15 +46,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 // For student login page
 Route::get('/studentLogin', function () {
-    $user = Auth::user(); // Safely get the user
+    //$user = Auth::user(); // Safely get the user
     Log::info('Accessed student login page.', [
         'method' => request()->method(),
         'path' => request()->path(),
         'ip' => request()->ip(),
-        'user_id' => $user ? $user->id : 'guest', 
-        'user_role' => $user ? $user->role : 'guest', 
+        //'user_id' => $user ? $user->id : 'guest', 
+        //'user_role' => $user ? $user->role : 'guest', 
     ]);
-    return Inertia::render('5-Students/Auth/Login');
+    return Inertia::render('5-Students/Auth/LoginStudent');
 });
 
 // Profile routes
