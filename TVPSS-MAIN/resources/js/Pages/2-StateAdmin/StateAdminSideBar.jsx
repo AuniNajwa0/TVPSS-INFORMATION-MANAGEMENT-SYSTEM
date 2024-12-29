@@ -55,10 +55,10 @@ function StateAdminSideBar() {
                             active={url.startsWith("/listGenerateCertificate")}
                         />
                         <SidebarLink
-                            href="/listSchool"
+                            href="/tvpssInfo"
                             icon={<Info size={20} />}
                             label="Informasi TVPSS Sekolah"
-                            active={url.startsWith("/listSchool")}
+                            active={url.startsWith("/tvpssInfo")}
                         />
                     </nav>
                 </div>
