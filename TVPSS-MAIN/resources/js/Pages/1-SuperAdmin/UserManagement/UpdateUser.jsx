@@ -1,47 +1,29 @@
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head } from "@inertiajs/react";
-import SuperAdminSideBar from "../SuperAdminSideBar";
-import { useState } from "react";
-import { Inertia } from "@inertiajs/inertia";
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { Head } from '@inertiajs/react';
+import SuperAdminSideBar from '../SuperAdminSideBar';
+import { useState, useEffect } from 'react';
 import { User, Mail, Lock, Shield, MapPin, Map, School, Landmark, Layers } from "lucide-react";
+import { Inertia } from '@inertiajs/inertia';
 
-export default function AddUser() {
+export default function UpdateUser({ user, roles }) {
     const [formData, setFormData] = useState({
-        name: "",
-        email: "",
-        role: "",
-        state: "",
-        district: "",
-        password: "",
-        password_confirmation: "",
+        name: user.name || '',
+        email: user.email || '',
+        role: user.role || '',
+        state: user.state || '',
+        district: user.district || '', 
+        password: user.password || '',
+        password_confirmation: '',
     });
 
-    const [message, setMessage] = useState("");
+    const [message, setMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState({});
 
-    const roles = [
-        { id: 0, name: "Super Admin" },
-        { id: 1, name: "State Admin" },
-        { id: 2, name: "PPD Admin" },
-        { id: 3, name: "School Admin" },
-    ];
-
     const states = [
-        "Johor",
-        "Melaka",
-        "Pahang",
-        "Wilayah Persekutuan Kuala Lumpur",
-        "Selangor",
-        "Negeri Sembilan",
-        "Perak",
-        "Kedah",
-        "Pulau Pinang",
-        "Perlis",
-        "Kelantan",
-        "Terengganu",
-        "Sabah",
-        "Sarawak",
+        'Johor', 'Melaka', 'Pahang', 'Wilayah Persekutuan Kuala Lumpur', 'Selangor', 
+        'Negeri Sembilan', 'Perak', 'Kedah', 'Pulau Pinang', 'Perlis', 'Kelantan', 
+        'Terengganu', 'Sabah', 'Sarawak'
     ];
 
     const districts = {
@@ -157,11 +139,12 @@ export default function AddUser() {
         ],
     };
 
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({
             ...prevData,
-            [name]: value,
+            [name]: value
         }));
     };
 
@@ -169,19 +152,21 @@ export default function AddUser() {
         e.preventDefault();
 
         setErrors({});
-        const newErrors = {};
 
-        if (!formData.name) newErrors.name = "Nama diperlukan!";
-        if (!formData.email) newErrors.email = "Email diperlukan!";
-        if (!formData.password) newErrors.password = "Kata laluan diperlukan!";
-        if (formData.password !== formData.password_confirmation) {
-            newErrors.password_confirmation = "Kata laluan tidak sepadan!";
+        const newErrors = {};
+        if (!formData.name) newErrors.name = 'Nama diperlukan!';
+        if (!formData.email) newErrors.email = 'Email diperlukan!';
+        if (!formData.password && formData.password_confirmation) {
+            newErrors.password = 'Katalaluan diperlukan!';
         }
-        if (!formData.role) newErrors.role = "Peranan diperlukan!";
-        if (!formData.state) newErrors.state = "Negeri diperlukan!";
-        if (!formData.district) newErrors.district = "Daerah diperlukan!";
+        if (formData.password !== formData.password_confirmation) {
+            newErrors.password_confirmation = 'Katalaluan tidak sepadan!';
+        }
+        if (!formData.role) newErrors.role = 'Peranan diperlukan!';
+        if (!formData.state) newErrors.state = 'Negeri diperlukan!';
+        if (!formData.district) newErrors.district = 'Daerah diperlukan!'; 
         if (!/\S+@\S+\.\S+/.test(formData.email)) {
-            newErrors.email = "Sila masukkan alamat emel yang sah.";
+            newErrors.email = 'Sila masukkan alamat emel yang sah.';
         }
 
         if (Object.keys(newErrors).length > 0) {
@@ -190,30 +175,30 @@ export default function AddUser() {
         }
 
         setIsLoading(true);
-        setMessage("");
+        setMessage('');
 
         try {
-            const transformedData = {
-                ...formData,
-                role: formData.role,
-            };
-            await Inertia.post("/users", transformedData);
-
-            setMessage("Pengguna berjaya ditambah!");
-            setFormData({
-                name: "",
-                email: "",
-                role: "",
-                state: "",
-                district: "",
-                password: "",
-                password_confirmation: "",
-            });
+            Inertia.put(`/users/${user.id}`, formData);
+            setMessage('Pengguna berjaya dikemaskini!');
         } catch (error) {
-            setMessage("Ralat berlaku, sila cuba lagi.");
+            setMessage('Ralat berlaku, sila cuba lagi.');
         } finally {
             setIsLoading(false);
         }
+    };
+
+    const handleCancel = () => {
+        /*setFormData({
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            state: user.state,
+            district: user.district,  
+            password: user.password,
+            password_confirmation: '',
+        });*/
+        Inertia.get('/listUsers'); 
+        //setMessage('');
     };
 
     return (
@@ -237,12 +222,12 @@ export default function AddUser() {
                                     href="/addUser"
                                     className="text-gray-700 "
                                 >
-                                    Tambah Pengguna
+                                    Kemas Kini Pengguna
                                 </a>
                             </h2>
 
                 <div className="max-w-4xl mx-auto bg-white p-8 shadow border rounded-lg">
-                    <h2 className="text-2xl font-bold mb-6 text-gray-700">Tambah Pengguna Baharu</h2>
+                    <h2 className="text-2xl font-bold mb-6 text-gray-700">Kemas Kini Pengguna</h2>
 
                     {message && (
                         <div
@@ -304,9 +289,8 @@ export default function AddUser() {
                                 name="name"
                                 id="name"
                                 value={formData.name}
-                                placeholder="e.g  Ali Bin Abu"
                                 onChange={handleInputChange}
-                                className={`border border-gray-300 bg-white shadow sm:rounded-lg p-2 focus:ring focus:ring-blue-500 focus:outline-none ${
+                                className={`border border-gray-300 bg-gray-100 shadow rounded-lg p-2 focus:ring focus:ring-blue-500 focus:outline-none ${
                                     errors.name && "border-red-500"
                                 }`}
                             />
@@ -324,9 +308,8 @@ export default function AddUser() {
                                 name="email"
                                 id="email"
                                 value={formData.email}
-                                placeholder="e.g ali@moe.gov.my"
                                 onChange={handleInputChange}
-                                className={`border border-gray-300 bg-white shadow sm:rounded-lg p-2 focus:ring focus:ring-blue-500 focus:outline-none ${
+                                className={`border border-gray-300 bg-gray-100 rounded-lg p-2 shadow focus:ring focus:ring-blue-500 focus:outline-none ${
                                     errors.email && "border-red-500"
                                 }`}
                             />
@@ -344,9 +327,8 @@ export default function AddUser() {
                                 name="password"
                                 id="password"
                                 value={formData.password} 
-                                placeholder="Masukkan Kata Laluan"
                                 onChange={handleInputChange}
-                                className={`border border-gray-300 bg-white shadow sm:rounded-lg p-2 focus:ring focus:ring-blue-500 focus:outline-none ${
+                                className={`border border-gray-300 bg-gray-100 rounded-lg p-2 shadow focus:ring focus:ring-blue-500 focus:outline-none ${
                                     errors.password && "border-red-500"
                                 }`}
                             />
@@ -367,9 +349,8 @@ export default function AddUser() {
                                 name="password_confirmation"
                                 id="password_confirmation"
                                 value={formData.password_confirmation}
-                                placeholder="Sahkan Kata Laluan"
                                 onChange={handleInputChange}
-                                className={`border border-gray-300 bg-white shadow sm:rounded-lg p-2 focus:ring focus:ring-blue-500 focus:outline-none${
+                                className={`border border-gray-300 bg-gray-100 rounded-lg p-2 shadow focus:ring focus:ring-blue-500 focus:outline-none ${
                                     errors.password_confirmation && "border-red-500"
                                 }`}
                             />
@@ -390,7 +371,7 @@ export default function AddUser() {
                                 id="state"
                                 value={formData.state}
                                 onChange={handleInputChange}
-                                className={`border border-gray-300 bg-white shadow sm:rounded-lg p-2 focus:ring focus:ring-blue-500 focus:outline-none${
+                                className={`border border-gray-300 bg-gray-100 rounded-lg p-2 shadow focus:ring focus:ring-blue-500 focus:outline-none ${
                                     errors.state && "border-red-500"
                                 }`}
                             >
@@ -415,7 +396,7 @@ export default function AddUser() {
                                 id="district"
                                 value={formData.district}
                                 onChange={handleInputChange}
-                                className={`border border-gray-300 bg-white shadow sm:rounded-lg p-2 focus:ring focus:ring-blue-500 focus:outline-none ${
+                                className={`border border-gray-300 bg-gray-100 rounded-lg p-2 shadow focus:ring focus:ring-blue-500 focus:outline-none ${
                                     errors.district && "border-red-500"
                                 }`}
                                 disabled={!formData.state}
@@ -433,20 +414,19 @@ export default function AddUser() {
 
                         {/* Submit and Cancel Buttons */}
                         <div className="flex justify-end space-x-4">
-                            <a
+                        <a
                                 href="/users"
                                 className="px-4 py-2 bg-gray-200 text-gray-700 font-bold rounded-lg hover:bg-gray-300 focus:ring focus:ring-blue-500"
                             >
                                 Batal
                             </a>
-                            <button
-                                type="submit"
-                                className="px-4 py-2 bg-[#4158A6] font-bold text-white shadow rounded-lg hover:bg-[#3C4565] focus:ring focus:ring-blue-500"
-                                disabled={isLoading}
-                            >
-                                {isLoading ? "Memuatkan..." : "Tambah Pengguna"}
-                            </button>
-                        </div>
+                                    <button
+                                        type="submit"
+                                        className="px-4 py-2 bg-[#4158A6] font-bold text-white shadow rounded-lg hover:bg-[#3C4565] focus:ring focus:ring-blue-500"
+                                    >
+                                        {isLoading ? 'Mengemaskini...' : 'Kemaskini'}
+                                    </button>
+                                </div>
                     </form>
                 </div>
             </div>
@@ -454,4 +434,3 @@ export default function AddUser() {
     </AuthenticatedLayout>
     );
 }
-
