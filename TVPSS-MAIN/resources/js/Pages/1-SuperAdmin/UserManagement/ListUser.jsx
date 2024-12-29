@@ -1,22 +1,3 @@
-<<<<<<< HEAD
-import { Head } from "@inertiajs/react";
-import { useState, useEffect } from "react";
-import { FaUsers, FaUserShield, FaSchool, FaDownload } from "react-icons/fa";
-import { Bar, Doughnut } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  ArcElement,
-  Tooltip,
-  Legend,
-} from "chart.js";
-import SuperAdminSideBar from "../SuperAdminSideBar";
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Select, MenuItem, TextField, Button, FormControl, InputLabel, Box } from "@mui/material";
-=======
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import { FaUserPlus, FaSearch, FaEdit, FaTrash } from 'react-icons/fa';
@@ -24,7 +5,6 @@ import SuperAdminSideBar from '../SuperAdminSideBar';
 import { useState } from 'react';
 import { Inertia } from '@inertiajs/inertia';
 import { Button, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
->>>>>>> a901fb1a7c7bfeba7559645fa83f725cd114eb38
 
 export default function ListUser({ auth, users, pagination, selectedRole }) {
     const [rowsPerPage, setRowsPerPage] = useState(pagination.per_page);
