@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Head, Link, useForm } from "@inertiajs/react";
 import { Inertia } from '@inertiajs/inertia';
-import { School, Lock, Mail, EyeOff, Eye } from 'lucide-react';
+import { Lock, Mail, EyeOff, Eye } from 'lucide-react';
 
 export default function StudentLogin({ status, canResetPassword }) {
   const { data, setData, post, processing, errors, reset } = useForm({
@@ -54,8 +54,6 @@ export default function StudentLogin({ status, canResetPassword }) {
       <Head title="TVPSS | Login Pelajar" />
       <div className="w-full max-w-xl bg-[#f8f9fa] border shadow rounded-3xl">
         
-
-        {/* Right Side - Login Form */}
         <div className="p-8 md:p-12 flex flex-col justify-center">
           <div className="w-full max-w-md mx-auto">
             <div className="flex justify-center mb-8">
@@ -143,15 +141,29 @@ export default function StudentLogin({ status, canResetPassword }) {
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
                 </div>
-                <div className="mt-2 text-right">
-                <Link
-                  href="/forgot-email"
-                  className="text-sm text-[#4158A6] hover:underline"
-                >
-                  Lupa Email?
-                </Link>
               </div>
-              </div>
+
+              <div className="flex items-center justify-between mb-6">
+  {/* Remember Me Checkbox */}
+  <label className="flex items-center text-sm">
+    <input
+      type="checkbox"
+      name="remember"
+      checked={data.remember}
+      className="mr-2 border rounded"
+      onChange={(e) => setData({ ...data, remember: e.target.checked })}
+    />
+    <span className="text-gray-700">Ingat Saya</span>
+  </label>
+
+  {/* Lupa Email Link */}
+  <Link
+    href="/forgot-email"
+    className="text-sm text-[#4158A6] hover:underline"
+  >
+    Lupa Email?
+  </Link>
+</div>  
 
               {/* Buttons */}
               <div>
