@@ -5,7 +5,7 @@ use App\Http\Controllers\StudentController;
 use Inertia\Inertia;
 
 // Define your student-related routes here
-Route::get('/studentsPage', [StudentController::class, 'index']);
+Route::get('/studentsPage', [StudentController::class, 'index'])->name('student.dashboard');
 
 Route::get('/applyCrew', [StudentController::class, 'applyCrew']);
 

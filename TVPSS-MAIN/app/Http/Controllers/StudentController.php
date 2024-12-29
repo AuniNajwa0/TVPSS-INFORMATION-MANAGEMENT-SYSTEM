@@ -14,7 +14,6 @@ class StudentController extends Controller
     }
     public function login(Request $request)
     {
-        // Validate the IC number format
         $validated = $request->validate([
             'ic_number' => 'required|regex:/^\d{6}-\d{2}-\d{4}$/', // Example format: 000000-00-0000
         ]);
@@ -29,7 +28,7 @@ class StudentController extends Controller
         session(['student_ic' => $validated['ic_number']]);
 
         // Redirect to the dashboard or desired route
-        return redirect()->route('dashboard')->with('success', 'Log masuk berjaya.');
+        return redirect()->route('student.dashboard')->with('success', 'Log masuk berjaya.');
     }
 
     // First index method for StudentPage

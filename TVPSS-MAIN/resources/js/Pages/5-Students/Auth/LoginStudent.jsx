@@ -1,51 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { Head, Link, useForm } from "@inertiajs/react";
-import { Inertia } from '@inertiajs/inertia';
-import { Lock, Mail, EyeOff, Eye } from 'lucide-react';
+import { Inertia } from "@inertiajs/inertia";
+import { Lock, EyeOff, Eye } from "lucide-react";
 
-export default function StudentLogin({ status, canResetPassword }) {
+export default function StudentLogin() {
   const { data, setData, post, processing, errors, reset } = useForm({
-    email: "",
-    password: "",
-    remember: false,
+    ic_number: "",
   });
 
   const [error, setError] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const [showIC, setShowIC] = useState(false);
 
   const handleLogin = (e) => {
     e.preventDefault();
     setError(""); // Reset any existing errors
 
-    // Frontend validation
-    if (!data.email) {
-      setError("Email diperlukan");
+    // Frontend validation for IC number format
+    const icPattern = /^\d{6}-\d{2}-\d{4}$/; // Example format: 000000-00-0000
+    if (!data.ic_number) {
+      setError("Kad Pengenalan diperlukan.");
       return;
     }
 
-    if (!data.email.endsWith("@moe.edu.my")) {
-      setError("Format email mesti @moe.edu.my.");
-      return;
-    }
-
-    if (!data.password) {
-      setError("Kata Laluan diperlukan.");
+    if (!icPattern.test(data.ic_number)) {
+      setError("Format Kad Pengenalan tidak sah.");
       return;
     }
 
     // Submit login and redirect
-    post(route("login"), {
+    post(route("student.login"), {
       onSuccess: () => {
         // Redirect to dashboard after successful login
-        Inertia.visit(route("dashboard"));
+        Inertia.visit(route("student.dashboard"));
       },
       onError: (backendErrors) => {
         // Display backend error messages if login fails
-        if (backendErrors.email || backendErrors.password) {
-          setError("Kata laluan atau email tidak sah.");
+        if (backendErrors.ic_number) {
+          setError("Kad Pengenalan tidak sah.");
         }
       },
-      onFinish: () => reset("password"),
+      onFinish: () => reset("ic_number"),
     });
   };
 
@@ -53,7 +47,6 @@ export default function StudentLogin({ status, canResetPassword }) {
     <div className="min-h-screen bg-white flex items-center justify-center px-4 py-8">
       <Head title="TVPSS | Login Pelajar" />
       <div className="w-full max-w-xl bg-[#f8f9fa] border shadow rounded-3xl">
-        
         <div className="p-8 md:p-12 flex flex-col justify-center">
           <div className="w-full max-w-md mx-auto">
             <div className="flex justify-center mb-8">
@@ -64,14 +57,11 @@ export default function StudentLogin({ status, canResetPassword }) {
               />
             </div>
 
-            <h1 className="text-center text-4xl font-bold mb-3">
-          Log Masuk
-        </h1>
+            <h1 className="text-center text-4xl font-bold mb-3">Log Masuk</h1>
 
-        {/* Add the "Log Masuk Pelajar" text here */}
-        <div className="text-center text-gray-400 text-sm mb-2">
-          Sila masukkan maklumat untuk log masuk!
-        </div>
+            <div className="text-center text-gray-400 text-sm mb-2">
+              Sila masukkan Kad Pengenalan untuk log masuk!
+            </div>
 
             {error && (
               <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded-lg mb-6 flex items-center">
@@ -91,32 +81,9 @@ export default function StudentLogin({ status, canResetPassword }) {
             )}
 
             <form onSubmit={handleLogin} className="space-y-6">
-              {/* Email Input */}
+              {/* IC Number Input */}
               <div>
-                <label htmlFor="email" className="block text-gray-700 font-medium mb-2">
-                  Email
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Mail className="text-gray-400" size={20} />
-                  </div>
-                  <input
-                    id="email"
-                    type="email"
-                    name="email"
-                    value={data.email}
-                    placeholder="pelajar@moe.edu.my"
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    autoComplete="username"
-                    autoFocus
-                    onChange={(e) => setData({ ...data, email: e.target.value })}
-                  />
-                </div>
-              </div>
-
-              {/* Password Input */}
-              <div>
-                <label htmlFor="password" className="block text-gray-700 font-medium mb-2">
+                <label htmlFor="ic_number" className="block text-gray-700 font-medium mb-2">
                   Kad Pengenalan
                 </label>
                 <div className="relative">
@@ -124,46 +91,23 @@ export default function StudentLogin({ status, canResetPassword }) {
                     <Lock className="text-gray-400" size={20} />
                   </div>
                   <input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    name="password"
-                    value={data.password}
+                    id="ic_number"
+                    
+                    name="ic_number"
+                    value={data.ic_number}
                     placeholder="000000-00-0000"
                     className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    autoComplete="current-password"
-                    onChange={(e) => setData({ ...data, password: e.target.value })}
+                    onChange={(e) => setData({ ...data, ic_number: e.target.value })}
                   />
                   <button
                     type="button"
-                    onClick={() => setShowPassword(!showPassword)}
+                    
                     className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
                   >
-                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    
                   </button>
                 </div>
               </div>
-
-              <div className="flex items-center justify-between mb-6">
-  {/* Remember Me Checkbox */}
-  <label className="flex items-center text-sm">
-    <input
-      type="checkbox"
-      name="remember"
-      checked={data.remember}
-      className="mr-2 border rounded"
-      onChange={(e) => setData({ ...data, remember: e.target.checked })}
-    />
-    <span className="text-gray-700">Ingat Saya</span>
-  </label>
-
-  {/* Lupa Email Link */}
-  <Link
-    href="/forgot-email"
-    className="text-sm text-[#4158A6] hover:underline"
-  >
-    Lupa Email?
-  </Link>
-</div>  
 
               {/* Buttons */}
               <div>
@@ -198,13 +142,10 @@ export default function StudentLogin({ status, canResetPassword }) {
                   )}
                 </button>
                 <div className="mt-5 text-center">
-                <Link
-                  href="/dashboard"
-                  className="text-md text-[#4158A6] hover:underline"
-                >
-                  Kembali
-                </Link>
-              </div>
+                  <Link href="/dashboard" className="text-md text-[#4158A6] hover:underline">
+                    Kembali
+                  </Link>
+                </div>
               </div>
             </form>
           </div>
