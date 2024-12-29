@@ -45,19 +45,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
     require __DIR__ . '/superAdminRoutes.php';
 });
 
-// // For student login page
+// For student login page
 // Route::get('/studentLogin', function () {
-//     //$user = Auth::user(); // Safely get the user
+//     $user = Auth::user(); // Safely get the user
 //     Log::info('Accessed student login page.', [
 //         'method' => request()->method(),
 //         'path' => request()->path(),
 //         'ip' => request()->ip(),
-//         //'user_id' => $user ? $user->id : 'guest', 
-//         //'user_role' => $user ? $user->role : 'guest', 
+//         'user_id' => $user ? $user->id : 'guest', 
+//         'user_role' => $user ? $user->role : 'guest', 
 //     ]);
 //     return Inertia::render('5-Students/Auth/LoginStudent');
 // })->name('student.login');
 
+Route::get('/studentLogin', [StudentController::class, 'showLogin'])->name('student.showLogin');
 Route::post('/studentLogin', [StudentController::class, 'login'])->name('student.login');
 
 // Profile routes
