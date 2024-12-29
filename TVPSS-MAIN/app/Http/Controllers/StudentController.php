@@ -8,6 +8,30 @@ use App\Models\Student;
 
 class StudentController extends Controller
 {
+    public function showLogin()
+    {
+        return Inertia::render('5-Students/Auth/LoginStudent');
+    }
+    public function login(Request $request)
+    {
+        // Validate the IC number format
+        $validated = $request->validate([
+            'ic_number' => 'required|regex:/^\d{6}-\d{2}-\d{4}$/', // Example format: 000000-00-0000
+        ]);
+
+        // Optionally, check if the IC number exists in the database
+        // $student = Student::where('ic_number', $validated['ic_number'])->first();
+        // if (!$student) {
+        //     return back()->withErrors(['ic_number' => 'IC number not found.']);
+        // }
+
+        // Store the IC number in the session or perform other actions
+        session(['student_ic' => $validated['ic_number']]);
+
+        // Redirect to the dashboard or desired route
+        return redirect()->route('dashboard')->with('success', 'Log masuk berjaya.');
+    }
+
     // First index method for StudentPage
     public function index()
     {

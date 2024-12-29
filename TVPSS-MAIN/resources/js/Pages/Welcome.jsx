@@ -92,7 +92,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                             ) : (
                                 <>
                                     <Link
-                                        href={route('student.login')}
+                                        href={route('student.showLogin')}
                                         className="flex items-center text-blue-600 hover:text-blue-800 font-semibold"
                                     >
                                         <Lock className="mr-2 h-5 w-5" />
