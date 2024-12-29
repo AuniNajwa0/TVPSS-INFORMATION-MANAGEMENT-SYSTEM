@@ -8,6 +8,7 @@ use Inertia\Inertia;
 Route::get('/studentsPage', [StudentController::class, 'index'])->name('student.dashboard');
 
 Route::get('/applyCrew', [StudentController::class, 'applyCrew'])->name('student.applyCrew');
+Route::post('/applyCrew', [StudentController::class, 'applyCrewSubmit'])->name('student.applyCrewSubmit');
 
 Route::get('/resultApply', [StudentController::class, 'resultApply'])->name('student.resultApply');
 

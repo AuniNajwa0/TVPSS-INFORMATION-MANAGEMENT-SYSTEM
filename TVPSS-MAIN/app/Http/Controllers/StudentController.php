@@ -39,11 +39,49 @@ class StudentController extends Controller
         return Inertia::render('5-Students/StudentPage');
     }
 
-    // Renamed second index method to applyCrew
     public function applyCrew()
     {
-        // Return the Inertia render for ApplyCrew
-        return Inertia::render('5-Students/ApplyCrew');
+        $icNumber = session('student_ic'); // Retrieve the IC number from the session
+
+        // Pass the IC number to the ApplyCrew page
+        return Inertia::render('5-Students/ApplyCrew', [
+            'icNumber' => $icNumber, // Pass the IC number to the view
+        ]);
+    }
+
+    public function applyCrewSubmit(Request $request)
+    {
+        // Validate the incoming data
+        $validated = $request->validate([
+            'ic_number' => 'required|regex:/^\d{6}-\d{2}-\d{4}$/',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'state' => 'required|string',
+            'district' => 'required|string',
+            'school_name' => 'required|string',
+            'crew_position' => 'required|string',
+        ]);
+
+        // Create a new student or update existing one
+        $student = Student::create([
+            'ic_num' => $validated['ic_number'],
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'state' => $validated['state'],
+            'district' => $validated['district'],
+            'schoolName' => $validated['school_name'],
+            'crew' => $validated['crew_position'], // this will save the crew position
+        ]);
+
+        // Save the crew information in the Studcrew model
+        Studcrew::create([
+            'student_id' => $student->id,
+            'position' => $validated['crew_position'],
+            // You can add additional fields here if needed
+        ]);
+
+        // Return a success message or redirect
+        return redirect()->route('student.applyCrew')->with('success', 'Permohonan Krew berjaya dihantar!');
     }
 
     public function resultApply()
