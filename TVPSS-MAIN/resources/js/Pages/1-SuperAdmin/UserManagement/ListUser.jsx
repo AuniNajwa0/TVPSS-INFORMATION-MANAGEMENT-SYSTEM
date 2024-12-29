@@ -67,40 +67,57 @@ export default function ListUser({ auth, users, pagination, selectedRole }) {
         <AuthenticatedLayout>
             <Head title="TVPSS | Pengurusan Pengguna" />
 
-            <div className="flex flex-col md:flex-row min-h-screen bg-[#f8faff]">
+            <div className="flex flex-col md:flex-row min-h-screen bg-white">
                 <div className="w-1/6 bg-white shadow-lg">
                     <SuperAdminSideBar />
                 </div>
 
                 <div className="w-full md:ml-[120px] p-6">
                     <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-4xl font-bold text-gray-900 bg-clip-text hover:scale-105 transform transition duration-300 ease-in-out">
-                            Pengurusan Pengguna
-                        </h2>
+                        {/* Breadcrumbs Section */}
+                        <div>
+                            <h2 className="text-3xl font-bold text-gray-900 bg-clip-text  ">
+                                <a
+                                    href="/listUsers"
+                                    className="text-[#455185] hover:underline"
+                                >
+                                    Pengurusan Pengguna
+                                </a>
+                                <span className="mx-2 text-gray-500">{'>'}</span>
+                                <a
+                                    href="/listUsers"
+                                    className="text-gray-700 hover:underline"
+                                >
+                                    Semua Pengguna
+                                </a>
+                            </h2>
+                        </div>
+
                         <a href="/addUser">
-                        <Button
-                            variant="contained"
-                            sx={{
-                                background: "#455185",
-                                color: "white",
-                                padding: "10px 20px",
-                                textTransform: "none",
-                                borderRadius: 2,
-                                height: "40px",
-                                "&:hover": {
-                                    background: "#3C4565",
-                                    transform: "scale(1.05)",
-                                    boxShadow: "0px 4px 15px rgba(0,0,0,0.2)",
-                                },
-                            }}
-                        >
-                            <FaUserPlus />
-                            Tambah Pengguna Baharu
-                        </Button>
+                            <Button
+                                variant="contained"
+                                sx={{
+                                    background: "#4158A6",
+                                    color: "white",
+                                    padding: "10px 20px",
+                                    textTransform: "none",
+                                    fontWeight: "bold",
+                                    borderRadius: 2,
+                                    height: "40px",
+                                    "&:hover": {
+                                        background: "#3C4565",
+                                        transform: "scale(1.05)",
+                                        boxShadow: "0px 4px 15px rgba(0,0,0,0.2)",
+                                    },
+                                }}
+                            >
+                                <FaUserPlus />
+                                Tambah Pengguna Baharu
+                            </Button>
                         </a>
                     </div>
 
-                    <div className="max-w-8xl mx-auto p-6 text-gray-900 bg-white rounded shadow-md">
+                    <div className="max-w-8xl mx-auto p-6 text-gray-900 bg-white border border-gray-200 shadow rounded-2xl ">
                         <div className="flex items-center mb-4 justify-between">
                             <div className="flex items-center w-full max-w-xs relative">
                                 <FaSearch className="absolute right-3 text-gray-400 text-xl" />
@@ -145,7 +162,7 @@ export default function ListUser({ auth, users, pagination, selectedRole }) {
 
                                 <FormControl variant="outlined" sx={{ minWidth: 120, borderRadius: 4 }}>
                                     <InputLabel id="rowsPerPage-label" sx={{ fontSize: '0.875rem' }}>
-                                    Bilangan Data
+                                        Bilangan Data
                                     </InputLabel>
                                     <Select
                                         labelId="rowsPerPage-label"
@@ -206,7 +223,7 @@ export default function ListUser({ auth, users, pagination, selectedRole }) {
                                             <td className="border-b px-6 py-4 text-center">
                                                 <div className="flex justify-center items-center space-x-4">
                                                     <button
-                                                        onClick={() => Inertia.visit(`/updateUser/${user.id}`)}
+                                                        onClick={() => Inertia.visit(`/users/${user.id}/edit`)}
                                                         className="text-gray-400 hover:text-gray-600"
                                                     >
                                                         <FaEdit size={18} />
@@ -235,15 +252,15 @@ export default function ListUser({ auth, users, pagination, selectedRole }) {
                             </button>
 
                             <span className="inline-flex items-center px-4 py-2 rounded-lg bg-[#f1f5f9] text-[#455185] font-semibold shadow-sm text-sm">
-    <span className="text-gray-600 mr-2">Halaman</span> 
-    <span className="bg-white px-3 py-1 rounded-lg text-[#455185] shadow-md border border-gray-200 mx-1">
-        {currentPage}
-    </span> 
-    <span className="text-gray-600 ml-2">daripada</span>
-    <span className="bg-white px-3 py-1 rounded-lg text-[#455185] shadow-md border border-gray-200 mx-1">
-        {Math.ceil(roleFilteredUsers.length / rowsPerPage)}
-    </span>
-</span>
+                                <span className="text-gray-600 mr-2">Halaman</span>
+                                <span className="bg-white px-3 py-1 rounded-lg text-[#455185] shadow-md border border-gray-200 mx-1">
+                                    {currentPage}
+                                </span>
+                                <span className="text-gray-600 ml-2">daripada</span>
+                                <span className="bg-white px-3 py-1 rounded-lg text-[#455185] shadow-md border border-gray-200 mx-1">
+                                    {Math.ceil(roleFilteredUsers.length / rowsPerPage)}
+                                </span>
+                            </span>
 
                             <button
                                 onClick={nextPage}
@@ -260,37 +277,7 @@ export default function ListUser({ auth, users, pagination, selectedRole }) {
     );
 }
 
-const getRoleColor = (role) => {
-    switch (role) {
-        case 0:
-            return 'bg-blue-100';
-        case 1:
-            return 'bg-green-100';
-        case 2:
-            return 'bg-purple-100';
-        case 3:
-            return 'bg-yellow-100';
-        default:
-            return 'bg-gray-100';
-    }
-};
-
-const getRoleTextColor = (role) => {
-    switch (role) {
-        case 0:
-            return '#0000FF'; // Blue
-        case 1:
-            return '#1d8238'; // Green
-        case 2:
-            return '#800080'; // Purple
-        case 3:
-            return '#b3b300'; // Yellow
-        default:
-            return '#808080'; // Gray
-    }
-};
-
-const getRoleLabel = (role) => {
+function getRoleLabel(role) {
     switch (role) {
         case 0:
             return 'Super Admin';
@@ -303,4 +290,34 @@ const getRoleLabel = (role) => {
         default:
             return 'Unknown';
     }
-};
+}
+
+function getRoleColor(role) {
+    switch (role) {
+        case 0:
+            return 'bg-blue-100 text-blue-700';
+        case 1:
+            return 'bg-green-100 text-green-700';
+        case 2:
+            return 'bg-yellow-100 text-yellow-700';
+        case 3:
+            return 'bg-purple-100 text-purple-700';
+        default:
+            return 'bg-gray-100 text-gray-700';
+    }
+}
+
+function getRoleTextColor(role) {
+    switch (role) {
+        case 0:
+            return '#1D4ED8';
+        case 1:
+            return '#059669';
+        case 2:
+            return '#D97706';
+        case 3:
+            return '#7C3AED';
+        default:
+            return '#1F2937';
+    }
+}
