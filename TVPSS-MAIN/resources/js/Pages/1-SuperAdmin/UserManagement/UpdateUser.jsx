@@ -210,24 +210,22 @@ export default function UpdateUser({ user, roles }) {
             </div>
             
             <div className="flex-1 p-6">
-            <h2 className="text-3xl font-bold text-gray-900 bg-clip-text mb-6">
-                                <a
-                                    href="/listUsers"
-                                    className="text-[#455185] hover:underline"
-                                >
+            <nav className="mb-8">
+                        <ol className="flex items-center space-x-2 text-gray-600">
+                            <li>
+                                <a href="/listUsers" className="text-[#4158A6] hover:text-blue-800 font-medium">
                                     Pengurusan Pengguna
                                 </a>
-                                <span className="mx-2 text-gray-500">{'>'}</span>
-                                <a
-                                    href="/addUser"
-                                    className="text-gray-700 "
-                                >
-                                    Kemas Kini Pengguna
-                                </a>
-                            </h2>
+                            </li>
+                            <li className="text-gray-500">/</li>
+                            <li className="text-gray-900 font-medium">
+                                Kemaskini Pengguna
+                            </li>
+                        </ol>
+                    </nav>
 
                 <div className="max-w-4xl mx-auto bg-white p-8 shadow border rounded-lg">
-                    <h2 className="text-2xl font-bold mb-6 text-gray-700">Kemas Kini Pengguna</h2>
+                    <h2 className="text-2xl font-bold mb-6 text-gray-700">Kemaskini Pengguna</h2>
 
                     {message && (
                         <div
