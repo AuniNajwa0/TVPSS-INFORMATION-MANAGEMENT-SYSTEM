@@ -12,22 +12,22 @@ function ToggleButton() {
   const applications = [
     {
       id: 1,
-      icNumber: "901010-10-1010",
+      ic_num: "901010-10-1010",
       name: "Ali Ahmad",
       email: "ali@gmail.com",
       negeri: "Johor",
       daerah: "Muar",
-      position: "Jurukamera",
+      jawatan: "Jurukamera",
       status: "Dalam Proses"
     },
     {
       id: 2,
-      icNumber: "920202-02-2020",
+      ic_num: "920202-02-2020",
       name: "Fatimah Binti Omar",
       email: "fatimah@gmail.com",
       negeri: "Selangor",
       daerah: "Petaling",
-      position: "Penemuduga",
+      jawatan: "Penemuduga",
       status: "Diluluskan"
     },
   ];
@@ -217,9 +217,9 @@ function ToggleButton() {
                       </span>
                     )}
                   </th>
-                  <th style={thStyle} onClick={() => handleSort('icNumber')}>
-                    No. Kad Pengenalan {sortField === 'icNumber' && (
-                      <span style={sortIconStyle('icNumber')}>
+                  <th style={thStyle} onClick={() => handleSort('ic_num')}>
+                    No. Kad Pengenalan {sortField === 'ic_num' && (
+                      <span style={sortIconStyle('ic_num')}>
                         {sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                       </span>
                     )}
@@ -234,7 +234,7 @@ function ToggleButton() {
                   <th style={thStyle} onClick={() => handleSort('email')}>Email</th>
                   <th style={thStyle} onClick={() => handleSort('negeri')}>Negeri</th>
                   <th style={thStyle} onClick={() => handleSort('daerah')}>Daerah</th>
-                  <th style={thStyle} onClick={() => handleSort('position')}>Jawatan</th>
+                  <th style={thStyle} onClick={() => handleSort('jawatan')}>Jawatan</th>
                   <th style={thStyle} onClick={() => handleSort('status')}>Status</th>
                   <th style={thStyle}>Aksi</th>
                 </tr>
@@ -249,12 +249,12 @@ function ToggleButton() {
                     }}
                   >
                     <td style={tdStyle(index)}>{index + 1}</td>
-                    <td style={tdStyle(index)}>{application.icNumber}</td>
+                    <td style={tdStyle(index)}>{application.ic_num}</td>
                     <td style={tdStyle(index)}>{application.name}</td>
                     <td style={tdStyle(index)}>{application.email}</td>
                     <td style={tdStyle(index)}>{application.negeri}</td>
                     <td style={tdStyle(index)}>{application.daerah}</td>
-                    <td style={tdStyle(index)}>{application.position}</td>
+                    <td style={tdStyle(index)}>{application.jawatan}</td>
                     <td style={tdStyle(index)}>
                       <span style={statusBadgeStyle(application.status)}>
                         {application.status}

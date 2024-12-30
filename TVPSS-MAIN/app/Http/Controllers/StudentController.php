@@ -80,7 +80,7 @@ class StudentController extends Controller
         ]);
 
         // Return a success message or redirect
-        return redirect()->route('student.applyCrew')->with('success', 'Permohonan Krew berjaya dihantar!');
+        return redirect()->route('student.resultApply')->with('success', 'Permohonan Krew berjaya dihantar!');
     }
 
     public function resultApply()
