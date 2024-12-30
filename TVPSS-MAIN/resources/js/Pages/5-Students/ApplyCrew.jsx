@@ -145,7 +145,7 @@ function ApplyCrew() {
                         <input
                             type="text"
                             name="ic_num"
-                            placeholder="Nombor Kad Pengenalan"
+                            placeholder="Nombor Kad Pengenalan (000000-00-0000)"
                             style={styles.input}
                             value={data.ic_num}
                             onChange={handleInputChange}
