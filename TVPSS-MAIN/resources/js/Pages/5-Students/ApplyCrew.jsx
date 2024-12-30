@@ -38,7 +38,10 @@ function ApplyCrew() {
 
     // CSS styles
     const styles = {
-        page: { backgroundColor: "#f8f9fa", minHeight: "100vh", padding: "20px" },
+        page: { 
+          backgroundColor: "#ebf8ff", 
+          minHeight: "100vh", 
+          padding: "20px" },
         formContainer: {
             maxWidth: "600px",
             margin: "20px auto",
