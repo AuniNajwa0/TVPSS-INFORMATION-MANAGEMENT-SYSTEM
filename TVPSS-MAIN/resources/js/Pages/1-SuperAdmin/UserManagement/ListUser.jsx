@@ -75,23 +75,19 @@ export default function ListUser({ auth, users, pagination, selectedRole }) {
                 <div className="w-full md:ml-[120px] p-6">
                     <div className="flex items-center justify-between mb-6">
                         {/* Breadcrumbs Section */}
-                        <div>
-                            <h2 className="text-3xl font-bold text-gray-900 bg-clip-text  ">
-                                <a
-                                    href="/listUsers"
-                                    className="text-[#455185] hover:underline"
-                                >
+                        <nav className="mb-8">
+                        <ol className="flex items-center space-x-2 text-gray-600">
+                            <li>
+                                <a href="/listUsers" className="text-[#4158A6] hover:text-blue-800 font-medium">
                                     Pengurusan Pengguna
                                 </a>
-                                <span className="mx-2 text-gray-500">{'>'}</span>
-                                <a
-                                    href="/listUsers"
-                                    className="text-gray-700 hover:underline"
-                                >
+                            </li>
+                            <li className="text-gray-500">/</li>
+                            <li className="text-gray-900 font-medium">
                                     Semua Pengguna
-                                </a>
-                            </h2>
-                        </div>
+                            </li>
+                        </ol>
+                    </nav>
 
                         <a href="/addUser">
                             <Button
