@@ -1,160 +1,86 @@
 import React, { useState } from 'react';
-import { ChevronDown } from 'lucide-react'; // Import the dropdown icon from lucide-react
-import { Link } from 'react-router-dom';
+import { ChevronDown, LogOut, Home, Users, CheckCircle } from 'lucide-react';
 
-function StudentNavBar() {
+const StudentNavBar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
-
-  // Placeholder name for the profile
   const profileName = "John Doe";
-
-  // Function to extract initials
+  
   const getInitials = (name) => {
-    const nameParts = name.split(" ");
-    const initials = nameParts
-      .map((part) => part[0].toUpperCase())
-      .join("");
-    return initials;
-  };
-
-  const navbarStyle = {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '20px 50px',
-    backgroundColor: '#f8f9fa',
-  };
-
-  const logoStyle = {
-    height: '60px',
-    width: 'auto',
-  };
-
-  const navbarButtonsStyle = {
-    display: 'flex',
-    gap: '40px',
-  };
-
-  const navButtonStyle = {
-    padding: '8px 16px',
-    backgroundColor: '#f8f9fa',
-    border: 'none',
-    borderRadius: '5px',
-    color: '#4158A6',
-    fontSize: '17px',
-    fontWeight: 'bold',
-    cursor: 'pointer',
-    transition: 'background-color 0.3s ease',
-  };
-
-  const navButtonHoverStyle = {
-    backgroundColor: '#e9e2e2',
-  };
-
-  const navbarProfileStyle = {
-    display: 'flex',
-    alignItems: 'center',
-    position: 'relative',
-  };
-
-  const profileInfoStyle = {
-    display: 'flex',
-    alignItems: 'center',
-    cursor: 'pointer',
-  };
-
-  const profilePicStyle = {
-    height: '40px',
-    width: '40px',
-    borderRadius: '50%',
-    backgroundColor: '#4158A6',
-    color: 'white',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    fontSize: '16px',
-    fontWeight: 'bold',
-    marginRight: '10px',
-  };
-
-  const dropdownMenuStyle = {
-    position: 'absolute',
-    top: '50px',
-    right: '0',
-    backgroundColor: 'white',
-    borderRadius: '5px',
-    border: '1px solid #ccc',
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-    padding: '10px',
-    width: '150px',
-    zIndex: '10',
-    opacity: isDropdownOpen ? 1 : 0,
-    transform: isDropdownOpen ? 'translateY(0)' : 'translateY(-10px)',
-    maxHeight: isDropdownOpen ? '200px' : '0',
-    transition: 'opacity 0.3s ease, transform 0.3s ease, max-height 0.3s ease',
-    pointerEvents: isDropdownOpen ? 'auto' : 'none',
-  };
-
-  const dropdownItemStyle = {
-    padding: '8px',
-    backgroundColor: '#fff',
-    border: 'none',
-    textAlign: 'left',
-    width: '100%',
-    cursor: 'pointer',
-    color: '#333',
-    fontWeight: 'bold',
+    return name.split(" ").map((part) => part[0].toUpperCase()).join("");
   };
 
   return (
-    <nav style={navbarStyle}>
-      {/* Left side: Logo */}
-      <div style={{ display: 'flex' }}>
-        <img src="/assets/TVPSSLogo.jpg" alt="Logo" style={logoStyle} />
-      </div>
+    <nav className="bg-blue">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16">
+          {/* Logo */}
+          <div className="flex-shrink-0 flex items-center">
+            <img 
+              src="/assets/TVPSSLogo3.jpg" 
+              alt="Logo" 
+              className="h-12 w-auto"
+            />
+          </div>
 
-      {/* Middle: Navigation buttons */}
-      <div style={navbarButtonsStyle}>
-        <button
-          style={navButtonStyle}
-          onMouseEnter={(e) => (e.target.style.backgroundColor = navButtonHoverStyle.backgroundColor)}
-          onMouseLeave={(e) => (e.target.style.backgroundColor = navButtonStyle.backgroundColor)}
-        >
-          Utama
-        </button>
-        <button
-          style={navButtonStyle}
-          onMouseEnter={(e) => (e.target.style.backgroundColor = navButtonHoverStyle.backgroundColor)}
-          onMouseLeave={(e) => (e.target.style.backgroundColor = navButtonStyle.backgroundColor)}
-        >
-          Permohonan Krew
-        </button>
-        <button
-          style={navButtonStyle}
-          onMouseEnter={(e) => (e.target.style.backgroundColor = navButtonHoverStyle.backgroundColor)}
-          onMouseLeave={(e) => (e.target.style.backgroundColor = navButtonStyle.backgroundColor)}
-        >
-          Keputusan Permohonan
-        </button>
-      </div>
+          {/* Navigation Links */}
+          <div className="hidden sm:flex sm:space-x-8 items-center">
+            <NavButton href="/studentsPage" icon={<Home size={18} />} text="Utama" />
+            <NavButton href="/applyCrew" icon={<Users size={18} />} text="Permohonan Krew" />
+            <NavButton href="/resultApply" icon={<CheckCircle size={18} />} text="Keputusan Permohonan" />
+          </div>
 
-      {/* Right side: Profile with dropdown */}
-      <div style={navbarProfileStyle}>
-        <div style={profileInfoStyle} onClick={toggleDropdown}>
-          <div style={profilePicStyle}>{getInitials(profileName)}</div>
-          <span>{profileName}</span>
-          <ChevronDown size={18} color="#333" /> {/* Dropdown icon */}
-        </div>
-        <div style={dropdownMenuStyle}>
-          <button style={dropdownItemStyle}>Logout</button>
+          {/* Profile Dropdown */}
+          <div className="flex items-center">
+            <div className="relative">
+              <button
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="flex items-center space-x-3 text-gray-700 hover:text-gray-900 focus:outline-none p-2 rounded-lg transition-colors duration-200"
+              >
+                <div className="bg-[#4158A6] text-white w-8 h-8 rounded-full flex items-center justify-center font-semibold text-sm">
+                  {getInitials(profileName)}
+                </div>
+                <span className="font-medium">{profileName}</span>
+                <ChevronDown
+                  size={16}
+                  className={`transform transition-transform duration-200 ${
+                    isDropdownOpen ? 'rotate-180' : ''
+                  }`}
+                />
+              </button>
+
+              {/* Dropdown Menu */}
+              <div
+                className={`absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 transition-all duration-200 ease-in-out transform origin-top-right
+                  ${isDropdownOpen
+                    ? 'opacity-100 scale-100 translate-y-0'
+                    : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'
+                  }`}
+              >
+                <button
+                  className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150"
+                >
+                  <LogOut size={16} className="mr-2" />
+                  Logout
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </nav>
   );
-}
+};
+
+// Navigation Button Component
+const NavButton = ({ href, icon, text }) => (
+  <a
+    href={href}
+    className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200"
+  >
+    {icon}
+    <span className="ml-2">{text}</span>
+  </a>
+);
 
 export default StudentNavBar;
