@@ -1,13 +1,24 @@
 import React, { useState } from 'react';
 import { ChevronDown, LogOut, Home, Users, CheckCircle } from 'lucide-react';
+import { useHistory } from 'react-router-dom'; // If using react-router for routing
 
 const StudentNavBar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const history = useHistory(); // For redirecting after logout
 
   const profileName = "John Doe";
   
   const getInitials = (name) => {
     return name.split(" ").map((part) => part[0].toUpperCase()).join("");
+  };
+
+  const handleLogout = () => {
+    // Clear session storage or localStorage (or handle any other logout logic)
+    localStorage.removeItem("user"); // Replace with actual storage key
+    sessionStorage.removeItem("user"); // Optional: if using sessionStorage
+
+    // Redirect to login or home page
+    history.push("/login"); // Adjust to your login route
   };
 
   return (
@@ -58,6 +69,7 @@ const StudentNavBar = () => {
                   }`}
               >
                 <button
+                  onClick={handleLogout} // Call logout function
                   className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150"
                 >
                   <LogOut size={16} className="mr-2" />
