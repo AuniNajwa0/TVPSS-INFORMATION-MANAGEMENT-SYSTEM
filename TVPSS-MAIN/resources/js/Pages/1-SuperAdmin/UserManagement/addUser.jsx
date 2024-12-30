@@ -21,10 +21,10 @@ export default function AddUser() {
     const [errors, setErrors] = useState({});
 
     const roles = [
-        { id: 0, name: "Super Admin" },
-        { id: 1, name: "State Admin" },
-        { id: 2, name: "PPD Admin" },
-        { id: 3, name: "School Admin" },
+        { id: 0, name: "Super Admin", icon: Shield, color: "text-purple-500", bgColor: "bg-purple-50" },
+        { id: 1, name: "State Admin", icon: Layers, color: "text-blue-500", bgColor: "bg-blue-50" },
+        { id: 2, name: "PPD Admin", icon: Landmark, color: "text-indigo-500", bgColor: "bg-indigo-50" },
+        { id: 3, name: "School Admin", icon: School, color: "text-orange-500", bgColor: "bg-orange-50" }
     ];
 
     const states = [
@@ -214,6 +214,31 @@ export default function AddUser() {
         } finally {
             setIsLoading(false);
         }
+
+        const InputField = ({ icon: Icon, label, name, type = "text", error, ...props }) => (
+            <div className="relative">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <div className="flex items-center gap-2">
+                        <Icon className="w-4 h-4 text-gray-500" />
+                        {label}
+                    </div>
+                </label>
+                <input
+                    type={type}
+                    name={name}
+                    className={`w-full px-4 py-2.5 bg-white border rounded-lg 
+                        ${error ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'}
+                        focus:outline-none focus:ring-2 transition-all duration-200`}
+                    {...props}
+                />
+                {error && (
+                    <div className="flex items-center gap-1 mt-1 text-red-500 text-sm">
+                        <AlertCircle className="w-4 h-4" />
+                        {error}
+                    </div>
+                )}
+            </div>
+        );
     };
 
     return (
@@ -225,21 +250,19 @@ export default function AddUser() {
             </div>
             
             <div className="flex-1 p-6">
-            <h2 className="text-3xl font-bold text-gray-900 bg-clip-text mb-6">
-                                <a
-                                    href="/listUsers"
-                                    className="text-[#455185] hover:underline"
-                                >
+            <nav className="mb-8">
+                        <ol className="flex items-center space-x-2 text-gray-600">
+                            <li>
+                                <a href="/listUsers" className="text-[#4158A6] hover:text-blue-800 font-medium">
                                     Pengurusan Pengguna
                                 </a>
-                                <span className="mx-2 text-gray-500">{'>'}</span>
-                                <a
-                                    href="/addUser"
-                                    className="text-gray-700 "
-                                >
-                                    Tambah Pengguna
-                                </a>
-                            </h2>
+                            </li>
+                            <li className="text-gray-500">/</li>
+                            <li className="text-gray-900 font-medium">
+                                Tambah Pengguna
+                            </li>
+                        </ol>
+                    </nav>
 
                 <div className="max-w-4xl mx-auto bg-white p-8 shadow border rounded-lg">
                     <h2 className="text-2xl font-bold mb-6 text-gray-700">Tambah Pengguna Baharu</h2>
@@ -304,7 +327,7 @@ export default function AddUser() {
                                 name="name"
                                 id="name"
                                 value={formData.name}
-                                placeholder="e.g  Ali Bin Abu"
+                                placeholder="Masukkan nama penuh"
                                 onChange={handleInputChange}
                                 className={`border border-gray-300 bg-white shadow sm:rounded-lg p-2 focus:ring focus:ring-blue-500 focus:outline-none ${
                                     errors.name && "border-red-500"
@@ -324,7 +347,7 @@ export default function AddUser() {
                                 name="email"
                                 id="email"
                                 value={formData.email}
-                                placeholder="e.g ali@moe.gov.my"
+                                placeholder="nama@moe.gov.my"
                                 onChange={handleInputChange}
                                 className={`border border-gray-300 bg-white shadow sm:rounded-lg p-2 focus:ring focus:ring-blue-500 focus:outline-none ${
                                     errors.email && "border-red-500"
