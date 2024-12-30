@@ -33,7 +33,7 @@ function ToggleButton() {
   ];
 
   const pageStyle = {
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#ebf8ff',
     minHeight: '100vh',
     padding: '20px',
   };
