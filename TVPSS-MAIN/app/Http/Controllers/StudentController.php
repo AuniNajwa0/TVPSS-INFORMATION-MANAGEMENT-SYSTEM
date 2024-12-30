@@ -16,7 +16,7 @@ class StudentController extends Controller
     public function login(Request $request)
     {
         $validated = $request->validate([
-            'ic_number' => 'required|regex:/^\d{6}-\d{2}-\d{4}$/', // Example format: 000000-00-0000
+            'ic_num' => 'required|regex:/^\d{6}-\d{2}-\d{4}$/', // Example format: 000000-00-0000
         ]);
 
         // Optionally, check if the IC number exists in the database
@@ -26,7 +26,7 @@ class StudentController extends Controller
         // }
 
         // Store the IC number in the session or perform other actions
-        session(['student_ic' => $validated['ic_number']]);
+        session(['ic_num' => $validated['ic_num']]);
 
         // Redirect to the dashboard or desired route
         return redirect()->route('student.dashboard')->with('success', 'Log masuk berjaya.');
@@ -41,11 +41,11 @@ class StudentController extends Controller
 
     public function applyCrew()
     {
-        $icNumber = session('student_ic'); // Retrieve the IC number from the session
+        $ic_num = session('ic_num'); // Retrieve the IC number from the session
 
         // Pass the IC number to the ApplyCrew page
         return Inertia::render('5-Students/ApplyCrew', [
-            'icNumber' => $icNumber, // Pass the IC number to the view
+            'ic_num' => $ic_num, // Pass the IC number to the view
         ]);
     }
 
@@ -53,30 +53,29 @@ class StudentController extends Controller
     {
         // Validate the incoming data
         $validated = $request->validate([
-            'ic_number' => 'required|regex:/^\d{6}-\d{2}-\d{4}$/',
+            'ic_num' => 'required|regex:/^\d{6}-\d{2}-\d{4}$/',
             'name' => 'required|string|max:255',
             'email' => 'required|email',
             'state' => 'required|string',
             'district' => 'required|string',
-            'school_name' => 'required|string',
-            'crew_position' => 'required|string',
+            'schoolName' => 'required|string',
+            'jawatan' => 'required|string',
         ]);
 
         // Create a new student or update existing one
         $student = Student::create([
-            'ic_num' => $validated['ic_number'],
+            'ic_num' => $validated['ic_num'],
             'name' => $validated['name'],
             'email' => $validated['email'],
             'state' => $validated['state'],
             'district' => $validated['district'],
-            'schoolName' => $validated['school_name'],
-            'crew' => $validated['crew_position'], // this will save the crew position
+            'schoolName' => $validated['schoolName'],// this will save the crew position
         ]);
 
         // Save the crew information in the Studcrew model
         Studcrew::create([
             'student_id' => $student->id,
-            'position' => $validated['crew_position'],
+            'jawatan' => $validated['jawatan'],
             // You can add additional fields here if needed
         ]);
 
