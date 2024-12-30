@@ -4,7 +4,7 @@ import { router, Head } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import PPDAdminSideBar from "../PPDAdminSideBar";
 
-export default function ListSchool({ schools = [] }) {
+export default function ListPPDSchool({ schools = [] }) {
     const [searchQuery, setSearchQuery] = useState("");
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
@@ -165,7 +165,7 @@ export default function ListSchool({ schools = [] }) {
                                                 <div className="flex justify-center items-center space-x-4">
                                                     <button
                                                         onClick={() =>
-                                                            router.visit(`/tvpssInfoState/${school.schoolCode}/edit`)
+                                                            router.visit(`/tvpssInfoPPD/${school.schoolCode}/edit`)
                                                         }
                                                         className="text-gray-400 hover:text-gray-600"
                                                     >
