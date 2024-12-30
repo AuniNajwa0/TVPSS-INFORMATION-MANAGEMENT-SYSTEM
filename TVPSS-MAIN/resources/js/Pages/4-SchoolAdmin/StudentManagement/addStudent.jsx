@@ -5,39 +5,6 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import SchoolAdminSideBar from "../SchoolAdminSideBar";
 import { FiUser, FiMail, FiMapPin, FiBook, FiHome, FiMap } from "react-icons/fi";
 
-const Modal = ({ message, onClose }) => (
-    <div className="fixed inset-0 flex items-center justify-center z-50">
-        <div className="bg-black bg-opacity-50 absolute inset-0 backdrop-blur-sm" onClick={onClose}></div>
-        <div className="bg-white p-8 rounded-2xl shadow-xl z-10 max-w-md w-full mx-4 transform transition-all">
-            <div className="flex flex-col items-center text-center">
-                <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
-                    <svg
-                        className="w-8 h-8 text-red-600"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                        />
-                    </svg>
-                </div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">Validation Error</h2>
-                <p className="text-gray-600">{message}</p>
-                <button
-                    onClick={onClose}
-                    className="mt-6 w-full px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl hover:from-red-700 hover:to-red-800 transform transition-all hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-                >
-                    Close
-                </button>
-            </div>
-        </div>
-    </div>
-);
-
 export default function AddStudent({ schoolInfo }) {
     const [formData, setFormData] = useState({
         name: "",
@@ -53,7 +20,6 @@ export default function AddStudent({ schoolInfo }) {
     const [message, setMessage] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState({});
-    const [modalMessage, setModalMessage] = useState("");
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -63,40 +29,33 @@ export default function AddStudent({ schoolInfo }) {
         }));
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
         setErrors({});
         setMessage("");
-        setModalMessage("");
-
         setIsLoading(true);
 
-        try {
-            await Inertia.post("/students", formData, {
-                onSuccess: () => {
-                    setMessage("Student added successfully!");
-                    setFormData({
-                        name: "",
-                        ic_num: "",
-                        email: "",
-                        crew: "",
-                        state: schoolInfo.state,
-                        district: schoolInfo.district,
-                        schoolName: schoolInfo.schoolName,
-                        school_info_id: schoolInfo.id,
-                    });
-                },
-                onError: (validationErrors) => {
-                    setErrors(validationErrors);
-                    setMessage("");
-                },
-            });
-        } catch (error) {
-            console.error("Unexpected Error:", error);
-            setMessage("An unexpected error occurred. Please try again.");
-        } finally {
-            setIsLoading(false);
-        }
+        Inertia.post("/students", formData, {
+            onSuccess: () => {
+                setMessage("Student added successfully!");
+                setFormData({
+                    name: "",
+                    ic_num: "",
+                    email: "",
+                    crew: "",
+                    state: schoolInfo.state,
+                    district: schoolInfo.district,
+                    schoolName: schoolInfo.schoolName,
+                    school_info_id: schoolInfo.id,
+                });
+            },
+            onError: (validationErrors) => {
+                setErrors(validationErrors);
+            },
+            onFinish: () => {
+                setIsLoading(false);
+            },
+        });
     };
 
     const InputField = ({ icon: Icon, label, name, type = "text", ...props }) => (
@@ -227,10 +186,6 @@ export default function AddStudent({ schoolInfo }) {
                     </div>
                 </div>
             </div>
-
-            {modalMessage && (
-                <Modal message={modalMessage} onClose={() => setModalMessage("")} />
-            )}
         </AuthenticatedLayout>
     );
 }
