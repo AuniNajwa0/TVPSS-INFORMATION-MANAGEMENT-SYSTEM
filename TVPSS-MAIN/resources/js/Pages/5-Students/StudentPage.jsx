@@ -1,8 +1,6 @@
 import { Head } from "@inertiajs/react";
 import { CheckCircle, ChevronLeft, ChevronRight, Edit, Send } from 'lucide-react';
-import { Edit, Send, CheckCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import StudentNavBar from './StudentNavBar';
 
 const LandingPage = () => {
   const [currentImage, setCurrentImage] = useState(0);
@@ -30,7 +28,6 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       <Head title="TVPSS | Pelajar" />
-      <StudentNavBar />
 
       {/* Hero Section */}
       <div className="max-w-7xl mx-auto px-4 pt-16 pb-8">
