@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
 import { Head } from "@inertiajs/react";
+import { CheckCircle, ChevronLeft, ChevronRight, Edit, Send } from 'lucide-react';
 import { Edit, Send, CheckCircle, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import StudentNavBar from './StudentNavBar';
 
 const LandingPage = () => {

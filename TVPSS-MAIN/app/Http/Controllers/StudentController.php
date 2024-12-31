@@ -4,9 +4,29 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia; // Import the Inertia facade
+use App\Models\Student;
+use App\Models\Studcrew;
 
 class StudentController extends Controller
 {
+    public function showLogin()
+    {
+        return Inertia::render('5-Students/Auth/LoginStudent');
+    }
+
+    public function login(Request $request)
+{
+    $validated = $request->validate([
+        'ic_num' => 'required|regex:/^\d{6}-\d{2}-\d{4}$/', // IC number validation
+    ]);
+
+    // Store the IC number in the session or perform other actions
+    session(['ic_num' => $validated['ic_num']]);
+
+    // Redirect to the dashboard after successful login
+    return redirect()->route('student.dashboard')->with('success', 'Log masuk berjaya.');
+}
+
     // First index method for StudentPage
     public function index()
     {

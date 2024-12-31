@@ -5,11 +5,12 @@ use App\Http\Controllers\StudentController;
 use Inertia\Inertia;
 
 // Define your student-related routes here
-Route::get('/studentsPage', [StudentController::class, 'index']);
+Route::get('/studentsPage', [StudentController::class, 'index'])->name('student.dashboard');
 
-Route::get('/applyCrew', [StudentController::class, 'applyCrew']);
+Route::get('/applyCrew', [StudentController::class, 'applyCrew'])->name('student.applyCrew');
+Route::post('/applyCrew', [StudentController::class, 'applyCrewSubmit'])->name('student.applyCrewSubmit');
 
-Route::get('/resultApply', [StudentController::class, 'resultApply']);
+Route::get('/resultApply', [StudentController::class, 'resultApply'])->name('student.resultApply');
 
 //Route::get('/studentsPage', fn() => Inertia::render('5-Students/StudentPage'))
     //->name('studentPg');
