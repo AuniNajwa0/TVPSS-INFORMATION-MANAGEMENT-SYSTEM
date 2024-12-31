@@ -68,9 +68,26 @@ export default function ListSchool({ schools = [] }) {
                 </div>
 
                 <div className="flex-1 p-6 bg-gray-50 min-h-screen">
-                    <h1 className="text-3xl font-bold mb-6">
-                        Informasi TVPSS Sekolah
-                    </h1>
+                    <div className="flex items-center justify-between mb-6">
+                        {/* Breadcrumbs Section */}
+                        <div>
+                            <h2 className="text-3xl font-bold text-gray-900 bg-clip-text pl-4">
+                                <a
+                                    href="/tvpssInfo"
+                                    className="text-[#455185] hover:underline"
+                                >
+                                    Informasi TVPSS Sekolah
+                                </a>
+                                <span className="mx-2 text-gray-500">{'>'}</span>
+                                <a
+                                    href="/tvpssInfo"
+                                    className="text-gray-700 hover:underline"
+                                >
+                                    Semua Sekolah
+                                </a>
+                            </h2>
+                        </div>
+                    </div>
 
                     <div className="max-w-8xl mx-auto p-6 text-gray-900 bg-white border border-gray-200 shadow rounded-2xl">
                         <div className="flex items-center mb-4 justify-between">
@@ -86,8 +103,8 @@ export default function ListSchool({ schools = [] }) {
                             </div>
 
                             <div className="flex items-center space-x-4">
-                                <button
-                                    style={{ marginTop: '1.45rem' }} // Adjust the value as needed
+                            <button
+                                    style={{ marginTop: '1.45rem' }}
                                     className="px-4 py-2 bg-[#455185] text-white rounded-lg shadow hover:bg-[#3b477a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#455185] transition-all"
                                 >
                                     Eksport
@@ -162,9 +179,7 @@ export default function ListSchool({ schools = [] }) {
                                                     >
                                                         <FaEdit size={18} />
                                                     </button>
-                                                    <button
-                                                        className="text-gray-400 hover:text-gray-600"
-                                                    >
+                                                    <button className="text-gray-400 hover:text-gray-600">
                                                         <FaTrash size={18} />
                                                     </button>
                                                 </div>
