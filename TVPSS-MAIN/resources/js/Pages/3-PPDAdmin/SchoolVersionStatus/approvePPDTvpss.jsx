@@ -52,25 +52,15 @@ const ApprovePPDTvpss = () => {
         },
     ];
 
-    const [checkboxStates, setCheckboxStates] = useState(
-        descriptiveFields.reduce(
-            (acc, field) => ({
-                ...acc,
-                [field.label]: normalizeValue(field.value) === "ADA",
-            }),
-            {}
-        )
+    const checkboxStates = descriptiveFields.reduce(
+        (acc, field) => ({
+            ...acc,
+            [field.label]: normalizeValue(field.value) === "ADA",
+        }),
+        {}
     );
 
-    const handleCheckboxChange = (label) => {
-        setCheckboxStates((prevState) => ({
-            ...prevState,
-            [label]: !prevState[label],
-        }));
-    };
-
     const handleApprove = () => {
-        console.log("Approving schoolCode:", tvpssData.schoolCode);
         Inertia.post(`/tvpssInfoPPD/${schoolCode}/approve`, {}, {
             onSuccess: () => {
                 alert("TVPSS has been approved!");
@@ -83,7 +73,6 @@ const ApprovePPDTvpss = () => {
     };
 
     const handleReject = () => {
-        console.log("Rejecting schoolCode:", tvpssData.schoolCode);
         Inertia.post(`/tvpssInfoPPD/${schoolCode}/reject`, {}, {
             onSuccess: () => {
                 alert("TVPSS has been rejected!");
@@ -102,9 +91,10 @@ const ApprovePPDTvpss = () => {
                     variant="h5"
                     sx={{
                         fontWeight: "bold",
-                        color: "#455185",
-                        fontSize: "1.5rem",
-                        marginBottom: "0.5rem",
+                        color: "#445184", // Updated blue color
+                        fontSize: "2rem",
+                        marginBottom: "0.1rem", // Reduced margin
+                        ml: 5,
                     }}
                 >
                     Info Status TVPSS
@@ -112,66 +102,79 @@ const ApprovePPDTvpss = () => {
             }
         >
             <Head title="TVPSS | Kemaskini TVPSS Sekolah" />
-            <Box display="flex">
+            <Box display="flex" height="100vh">
                 {/* Sidebar */}
                 <Box
                     width="20%"
-                    bgcolor="#455185"
+                    bgcolor="#445184"
                     color="white"
-                    minHeight="100vh"
-                    p={2}
+                    minHeight="105vh"
+                    p={3}
+                    boxShadow="2px 0 15px rgba(0, 0, 0, 0.1)"
                 >
                     <PPDAdminSideBar />
                 </Box>
 
                 {/* Main Content */}
-                <Box width="80%" p={4} sx={{ backgroundColor: "#F7F9FC" }}>
+                <Box width="80%" p={4} sx={{ backgroundColor: "#F4F6F9", borderRadius: "0 12px 12px 0", height: "105vh" }}>
                     {/* Breadcrumb */}
                     <Box
                         sx={{
                             display: "flex",
-                            gap: 1,
-                            mb: 2,
-                            color: "#666",
-                            fontSize: "0.875rem",
+                            alignItems: "center",
+                            fontSize: "16px",
+                            fontWeight: 600,
+                            color: "#757575",
+                            mb: 3,
                         }}
                     >
-                        <Typography>Informasi TVPSS Sekolah</Typography>
-                        <Typography>›</Typography>
-                        <Typography>Info Status TVPSS</Typography>
-                        <Typography>›</Typography>
-                        <Typography>{schoolName}</Typography>
+                        <Typography variant="body2" sx={{ color: "#445184" }}>
+                            <a href="/tvpssInfoPPDList" className="text-[#445184] hover:underline">
+                                Informasi TVPSS Sekolah
+                            </a>
+                        </Typography>
+                        <Typography sx={{ mx: 1, color: "#757575" }}>›</Typography>
+                        <Typography variant="body2" sx={{ color: "#757575" }}>
+                            <a href="/tvpssInfoPPDList" className="text-[#445184] hover:underline">
+                                Info Status TVPSS
+                            </a>
+                        </Typography>
+                        <Typography sx={{ mx: 1, color: "#757575" }}>›</Typography>
+                        <Typography variant="body2" sx={{ fontWeight: "bold", color: "#445184" }}>
+                            {schoolName}
+                        </Typography>
                     </Box>
 
-                    <Typography
-                        variant="h5"
-                        sx={{ mb: 3, fontWeight: "bold", color: "#455185" }}
-                    >
+                    {/* School Info Section */}
+                    <Typography variant="h5" sx={{ mb: 3, fontWeight: "bold", color: "#445184" }}>
                         Maklumat Sekolah
                     </Typography>
 
-                    <Box
-                        display="flex"
-                        gap={4}
-                        sx={{
-                            alignItems: "flex-start",
-                            justifyContent: "space-between",
-                        }}
-                    >
+                    <Box display="flex" gap={4} sx={{ alignItems: "flex-start", justifyContent: "space-between" }}>
                         {/* Left Section */}
                         <Card
                             sx={{
                                 flex: 1,
-                                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                                boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
+                                borderRadius: "16px",
+                                padding: "20px",
+                                minHeight: "400px", // Ensures minimum height
+                                height: "100%", // Ensures equal height
+                                transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                                "&:hover": {
+                                    transform: "scale(1.02)",
+                                    boxShadow: "0 8px 25px rgba(0, 0, 0, 0.2)",
+                                },
+                                mb: 4, // Added bottom margin
                             }}
                         >
                             <CardContent>
                                 <Box
                                     sx={{
-                                        bgcolor: "#455185",
-                                        p: 2,
-                                        borderRadius: "4px",
-                                        mb: 3,
+                                        bgcolor: "#445184", // Updated blue color
+                                        p: 3,
+                                        borderRadius: "16px 16px 0 0",
+                                        mb: 4,
                                     }}
                                 >
                                     <Typography
@@ -179,26 +182,30 @@ const ApprovePPDTvpss = () => {
                                         sx={{
                                             fontWeight: "bold",
                                             color: "white",
-                                            fontSize: "1rem",
+                                            fontSize: "1.5rem",
                                         }}
                                     >
                                         {schoolName}
                                     </Typography>
                                 </Box>
 
-                                {/* Info Sekolah */}
+                                {/* School Info */}
                                 <Typography
                                     variant="subtitle1"
-                                    sx={{ fontWeight: "bold", mb: 1 }}
+                                    sx={{
+                                        fontWeight: "bold",
+                                        mb: 2,
+                                        color: "#455A64",
+                                    }}
                                 >
                                     A. Info Sekolah
                                 </Typography>
-                                <Typography variant="body1" sx={{ mb: 3 }}>
+                                <Typography variant="body1" sx={{ mb: 2 }}>
                                     Pegawai TVPSS Sekolah:{" "}
                                     <Box
                                         component="span"
                                         sx={{
-                                            bgcolor: "#E8EAF6",
+                                            bgcolor: "#E3F2FD",
                                             px: 1,
                                             py: 0.5,
                                             borderRadius: 1,
@@ -209,10 +216,14 @@ const ApprovePPDTvpss = () => {
                                     </Box>
                                 </Typography>
 
-                                {/* Info TVPSS */}
+                                {/* TVPSS Info */}
                                 <Typography
                                     variant="subtitle1"
-                                    sx={{ fontWeight: "bold", mb: 2 }}
+                                    sx={{
+                                        fontWeight: "bold",
+                                        mb: 2,
+                                        color: "#455A64",
+                                    }}
                                 >
                                     B. Info TVPSS Sekolah
                                 </Typography>
@@ -223,12 +234,11 @@ const ApprovePPDTvpss = () => {
                                             display="flex"
                                             alignItems="center"
                                             justifyContent="space-between"
-                                            mb={1.5}
+                                            mb={2}
                                             sx={{
                                                 "&:not(:last-child)": {
-                                                    borderBottom:
-                                                        "1px solid #eee",
-                                                    pb: 1,
+                                                    borderBottom: "1px solid #eee",
+                                                    pb: 2,
                                                 },
                                             }}
                                         >
@@ -236,23 +246,21 @@ const ApprovePPDTvpss = () => {
                                                 variant="body2"
                                                 sx={{
                                                     flex: 1,
-                                                    color: "#444",
+                                                    color: "#445184", // Updated blue color
                                                 }}
                                             >
                                                 {field.label} :
                                             </Typography>
                                             <Chip
-                                                label={normalizeValue(
-                                                    field.value
-                                                )}
+                                                label={normalizeValue(field.value)}
                                                 sx={{
-                                                    bgcolor: "#E8EAF6",
-                                                    color: "#455185",
-                                                    fontSize: "0.75rem",
-                                                    height: "24px",
-                                                    fontWeight: "normal",
+                                                bgcolor: field.value === "Ada" ? "#E8F5E9" : "#FFEBEE", // Green background for "ADA", red for "TIADA"
+                                                color: field.value === "Ada" ? "#388E3C" : "#D32F2F",   // Green text for "ADA", red for "TIADA"
+                                                fontSize: "0.9rem",
+                                                height: "30px",
+                                                fontWeight: "normal",
                                                 }}
-                                                size="small"
+                                                 size="small"
                                             />
                                         </Box>
                                     ))}
@@ -264,9 +272,18 @@ const ApprovePPDTvpss = () => {
                         <Card
                             sx={{
                                 flex: 1,
-                                backgroundColor: "#F8F9FE",
+                                backgroundColor: "white",
                                 textAlign: "center",
-                                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                                boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
+                                borderRadius: "16px",
+                                padding: "20px",
+                                minHeight: "400px", // Ensures minimum height
+                                height: "100%", // Ensures equal height
+                                transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                                "&:hover": {
+                                    transform: "scale(1.02)",
+                                    boxShadow: "0 8px 25px rgba(0, 0, 0, 0.2)",
+                                },
                             }}
                         >
                             <CardContent>
@@ -274,8 +291,10 @@ const ApprovePPDTvpss = () => {
                                     variant="h6"
                                     sx={{
                                         fontWeight: "bold",
-                                        color: "#455185",
-                                        mb: 1,
+                                        color: "#445184", // Updated blue color
+                                        mb: 2,
+                                        fontSize: "1.2rem",
+                                        textTransform: "uppercase",
                                     }}
                                 >
                                     PENUHI KEPERLUAN
@@ -283,35 +302,29 @@ const ApprovePPDTvpss = () => {
                                 <Typography
                                     variant="body2"
                                     sx={{
-                                        color: "#666",
-                                        mb: 3,
+                                        color: "#607D8B",
+                                        mb: 4,
                                         textDecoration: "underline",
                                     }}
                                 >
                                     Naik Taraf Status Versi
                                 </Typography>
 
-                                <Box
-                                    display="flex"
-                                    justifyContent="center"
-                                    alignItems="center"
-                                    gap={2}
-                                    mb={4}
-                                >
+                                <Box display="flex" justifyContent="center" alignItems="center" gap={2} mb={4}>
                                     <Typography
-                                        variant="h4"
+                                        variant="h3"
                                         sx={{
-                                            color: "#455185",
+                                            color: "#445184", // Updated blue color
                                             fontWeight: "bold",
                                         }}
                                     >
                                         {currentVersion}
                                     </Typography>
-                                    <ArrowForward sx={{ color: "#455185" }} />
+                                    <ArrowForward sx={{ color: "#445184", fontSize: "3rem" }} />
                                     <Typography
-                                        variant="h4"
+                                        variant="h3"
                                         sx={{
-                                            color: "#FF0000",
+                                            color: "#D32F2F", // Red for next version
                                             fontWeight: "bold",
                                         }}
                                     >
@@ -319,26 +332,18 @@ const ApprovePPDTvpss = () => {
                                     </Typography>
                                 </Box>
 
-                                <Box>
+                                <Box sx={{ mb: 4 }}>
                                     {descriptiveFields.map((field, index) => (
                                         <FormControlLabel
                                             key={index}
                                             control={
                                                 <Checkbox
-                                                    checked={
-                                                        checkboxStates[
-                                                            field.label
-                                                        ]
-                                                    }
-                                                    onChange={() =>
-                                                        handleCheckboxChange(
-                                                            field.label
-                                                        )
-                                                    }
+                                                    checked={checkboxStates[field.label]}
+                                                    disabled
                                                     sx={{
-                                                        color: "#455185",
+                                                        color: "#445184", // Updated blue color
                                                         "&.Mui-checked": {
-                                                            color: "#455185",
+                                                            color: "#445184", // Consistent blue on check
                                                         },
                                                     }}
                                                 />
@@ -347,13 +352,12 @@ const ApprovePPDTvpss = () => {
                                             sx={{
                                                 display: "flex",
                                                 justifyContent: "left",
-                                                //justifyContent: "space-between",
-                                                color: "#455185",
-                                                mb: 1,
+                                                color: "#445184", // Updated blue color
+                                                mb: 2,
                                                 ml: 0,
                                                 width: "100%",
                                                 ".MuiFormControlLabel-label": {
-                                                    fontSize: "0.875rem",
+                                                    fontSize: "1rem",
                                                     fontWeight: "normal",
                                                 },
                                             }}
@@ -361,23 +365,21 @@ const ApprovePPDTvpss = () => {
                                     ))}
                                 </Box>
 
-                                <Box
-                                    display="flex"
-                                    justifyContent="space-between"
-                                    gap={2}
-                                    mt={3}
-                                >
+                                <Box display="flex" justifyContent="space-between" gap={2} mt={4}>
                                     <Button
                                         variant="contained"
                                         startIcon={<Done />}
                                         fullWidth
-                                        onClick={handleApprove} 
+                                        onClick={handleApprove}
                                         sx={{
-                                            bgcolor: "#4CAF50",
+                                            bgcolor: "#445184",  // Updated blue color
                                             "&:hover": {
-                                                bgcolor: "#45A049",
+                                                bgcolor: "#3c4f88",  // Darker blue for hover effect
                                             },
                                             fontWeight: "bold",
+                                            borderRadius: "12px",
+                                            textTransform: "capitalize",
+                                            padding: "10px 20px",
                                         }}
                                     >
                                         Diterima
@@ -388,11 +390,14 @@ const ApprovePPDTvpss = () => {
                                         fullWidth
                                         onClick={handleReject}
                                         sx={{
-                                            bgcolor: "#F44336",
+                                            bgcolor: "#F44336",  // Red color
                                             "&:hover": {
-                                                bgcolor: "#E53935",
+                                                bgcolor: "#E53935", // Darker red for hover
                                             },
                                             fontWeight: "bold",
+                                            borderRadius: "12px",
+                                            textTransform: "capitalize",
+                                            padding: "10px 20px",
                                         }}
                                     >
                                         Ditolak
