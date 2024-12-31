@@ -123,7 +123,7 @@ const ApproveStateTvpss = () => {
                     >
                         <Typography variant="body2" sx={{ color: "#445184" }}>
                             <a
-                                href="/tvpssInfoPPDList"
+                                href="/tvpssInfo"
                                 className="text-[#445184] hover:underline"
                             >
                                 Informasi TVPSS Sekolah
@@ -132,7 +132,7 @@ const ApproveStateTvpss = () => {
                         <Typography sx={{ mx: 1, color: "#757575" }}>›</Typography>
                         <Typography variant="body2" sx={{ color: "#757575" }}>
                             <a
-                                href="/tvpssInfoPPDList"
+                                href="/tvpssInfo"
                                 className="text-[#445184] hover:underline"
                             >
                                 Info Status TVPSS
