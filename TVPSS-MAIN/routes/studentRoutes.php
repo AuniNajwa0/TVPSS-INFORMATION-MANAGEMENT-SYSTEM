@@ -10,7 +10,7 @@ Route::get('/studentsPage', [StudentController::class, 'index'])->name('student.
 Route::get('/applyCrew', [StudentController::class, 'applyCrew'])->name('student.applyCrew');
 Route::post('/applyCrew', [StudentController::class, 'applyCrewSubmit'])->name('student.applyCrewSubmit');
 
-Route::get('/resultApply', [StudentController::class, 'resultApply'])->name('student.resultApply');
+Route::get('/student/resultApply/{id}', [StudentController::class, 'resultApply'])->name('student.resultApply');
 
 //Route::get('/studentsPage', fn() => Inertia::render('5-Students/StudentPage'))
     //->name('studentPg');

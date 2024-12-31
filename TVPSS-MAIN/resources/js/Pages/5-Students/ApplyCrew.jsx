@@ -3,11 +3,11 @@ import { Briefcase, CheckCircle, Mail, MapPin, School, Send, User } from "lucide
 import { useState } from "react";
 import StudentNavBar from "./StudentNavBar";
 
-function ApplyCrew() {
+function ApplyCrew({ ic_num }) {
     const [isModalVisible, setIsModalVisible] = useState(false);
 
     const { data, setData, post, errors } = useForm({
-        ic_num: '',
+        ic_num: ic_num || '',
         name: '',
         email: '',
         state: '',
@@ -24,7 +24,7 @@ function ApplyCrew() {
         e.preventDefault();
         post(route("student.applyCrewSubmit"), {
             onSuccess: () => {
-                setIsModalVisible(true);
+               Inertia.visit(route("student.resultApply"));
             },
             onError: (errors) => {
                 console.error(errors);

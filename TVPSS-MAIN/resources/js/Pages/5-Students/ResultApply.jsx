@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import StudentNavBar from './StudentNavBar';
-import { Head } from "@inertiajs/react";
+import { Head, usePage } from "@inertiajs/react";
 import { Search, ChevronDown, ChevronUp, Eye, Filter } from 'lucide-react';
 
 function ToggleButton() {
@@ -9,28 +9,7 @@ function ToggleButton() {
   const [sortField, setSortField] = useState('');
   const [sortDirection, setSortDirection] = useState('asc');
 
-  const applications = [
-    {
-      id: 1,
-      ic_num: "901010-10-1010",
-      name: "Ali Ahmad",
-      email: "ali@gmail.com",
-      negeri: "Johor",
-      daerah: "Muar",
-      jawatan: "Jurukamera",
-      status: "Dalam Proses"
-    },
-    {
-      id: 2,
-      ic_num: "920202-02-2020",
-      name: "Fatimah Binti Omar",
-      email: "fatimah@gmail.com",
-      negeri: "Selangor",
-      daerah: "Petaling",
-      jawatan: "Penemuduga",
-      status: "Diluluskan"
-    },
-  ];
+  const { applications } = usePage().props;
 
   const pageStyle = {
     backgroundColor: '#ebf8ff',
