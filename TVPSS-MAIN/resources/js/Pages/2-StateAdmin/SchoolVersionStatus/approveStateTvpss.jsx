@@ -52,7 +52,7 @@ const ApproveStateTvpss = () => {
                 alert("Failed to approve TVPSS Version.");
             },
         });
-    };    
+    };
 
     const handleReject = () => {
         if (!schoolCode) {
@@ -68,66 +68,204 @@ const ApproveStateTvpss = () => {
                 alert("Failed to reject TVPSS Version.");
             },
         });
-    };    
+    };
 
     return (
         <AuthenticatedLayout
             header={
-                <Typography variant="h5" sx={{ fontWeight: "bold", color: "#455185", fontSize: "1.5rem", mb: 0.5 }}>
+                <Typography
+                    variant="h5"
+                    sx={{
+                        fontWeight: "bold",
+                        color: "#445184",
+                        fontSize: "2rem",
+                        marginBottom: "0.1rem",
+                        ml: 5,
+                    }}
+                >
                     Info Status TVPSS
                 </Typography>
             }
         >
             <Head title="TVPSS | Kemaskini TVPSS Sekolah" />
-            <Box display="flex">
-                <Box width="20%" bgcolor="#455185" color="white" minHeight="100vh" p={2}>
+            <Box display="flex" height="100vh">
+                <Box
+                    width="20%"
+                    bgcolor="#445184"
+                    color="white"
+                    minHeight="100vh"
+                    p={3}
+                    boxShadow="2px 0 15px rgba(0, 0, 0, 0.1)"
+                >
                     <StateAdminSideBar />
                 </Box>
 
-                <Box width="80%" p={4} sx={{ backgroundColor: "#F7F9FC" }}>
-                    <Box sx={{ display: "flex", gap: 1, mb: 2, color: "#666", fontSize: "0.875rem" }}>
-                        <Typography>Pengurusan TVPSS</Typography>
-                        <Typography>›</Typography>
-                        <Typography>Butiran Sekolah</Typography>
-                        <Typography>›</Typography>
-                        <Typography>{schoolName}</Typography>
+                {/* Main Content */}
+                <Box
+                    width="80%"
+                    p={4}
+                    sx={{
+                        backgroundColor: "#F4F6F9",
+                        borderRadius: "0 12px 12px 0",
+                        height: "100vh",
+                    }}
+                >
+                    {/* Breadcrumb */}
+                    <Box
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            fontSize: "16px",
+                            fontWeight: 600,
+                            color: "#757575",
+                            mb: 3,
+                        }}
+                    >
+                        <Typography variant="body2" sx={{ color: "#445184" }}>
+                            <a
+                                href="/tvpssInfoPPDList"
+                                className="text-[#445184] hover:underline"
+                            >
+                                Informasi TVPSS Sekolah
+                            </a>
+                        </Typography>
+                        <Typography sx={{ mx: 1, color: "#757575" }}>›</Typography>
+                        <Typography variant="body2" sx={{ color: "#757575" }}>
+                            <a
+                                href="/tvpssInfoPPDList"
+                                className="text-[#445184] hover:underline"
+                            >
+                                Info Status TVPSS
+                            </a>
+                        </Typography>
+                        <Typography sx={{ mx: 1, color: "#757575" }}>›</Typography>
+                        <Typography
+                            variant="body2"
+                            sx={{ fontWeight: "bold", color: "#445184" }}
+                        >
+                            {schoolName}
+                        </Typography>
                     </Box>
 
-                    <Typography variant="h5" sx={{ mb: 3, fontWeight: "bold", color: "#455185" }}>
+                    <Typography
+                        variant="h5"
+                        sx={{
+                            mb: 3,
+                            fontWeight: "bold",
+                            color: "#455185",
+                        }}
+                    >
                         Maklumat Sekolah
                     </Typography>
 
-                    <Card sx={{ mb: 4, boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }}>
+                    <Card
+                        sx={{
+                            mb: 4,
+                            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                            borderRadius: "16px",
+                            transition: "transform 0.3s ease, box-shadow 0.3s ease", // Smooth transitions
+                            "&:hover": {
+                                transform: "scale(1.02)", // Slightly enlarge the card
+                                boxShadow: "0 4px 8px rgba(0,0,0,0.2)", // Enhanced shadow on hover
+                            },
+                        }}
+                    >
                         <CardContent>
-                            <Box sx={{ bgcolor: "#455185", p: 2, borderRadius: "4px", mb: 3 }}>
-                                <Typography variant="h6" sx={{ fontWeight: "bold", color: "white", fontSize: "1rem" }}>
-                                    {schoolName} (JEA1059)
+                            <Box
+                                sx={{
+                                    bgcolor: "#455185",
+                                    p: 2,
+                                    borderRadius: "16px",
+                                    mb: 3,
+                                }}
+                            >
+                                <Typography
+                                    variant="h6"
+                                    sx={{
+                                        fontWeight: "bold",
+                                        color: "white",
+                                        fontSize: "1rem",
+                                    }}
+                                >
+                                    {schoolName}
                                 </Typography>
                             </Box>
 
-                            <Typography variant="subtitle1" sx={{ fontWeight: "bold", mb: 1 }}>
+                            <Typography
+                                variant="subtitle1"
+                                sx={{
+                                    fontWeight: "bold",
+                                    mb: 1,
+                                }}
+                            >
                                 A. Info Sekolah
                             </Typography>
-                            <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', gap: 1 }}>
-                                <Typography variant="body1">Pegawai TVPSS Sekolah:</Typography>
-                                <Box component="span" sx={{ bgcolor: "#E8EAF6", px: 1, py: 0.5, borderRadius: 1 }}>
+                            <Box
+                                sx={{
+                                    mb: 3,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 1,
+                                }}
+                            >
+                                <Typography variant="body1">
+                                    Pegawai TVPSS Sekolah:
+                                </Typography>
+                                <Box
+                                    component="span"
+                                    sx={{
+                                        bgcolor: "#E8EAF6",
+                                        px: 1,
+                                        py: 0.5,
+                                        borderRadius: 1,
+                                    }}
+                                >
                                     {officer}
                                 </Box>
                             </Box>
 
-                            <Typography variant="subtitle1" sx={{ fontWeight: "bold", mb: 2 }}>
+                            <Typography
+                                variant="subtitle1"
+                                sx={{
+                                    fontWeight: "bold",
+                                    mb: 2,
+                                }}
+                            >
                                 B. Info TVPSS Sekolah
                             </Typography>
-                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    gap: 2,
+                                }}
+                            >
                                 {descriptiveFields.map((field, index) => (
-                                    <Box key={index} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: index !== descriptiveFields.length - 1 ? '1px solid #eee' : 'none', pb: 1 }}>
-                                        <Typography sx={{ color: '#666' }}>{field.label} :</Typography>
+                                    <Box
+                                        key={index}
+                                        sx={{
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            alignItems: "center",
+                                            borderBottom:
+                                                index !==
+                                                descriptiveFields.length - 1
+                                                    ? "1px solid #eee"
+                                                    : "none",
+                                            pb: 1,
+                                        }}
+                                    >
+                                        <Typography sx={{ color: "#666" }}>
+                                            {field.label} :
+                                        </Typography>
                                         <Chip
                                             label={normalizeValue(field.value)}
                                             sx={{
-                                                bgcolor: "#E8EAF6",
-                                                color: "#455185",
-                                                height: "24px"
+                                                bgcolor: field.value === "Ada" ? "#E8F5E9" : "#FFEBEE",
+                                                color: field.value === "Ada" ? "#388E3C" : "#D32F2F",
+                                                fontSize: "0.9rem",
+                                                height: "30px",
+                                                fontWeight: "normal",
                                             }}
                                             size="small"
                                         />
@@ -135,16 +273,27 @@ const ApproveStateTvpss = () => {
                                 ))}
                             </Box>
 
-                            <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 4 }}>
+                            {/* Buttons */}
+                            <Box
+                                display="flex"
+                                justifyContent="space-between"
+                                gap={2}
+                                mt={4}
+                            >
                                 <Button
                                     variant="contained"
                                     startIcon={<Done />}
+                                    fullWidth
                                     onClick={handleApprove}
                                     sx={{
-                                        bgcolor: "#4CAF50",
-                                        "&:hover": { bgcolor: "#45A049" },
+                                        bgcolor: "#445184",
+                                        "&:hover": {
+                                            bgcolor: "#3c4f88",
+                                        },
                                         fontWeight: "bold",
-                                        width: "150px"
+                                        borderRadius: "12px",
+                                        textTransform: "capitalize",
+                                        padding: "10px 20px",
                                     }}
                                 >
                                     Diterima
@@ -152,12 +301,17 @@ const ApproveStateTvpss = () => {
                                 <Button
                                     variant="contained"
                                     startIcon={<Clear />}
+                                    fullWidth
                                     onClick={handleReject}
                                     sx={{
                                         bgcolor: "#F44336",
-                                        "&:hover": { bgcolor: "#E53935" },
+                                        "&:hover": {
+                                            bgcolor: "#E53935",
+                                        },
                                         fontWeight: "bold",
-                                        width: "150px"
+                                        borderRadius: "12px",
+                                        textTransform: "capitalize",
+                                        padding: "10px 20px",
                                     }}
                                 >
                                     Ditolak
