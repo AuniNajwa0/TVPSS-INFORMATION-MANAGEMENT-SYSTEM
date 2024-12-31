@@ -8,7 +8,6 @@ export default function ListPPDSchool({ schools = [] }) {
     const [searchQuery, setSearchQuery] = useState("");
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
-    const [selectedSchools, setSelectedSchools] = useState([]);
     const [filteredData, setFilteredData] = useState(schools);
 
     useEffect(() => {
@@ -42,19 +41,6 @@ export default function ListPPDSchool({ schools = [] }) {
         }
     };
 
-    const handleCheckboxChange = (id) => {
-        setSelectedSchools((prev) =>
-            prev.includes(id)
-                ? prev.filter((schoolId) => schoolId !== id)
-                : [...prev, id]
-        );
-    };
-
-    const paginatedData = filteredData.slice(
-        (currentPage - 1) * rowsPerPage,
-        currentPage * rowsPerPage
-    );
-
     const getStatusStyle = (status) => {
         switch (status) {
             case "Pending":
@@ -68,8 +54,13 @@ export default function ListPPDSchool({ schools = [] }) {
         }
     };
 
+    const paginatedData = filteredData.slice(
+        (currentPage - 1) * rowsPerPage,
+        currentPage * rowsPerPage
+    );
+
     return (
-<AuthenticatedLayout>
+        <AuthenticatedLayout>
             <Head title="TVPSS | Info Status TVPSS" />
             <div className="flex flex-col md:flex-row min-h-screen bg-white">
                 <div className="w-1/6 bg-white shadow-lg">
@@ -77,9 +68,26 @@ export default function ListPPDSchool({ schools = [] }) {
                 </div>
 
                 <div className="flex-1 p-6 bg-gray-50 min-h-screen">
-                    <h1 className="text-3xl font-bold mb-6">
-                        Informasi TVPSS Sekolah
-                    </h1>
+                    <div className="flex items-center justify-between mb-6">
+                        {/* Breadcrumb Section */}
+                        <div>
+                            <h2 className="text-3xl font-bold text-gray-900 bg-clip-text pl-4">
+                                <a
+                                    href="/tvpssInfoPPDList"
+                                    className="text-[#455185] hover:underline"
+                                >
+                                    Informasi TVPSS Sekolah
+                                </a>
+                                <span className="mx-2 text-gray-500">{'>'}</span>
+                                <a
+                                    href="/tvpssInfoPPDList"
+                                    className="text-gray-700 hover:underline"
+                                >
+                                    Semua Sekolah
+                                </a>
+                            </h2>
+                        </div>
+                    </div>
 
                     <div className="max-w-8xl mx-auto p-6 text-gray-900 bg-white border border-gray-200 shadow rounded-2xl">
                         <div className="flex items-center mb-4 justify-between">
@@ -96,7 +104,7 @@ export default function ListPPDSchool({ schools = [] }) {
 
                             <div className="flex items-center space-x-4">
                                 <button
-                                    style={{ marginTop: '1.45rem' }} // Adjust the value as needed
+                                    style={{ marginTop: "1.45rem" }}
                                     className="px-4 py-2 bg-[#455185] text-white rounded-lg shadow hover:bg-[#3b477a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#455185] transition-all"
                                 >
                                     Eksport
@@ -212,4 +220,3 @@ export default function ListPPDSchool({ schools = [] }) {
         </AuthenticatedLayout>
     );
 }
-
