@@ -63,7 +63,7 @@ export default function Login({ status, canResetPassword }) {
         
         {/* Back Button */}
         <Link 
-          href="Welcome" 
+          href="/" 
           className="absolute top-8 left-8 p-3 rounded-full hover:bg-white/80 transition-all duration-200 flex items-center justify-center group"
           aria-label="Kembali"
         >

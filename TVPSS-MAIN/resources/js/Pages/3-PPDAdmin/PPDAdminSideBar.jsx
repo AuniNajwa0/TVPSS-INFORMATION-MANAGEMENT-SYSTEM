@@ -49,10 +49,10 @@ function PPDAdminSideBar() {
               active={url.startsWith("/dashboardPPD")}
             />
             <SidebarLink
-              href="/tvpssInfo"
+              href="/tvpssInfoPPDList"
               icon={<FaInfoCircle size={20} />}
               label="Informasi TVPSS Sekolah"
-              active={url.startsWith("/tvpssInfo")}
+              active={url.startsWith("/tvpssInfoPPDList")}
             />
           </nav>
         </div>
