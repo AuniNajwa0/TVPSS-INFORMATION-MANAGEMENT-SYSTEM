@@ -1,25 +1,30 @@
 import React, { useState } from 'react';
 import { ChevronDown, LogOut, Home, Users, CheckCircle } from 'lucide-react';
-import { useHistory } from 'react-router-dom'; // If using react-router for routing
 
 const StudentNavBar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const history = useHistory(); // For redirecting after logout
 
   const profileName = "John Doe";
-  
+
   const getInitials = (name) => {
     return name.split(" ").map((part) => part[0].toUpperCase()).join("");
   };
 
   const handleLogout = () => {
-    // Clear session storage or localStorage (or handle any other logout logic)
-    localStorage.removeItem("user"); // Replace with actual storage key
-    sessionStorage.removeItem("user"); // Optional: if using sessionStorage
-
-    // Redirect to login or home page
-    history.push("/login"); // Adjust to your login route
+    // Handle logout logic
+    console.log("User logged out");
   };
+
+  // Inline NavButton Component
+  const NavButton = ({ href, icon, text }) => (
+    <a
+      href={href}
+      className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200"
+    >
+      {icon}
+      <span className="ml-2">{text}</span>
+    </a>
+  );
 
   return (
     <nav className="bg-blue">
@@ -27,9 +32,9 @@ const StudentNavBar = () => {
         <div className="flex justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
-            <img 
-              src="/assets/TVPSSLogo3.jpg" 
-              alt="Logo" 
+            <img
+              src="/assets/TVPSSLogo3.jpg"
+              alt="Logo"
               className="h-12 w-auto"
             />
           </div>
@@ -55,18 +60,18 @@ const StudentNavBar = () => {
                 <ChevronDown
                   size={16}
                   className={`transform transition-transform duration-200 ${
-                    isDropdownOpen ? 'rotate-180' : ''
+                    isDropdownOpen ? "rotate-180" : ""
                   }`}
                 />
               </button>
 
               {/* Dropdown Menu */}
               <div
-                className={`absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 transition-all duration-200 ease-in-out transform origin-top-right
-                  ${isDropdownOpen
-                    ? 'opacity-100 scale-100 translate-y-0'
-                    : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'
-                  }`}
+                className={`absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 transition-all duration-200 ease-in-out transform origin-top-right ${
+                  isDropdownOpen
+                    ? "opacity-100 scale-100 translate-y-0"
+                    : "opacity-0 scale-95 -translate-y-2 pointer-events-none"
+                }`}
               >
                 <button
                   onClick={handleLogout} // Call logout function
@@ -83,16 +88,5 @@ const StudentNavBar = () => {
     </nav>
   );
 };
-
-// Navigation Button Component
-const NavButton = ({ href, icon, text }) => (
-  <a
-    href={href}
-    className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200"
-  >
-    {icon}
-    <span className="ml-2">{text}</span>
-  </a>
-);
 
 export default StudentNavBar;
