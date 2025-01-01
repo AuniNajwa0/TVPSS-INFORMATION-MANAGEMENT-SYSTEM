@@ -4,19 +4,24 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StudentController;
 use Inertia\Inertia;
 use App\Models\Student;
+use App\Http\Middleware\StudentSessionCheck;
 
 // Define your student-related routes here
-Route::get('/studentsPage', [StudentController::class, 'index'])->name('student.dashboard');
+Route::middleware([StudentSessionCheck::class])->group(function () {
+    Route::get('/studentPage', [StudentController::class, 'index'])->name('student.dashboard');
+    Route::get('/applyCrew', [StudentController::class, 'applyCrew'])->name('student.applyCrew');
+    Route::post('/applyCrew', [StudentController::class, 'applyCrewSubmit'])->name('student.applyCrewSubmit');
+});
 
-Route::get('/applyCrew', function () {
-    // Replace with your custom logic to fetch the logged-in student
-    $student = Student::where('ic_num', session('ic_num'))->first(); // Example of using session to store ic_num
-    return Inertia::render('ApplyCrew', [
-        'student' => $student,
-    ]);
-})->name('student.applyCrew');
+// Route::get('/applyCrew', function () {
+//     // Replace with your custom logic to fetch the logged-in student
+//     $student = Student::where('ic_num', session('ic_num'))->first(); // Example of using session to store ic_num
+//     return Inertia::render('ApplyCrew', [
+//         'student' => $student,
+//     ]);
+// })->name('student.applyCrew');
 
-Route::post('/applyCrew', [StudentController::class, 'applyCrewSubmit'])->name('student.applyCrewSubmit');
+// Route::post('/applyCrew', [StudentController::class, 'applyCrewSubmit'])->name('student.applyCrewSubmit');
 
 //Route::get('/student/resultApply/{id}', [StudentController::class, 'resultApply'])->name('student.resultApply');
 

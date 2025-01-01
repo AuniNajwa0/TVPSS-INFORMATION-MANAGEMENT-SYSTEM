@@ -1,20 +1,36 @@
 import { Link, useForm } from '@inertiajs/react';
-import { ArrowLeft } from "react-icons/fa";
+import { useEffect, useState } from 'react'; // Import useState and useEffect
+import { FaArrowLeft } from "react-icons/fa"; // Correct import for the ArrowLeft icon
 
 export default function ApplyCrew({ student }) {
+    console.log('Student data:', student); // Log the student data
+
     const { data, setData, post, processing, errors, reset } = useForm({
-      jawatan: "", // Only the jawatan is required
+        jawatan: "", // Only the jawatan is required
     });
-  
+
+    const [isModalVisible, setIsModalVisible] = useState(false); // Define the modal visibility state
+
     const handleSubmit = (e) => {
-      e.preventDefault();
-      post(route("student.applyCrewSubmit"), {
-        data: {
-          ic_num: student.ic_num, // Pass the IC number from the student data
-          jawatan: data.jawatan, // Pass the selected jawatan
-        },
-      });
+        e.preventDefault();
+        console.log('Submitting form with data:', {
+            ic_num: student.ic_num, // Pass the IC number from the student data
+            jawatan: data.jawatan, // Pass the selected jawatan
+        });
+        post(route("student.applyCrewSubmit"), {
+            data: {
+                ic_num: student.ic_num,
+                jawatan: data.jawatan,
+            },
+        });
     };
+
+    useEffect(() => {
+        if (errors) {
+            console.log('Form submission errors:', errors);
+        }
+    }, [errors]);
+
     const styles = {
         page: { 
           backgroundColor: "#ebf8ff", 
@@ -105,119 +121,73 @@ export default function ApplyCrew({ student }) {
             marginTop: "20px",
         },
     };
-  
+
     return (
-      <div className="min-h-screen bg-white flex">
-        {/* Left Column - Image */}
-        <div className="hidden lg:flex w-[100%] bg-[#4158A6] items-center justify-center">
-          <img
-            src="/assets/login1.jpg"
-            alt="Login Illustration"
-            className="w-full h-full object-cover"
-          />
-        </div>
-  
-        {/* Right Column - Apply Crew Form */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center px-8 py-12 relative bg-gradient-to-b from-gray-50 to-white">
-          {/* Back Button */}
-          <Link
-            href="/"
-            className="absolute top-8 left-8 p-3 rounded-full hover:bg-white/80 transition-all duration-200 flex items-center justify-center group"
-            aria-label="Kembali"
-          >
-            <ArrowLeft className="h-5 w-5 text-gray-600 group-hover:text-blue-600" />
-          </Link>
-  
-          <div className="w-full max-w-md relative">
-            <div className="bg-white/80 backdrop-blur-sm px-8 py-12 rounded-2xl shadow-xl border border-gray-100">
-              <div className="flex flex-col items-center mb-10">
-                <div className="relative">
-                  <div className="absolute -inset-4 bg-white rounded-full blur-lg opacity-30" />
-                  <img
-                    src="/assets/TVPSSLogo2.jpg"
-                    alt="TVPSS Logo"
-                    className="h-24 w-auto relative"
-                  />
-                </div>
-                <h1 className="text-3xl font-bold bg-[#4158A6] bg-clip-text text-transparent mt-8 mb-2">
-                  Permohonan Krew
-                </h1>
-                <p className="text-gray-600 text-sm mb-2">
-                  Sila pilih jawatan yang ingin anda mohon.
-                </p>
-              </div>
-  
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Display Student Data */}
-                <div className="space-y-2">
-                  <p className="text-sm font-medium text-gray-700">Nama</p>
-                  <p className="bg-gray-100 py-3 px-4 rounded-xl">{student.name}</p>
-  
-                  <p className="text-sm font-medium text-gray-700">IC No</p>
-                  <p className="bg-gray-100 py-3 px-4 rounded-xl">{student.ic_num}</p>
-  
-                  <p className="text-sm font-medium text-gray-700">Sekolah</p>
-                  <p className="bg-gray-100 py-3 px-4 rounded-xl">{student.schoolName}</p>
-  
-                  <p className="text-sm font-medium text-gray-700">Negeri</p>
-                  <p className="bg-gray-100 py-3 px-4 rounded-xl">{student.state}</p>
-                </div>
-  
-                {/* Jawatan Selection */}
-                <div className="space-y-2">
-                  <label htmlFor="jawatan" className="block text-sm font-medium text-gray-700">
-                    Pilih Jawatan
-                  </label>
-                  <select
-                    id="jawatan"
-                    name="jawatan"
-                    value={data.jawatan}
-                    onChange={(e) => setData("jawatan", e.target.value)}
-                    className="w-full pl-10 pr-12 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                  >
-                    <option value="">Pilih Jawatan</option>
-                    <option value="Ketua Krew">Ketua Krew</option>
-                    <option value="Ahli Krew">Ahli Krew</option>
-                    {/* Add more jawatan options here */}
-                  </select>
-                </div>
-  
-                {/* Submit Button */}
-                <button
-                  type="submit"
-                  className="w-full py-3 px-4 bg-[#4158A6] text-white font-semibold rounded-xl shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
-                  disabled={processing}
-                >
-                  {processing ? (
-                    <svg
-                      className="animate-spin h-5 w-5 mx-auto text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                  ) : (
-                    "Hantar Permohonan"
-                  )}
-                </button>
-              </form>
+        <div className="min-h-screen bg-white flex">
+            {/* Left Column - Image */}
+            <div className="hidden lg:flex w-[100%] bg-[#4158A6] items-center justify-center">
+                <img
+                    src="/assets/login1.jpg"
+                    alt="Login Illustration"
+                    className="w-full h-full object-cover"
+                />
             </div>
-          </div>
+
+            {/* Right Column - Apply Crew Form */}
+            <div className="w-full lg:w-1/2 flex items-center justify-center px-8 py-12 relative bg-gradient-to-b from-gray-50 to-white">
+                {/* Back Button */}
+                <Link
+                    href="/"
+                    className="absolute top-8 left-8 p-3 rounded-full hover:bg-white/80 transition-all duration-200 flex items-center justify-center group"
+                    aria-label="Kembali"
+                >
+                    <FaArrowLeft className="h-5 w-5 text-gray-600 group-hover:text-blue-600" />
+                </Link>
+
+                {/* Form */}
+                <form onSubmit={handleSubmit} className="w-full max-w-md">
+                    <h2 className="text-2xl font-bold mb-6">Permohonan Krew</h2>
+
+                    {/* Display Student Data */}
+                    <div className="mb-4">
+                        <p className="text-sm font-medium text-gray-700">Nama Pelajar:</p>
+                        <p className="bg-gray-100 py-2 px-4 rounded-md">{student.name}</p>
+                    </div>
+                    <div className="mb-4">
+                        <p className="text-sm font-medium text-gray-700">IC No:</p>
+                        <p className="bg-gray-100 py-2 px-4 rounded-md">{student.ic_num}</p>
+                    </div>
+
+                    {/* Jawatan Input */}
+                    <div className="mb-4">
+                        <label htmlFor="jawatan" className="block text-sm font-medium text-gray-700">Jawatan</label>
+                        <input
+                            type="text"
+                            id="jawatan"
+                            value={data.jawatan}
+                            onChange={e => setData('jawatan', e.target.value)}
+                            className="mt- 1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-500"
+                        />
+                        {errors.jawatan && <span className="text-red-500 text-sm">{errors.jawatan}</span>}
+                    </div>
+
+                    {/* Submit Button */}
+                    <button
+                        type="submit"
+                        className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-200"
+                        disabled={processing}
+                    >
+                        {processing ? (
+                            <svg className="animate-spin h-5 w-5 mx-auto text-white" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                            </svg>
+                        ) : (
+                            "Hantar Permohonan"
+                        )}
+                    </button>
+                </form>
+            </div>
         </div>
-      </div>
     );
-  }
-  
+}

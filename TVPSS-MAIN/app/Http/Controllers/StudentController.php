@@ -7,9 +7,15 @@ use Inertia\Inertia; // Import the Inertia facade
 use App\Models\Student;
 use App\Models\Studcrew;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Middleware\StudentSessionCheck;
 
 class StudentController extends Controller
 {
+    // public function __construct()
+    // {
+    //     $this->middleware(StudentSessionCheck::class)->only(['index', 'applyCrew']);
+    // }
+
     public function showLogin()
     {
         return Inertia::render('5-Students/Auth/LoginStudent');
@@ -32,36 +38,36 @@ class StudentController extends Controller
 
     // First index method for StudentPage
     public function index()
-    {
-        $ic_num = session('ic_num');
-        $student = Student::where('ic_num', $ic_num)->first();
-        
-        return Inertia::render('5-Students/StudentPage', [
-            'student' => $student, // Pass the student data to the view
-        ]);;    
+{
+    $ic_num = session('ic_num');
+    $student = Student::where('ic_num', $ic_num)->first();
+    
+    return Inertia::render('5-Students/StudentPage', [
+        'student' => $student, // Pass the student data to the view
+    ]);
+}
+
+public function applyCrew()
+{
+    $ic_num = session('ic_num');
+
+    // Retrieve the student data based on IC number
+    $student = Student::where('ic_num', $ic_num)->first();
+
+    if (!$student) {
+        return redirect()->route('student.dashboard')->with('error', 'Pelajar tidak dijumpai.');
     }
 
-    public function applyCrew()
-    {
-        $ic_num = session('ic_num');
-
-        // Retrieve the student data based on IC number
-        $student = Student::where('ic_num', $ic_num)->first();
-
-        if (!$student) {
-            return redirect()->route('student.dashboard')->with('error', 'Pelajar tidak dijumpai.');
-        }
-
-        return Inertia::render('5-Students/ApplyCrew', [
-            'student' => $student, // Pass the student data to the view
-        ]);
-    }
+    return Inertia::render('5-Students/ApplyCrew', [
+        'student' => $student, // Pass the student data to the view
+    ]);
+}
 
     public function applyCrewSubmit(Request $request)
     {
         // Validate the incoming data
         $validated = $request->validate([
-            'ic_num' => 'requiredstring|max:12',
+            'ic_num' => 'required|string|max:12',
             'jawatan' => 'required|string',
         ]);
 

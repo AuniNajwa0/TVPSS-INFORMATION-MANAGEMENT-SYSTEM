@@ -10,23 +10,16 @@ class StudentSessionCheck
 {
     /**
      * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle($request, Closure $next)
-{
-    // Custom authentication logic
-    $student = Student::where('ic_num', $request->ic_num)->first();
+    public function handle(Request $request, Closure $next): mixed
+    {
+        // Check if the session has 'ic_num'
+        if (!$request->session()->has('ic_num')) {
+            // Redirect to the login route if 'ic_num' is missing
+            return redirect()->route('student.login');
+        }
 
-    if ($student) {
-        // Store student information in the session
-        session(['ic_num' => $student->ic_num]);
-        return $next($request);  // Proceed with the request
+        // Proceed with the request and let Inertia handle the response
+        return $next($request);
     }
-
-    // If not authenticated, redirect to login
-    return redirect()->route('student.login');
-}
-
-
 }
