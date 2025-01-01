@@ -16,7 +16,8 @@ Route::get('/student/resultApply/{id}', [StudentController::class, 'resultApply'
     //->name('studentPg');
 
 
-Route::get('/students/{id}', [StudentController::class, 'show']);
+// Toksah mung nak guna route hok ni, aku hok milih jaley aku
+/*Route::get('/students/{id}', [StudentController::class, 'show']);
 Route::post('/students', [StudentController::class, 'store']);
 Route::put('/students/{id}', [StudentController::class, 'update']);
-Route::delete('/students/{id}', [StudentController::class, 'destroy']);
+Route::delete('/students/{id}', [StudentController::class, 'destroy']);*/
