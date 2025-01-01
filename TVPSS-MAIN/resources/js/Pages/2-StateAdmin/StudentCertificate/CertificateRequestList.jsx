@@ -1,54 +1,9 @@
 import React, { useState } from 'react';
 import { FaSearch, FaChevronLeft, FaChevronRight, FaFilter, FaCaretDown } from 'react-icons/fa';
 import StateAdminSideBar from '../StateAdminSideBar'; // Ensure this is correctly imported
-
+import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { Link } from '@inertiajs/react';
 export default function ListSchool() {
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
-  const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
-  const [selectedRegion, setSelectedRegion] = useState('');
-  const [achievementDetails, setAchievementDetails] = useState(null); // For showing achievement details
-
-  // Example student data with the new fields
-  const studentData = [
-    { id: '1', icNumber: '1234567890', fullName: 'Ali bin Ahmad', educationLevel: 'Form 4', achievementType: 'Cemerlang', achievementDetails: 'Achieved 5 A\'s in SPM' },
-    { id: '2', icNumber: '9876543210', fullName: 'Siti Aisyah', educationLevel: 'Form 3', achievementType: 'Memuaskan', achievementDetails: 'Won first place in Science competition' },
-    { id: '3', icNumber: '1122334455', fullName: 'Kamal bin Hassan', educationLevel: 'Form 5', achievementType: 'Baik', achievementDetails: 'Completed project on renewable energy' },
-    { id: '4', icNumber: '6677889900', fullName: 'Maya binti Zain', educationLevel: 'Form 2', achievementType: 'Kurang Memuaskan', achievementDetails: 'Needs improvement in Mathematics' },
-  ];
-
-  const filteredStudents = studentData.filter(student => 
-    student.fullName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const indexOfLastStudent = currentPage * rowsPerPage;
-  const indexOfFirstStudent = indexOfLastStudent - rowsPerPage;
-  const currentStudents = filteredStudents.slice(indexOfFirstStudent, indexOfLastStudent);
-
-  const totalPages = Math.ceil(filteredStudents.length / rowsPerPage);
-
-  const handlePrevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handleRowsPerPageChange = (e) => {
-    setRowsPerPage(Number(e.target.value));
-    setCurrentPage(1);
-  };
-
-  const handleAchievementClick = (details) => {
-    setAchievementDetails(details); // Show achievement details in a popup
-  };
 
   return (
     <div className="flex bg-gray-50 min-h-screen">

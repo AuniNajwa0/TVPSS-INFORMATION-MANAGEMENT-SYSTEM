@@ -48,12 +48,12 @@ export default function UpdatePasswordForm({ className = '' }) {
         <section className={className}>
             <header>
                 <h2 className="text-lg font-medium text-gray-900">
-                    Update Password
+                    Kemas Kini Kata Laluan
                 </h2>
 
                 <p className="mt-1 text-sm text-gray-600">
-                    Ensure your account is using a long, random password to stay
-                    secure.
+                     Pastikan akaun anda menggunakan kata laluan yang mempunyai 
+                     huruf dan nombor bagi tujuan keselamatan.
                 </p>
             </header>
 
@@ -61,7 +61,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                 <div>
                     <InputLabel
                         htmlFor="current_password"
-                        value="Current Password"
+                        value="Kata Laluan Semasa"
                     />
 
                     <TextInput
@@ -83,7 +83,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="password" value="New Password" />
+                    <InputLabel htmlFor="password" value="Kata Laluan Baharu" />
 
                     <TextInput
                         id="password"
@@ -101,7 +101,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                 <div>
                     <InputLabel
                         htmlFor="password_confirmation"
-                        value="Confirm Password"
+                        value="Sahkan Kata Laluan Baharu"
                     />
 
                     <TextInput
@@ -122,7 +122,13 @@ export default function UpdatePasswordForm({ className = '' }) {
                 </div>
 
                 <div className="flex items-center gap-4">
-                    <PrimaryButton disabled={processing}>Save</PrimaryButton>
+                    <PrimaryButton 
+                    style={{ backgroundColor: '#4158A6' }}
+                    className="hover:bg-gray-700 text-white"
+                    disabled={processing}
+                    >
+                    Simpan
+                    </PrimaryButton>
 
                     <Transition
                         show={recentlySuccessful}

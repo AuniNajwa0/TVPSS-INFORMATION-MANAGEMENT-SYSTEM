@@ -16,7 +16,6 @@ use App\Enums\StatusEnum;
 use App\Enums\versionEnum;
 use App\Enums\ApprovalStatusEnum;
 use Illuminate\Support\Facades\Log;
-use MongoDB\BSON\ObjectId;
 
 
 class SchoolAdminController extends Controller
@@ -643,7 +642,7 @@ class SchoolAdminController extends Controller
 
             Student::create([
                 'name' => $validatedData['name'],
-                'ic_num' => $validatedData['ic_num'],
+                'ic_num' => $validatedData['ic_num'], 
                 'email' => $validatedData['email'],
                 'crew' => $validatedData['crew'],
                 'state' => $schoolInfo->state,
@@ -720,7 +719,6 @@ class SchoolAdminController extends Controller
 
         return redirect()->route('student.studentList')->with('success', 'Student deleted successfully!');
     }
-
 
     public function achievementList(Request $request)
     {

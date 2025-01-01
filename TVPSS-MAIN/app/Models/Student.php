@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Student extends Model
 {
     use HasFactory;
+    //protected $table = 'students';
 
     protected $fillable = [
         'name',
@@ -25,8 +26,10 @@ class Student extends Model
         return $this->belongsTo(SchoolInfo::class, 'school_info_id');
     }
 
-    public function studcrew()
+    // In Student.php
+    public function studcrews()
     {
         return $this->hasMany(Studcrew::class);
     }
+
 }

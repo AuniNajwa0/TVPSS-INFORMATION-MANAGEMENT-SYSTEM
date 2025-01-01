@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { FaFilter } from "react-icons/fa";
-import { router } from "@inertiajs/react";
-import StateAdminSideBar from "../PPDAdminSideBar";
+import { FaSearch, FaEdit, FaTrash } from "react-icons/fa";
+import { router, Head } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head } from "@inertiajs/react";
+import PPDAdminSideBar from "../PPDAdminSideBar";
 
-export default function TVPSSInfoSchoolPPD({ schools }) {
+export default function ListPPDSchool({ schools = [] }) {
     const [searchQuery, setSearchQuery] = useState("");
-    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
-    const [selectedSchools, setSelectedSchools] = useState([]);
     const [filteredData, setFilteredData] = useState(schools);
 
     useEffect(() => {
@@ -43,19 +41,6 @@ export default function TVPSSInfoSchoolPPD({ schools }) {
         }
     };
 
-    const handleCheckboxChange = (id) => {
-        setSelectedSchools((prev) =>
-            prev.includes(id)
-                ? prev.filter((schoolId) => schoolId !== id)
-                : [...prev, id]
-        );
-    };
-
-    const paginatedData = filteredData.slice(
-        (currentPage - 1) * rowsPerPage,
-        currentPage * rowsPerPage
-    );
-
     const getStatusStyle = (status) => {
         switch (status) {
             case "Pending":
@@ -69,194 +54,166 @@ export default function TVPSSInfoSchoolPPD({ schools }) {
         }
     };
 
+    const paginatedData = filteredData.slice(
+        (currentPage - 1) * rowsPerPage,
+        currentPage * rowsPerPage
+    );
+
     return (
-        <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Info Status TVPSS
-                </h2>
-            }
-        >
+        <AuthenticatedLayout>
             <Head title="TVPSS | Info Status TVPSS" />
-            <div className="flex">
-                <div className="w-1/6 p-4 bg-gray-800 text-white min-h-screen">
-                    <StateAdminSideBar />
+            <div className="flex flex-col md:flex-row min-h-screen bg-white">
+                <div className="w-1/6 bg-white shadow-lg">
+                    <PPDAdminSideBar />
                 </div>
 
-                <div className="flex-1 p-6 bg-white min-h-screen">
-                    <h1 className="text-2xl font-semibold mb-6">
-                        Maklumat Sekolah
-                    </h1>
-
-                    {/* Search Bar and Actions */}
-                    <div className="flex justify-between items-center mb-4 space-x-4">
-                        <div className="flex items-center space-x-2">
-                            <input
-                                type="text"
-                                placeholder="Cari Nama Sekolah..."
-                                value={searchQuery}
-                                onChange={handleSearch}
-                                className="px-4 py-2 w-64 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                            <button className="flex items-center px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100">
-                                <FaFilter className="mr-2" /> Filter
-                            </button>
-                        </div>
-
-                        {/* Action Buttons */}
-                        <div className="flex items-center space-x-4">
-                            <button className="px-4 py-2 bg-[#666969] text-white rounded-md shadow hover:bg-[#5c5f5f]">
-                                Eksport
-                            </button>
-                            <button className="px-4 py-2 bg-[#F44336] text-white rounded-md shadow hover:bg-[#e32e2e]">
-                                Hapus
-                            </button>
-
-                            {/* Rows per Page Dropdown */}
-                            <div className="flex items-center space-x-2">
-                                <span className="text-sm font-medium">
-                                    Tunjuk
-                                </span>
-                                <select
-                                    id="rowsPerPage"
-                                    value={rowsPerPage}
-                                    onChange={handleRowsPerPageChange}
-                                    className="px-4 py-2 border rounded-md shadow focus:outline-none"
+                <div className="flex-1 p-6 bg-gray-50 min-h-screen">
+                    <div className="flex items-center justify-between mb-6">
+                        {/* Breadcrumb Section */}
+                        <div>
+                            <h2 className="text-3xl font-bold text-gray-900 bg-clip-text pl-4">
+                                <a
+                                    href="/tvpssInfoPPDList"
+                                    className="text-[#455185] hover:underline"
                                 >
-                                    <option value={5}>5</option>
-                                    <option value={10}>10</option>
-                                    <option value={25}>25</option>
-                                </select>
-                                <span className="text-sm font-medium">
-                                    Entri
-                                </span>
-                            </div>
+                                    Informasi TVPSS Sekolah
+                                </a>
+                                <span className="mx-2 text-gray-500">{'>'}</span>
+                                <a
+                                    href="/tvpssInfoPPDList"
+                                    className="text-gray-700 hover:underline"
+                                >
+                                    Semua Sekolah
+                                </a>
+                            </h2>
                         </div>
                     </div>
 
-                    {/* Table */}
-                    <table className="w-full bg-white shadow-md rounded-md overflow-hidden">
-                        <thead className="bg-gray-100">
-                            <tr>
-                                <th className="p-4">
-                                    <input
-                                        type="checkbox"
-                                        onChange={(e) => {
-                                            if (e.target.checked) {
-                                                setSelectedSchools(
-                                                    filteredData.map(
-                                                        (school) =>
-                                                            school.schoolCode
-                                                    )
-                                                );
-                                            } else {
-                                                setSelectedSchools([]);
-                                            }
-                                        }}
-                                        checked={
-                                            selectedSchools.length ===
-                                                filteredData.length &&
-                                            filteredData.length > 0
-                                        }
-                                    />
-                                </th>
-                                <th className="text-left p-4">Kod Sekolah</th>
-                                <th className="text-left p-4">Nama Sekolah</th>
-                                <th className="text-left p-4">
-                                    Nama Pegawai Sekolah
-                                </th>
-                                <th className="text-left p-4">Versi</th>
-                                <th className="text-left p-4">Status</th>
-                                <th className="text-left p-4">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {paginatedData.length > 0 ? (
-                                paginatedData.map((school) => (
-                                    <tr
-                                        key={school.schoolCode}
-                                        className="hover:bg-gray-50 border-b"
+                    <div className="max-w-8xl mx-auto p-6 text-gray-900 bg-white border border-gray-200 shadow rounded-2xl">
+                        <div className="flex items-center mb-4 justify-between">
+                            <div className="flex items-center w-full max-w-xs relative">
+                                <FaSearch className="absolute right-3 text-gray-400 text-xl" />
+                                <input
+                                    type="text"
+                                    placeholder="Cari Sekolah..."
+                                    value={searchQuery}
+                                    onChange={handleSearch}
+                                    className="w-full pl-4 pr-4 py-3 bg-white border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#455185] focus:border-[#455185] transition-all placeholder-gray-400"
+                                />
+                            </div>
+
+                            <div className="flex items-center space-x-4">
+                                <button
+                                    style={{ marginTop: "1.45rem" }}
+                                    className="px-4 py-2 bg-[#455185] text-white rounded-lg shadow hover:bg-[#3b477a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#455185] transition-all"
+                                >
+                                    Eksport
+                                </button>
+
+                                <div>
+                                    <label
+                                        htmlFor="rowsPerPage"
+                                        className="block text-sm font-medium text-gray-700"
                                     >
-                                        <td className="p-4">
-                                            <input
-                                                type="checkbox"
-                                                checked={selectedSchools.includes(
-                                                    school.schoolCode
-                                                )}
-                                                onChange={() =>
-                                                    handleCheckboxChange(
-                                                        school.schoolCode
-                                                    )
-                                                }
-                                            />
-                                        </td>
-                                        <td className="p-4">
-                                            {school.schoolCode}
-                                        </td>
-                                        <td className="p-4">
-                                            {school.schoolName}
-                                        </td>
-                                        <td className="p-4">
-                                            {school.schoolOfficer || "N/A"}
-                                        </td>
-                                        <td className="p-4">
-                                            {school.schoolVersion}
-                                        </td>
-                                        <td className="p-4">
-                                            <span
-                                                className={`px-2 py-1 rounded-full ${getStatusStyle(
-                                                    school.status
-                                                )}`}
-                                            >
-                                                {school.status}
-                                            </span>
-                                        </td>
-                                        <td className="p-4">
-                                            <button
-                                                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-                                                onClick={() =>
-                                                    router.visit(
-                                                        `/tvpssInfoPPD/${school.schoolCode}/edit`
-                                                    )
-                                                }
-                                            >
-                                                Lihat
-                                            </button>
+                                        Bilangan Data
+                                    </label>
+                                    <select
+                                        id="rowsPerPage"
+                                        value={rowsPerPage}
+                                        onChange={handleRowsPerPageChange}
+                                        className="mt-1 block pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-[#455185] focus:border-[#455185] sm:text-sm rounded-md"
+                                    >
+                                        <option value={5}>5</option>
+                                        <option value={10}>10</option>
+                                        <option value={25}>25</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <table className="w-full text-left rounded-lg border-collapse">
+                            <thead>
+                                <tr className="bg-white">
+                                    <th className="border-b px-4 py-6">Bil</th>
+                                    <th className="border-b px-4 py-6">Nama Sekolah</th>
+                                    <th className="border-b px-4 py-6">Nama Pegawai</th>
+                                    <th className="border-b px-4 py-6">Versi</th>
+                                    <th className="border-b px-4 py-6">Status</th>
+                                    <th className="border-b px-4 py-6 text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {paginatedData.length === 0 ? (
+                                    <tr>
+                                        <td colSpan="6" className="text-center py-4">
+                                            Tiada Data Ditemui
                                         </td>
                                     </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td
-                                        colSpan="7"
-                                        className="text-center py-4"
-                                    >
-                                        Tiada Data Ditemui
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-
-                    {/* Pagination */}
-                    <div className="flex justify-between items-center mt-6">
-                        <button
-                            onClick={handlePrevPage}
-                            className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
-                            disabled={currentPage === 1}
-                        >
-                            Prev
-                        </button>
-                        <span className="text-sm text-gray-600 font-semibold">
-                            Page {currentPage} of {totalPages}
-                        </span>
-                        <button
-                            onClick={handleNextPage}
-                            className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
-                            disabled={currentPage === totalPages}
-                        >
-                            Next
-                        </button>
+                                ) : (
+                                    paginatedData.map((school, index) => (
+                                        <tr key={school.schoolCode} className="hover:bg-gray-50">
+                                            <td className="border-b px-4 py-6">
+                                                {(currentPage - 1) * rowsPerPage + index + 1}
+                                            </td>
+                                            <td className="border-b px-4 py-6">{school.schoolName}</td>
+                                            <td className="border-b px-4 py-6">
+                                                {school.schoolOfficer || "N/A"}
+                                            </td>
+                                            <td className="border-b px-4 py-6">{school.schoolVersion}</td>
+                                            <td className="border-b px-4 py-6">
+                                                <span
+                                                    className={`px-2 py-1 rounded-full ${getStatusStyle(
+                                                        school.status
+                                                    )}`}
+                                                >
+                                                    {school.status}
+                                                </span>
+                                            </td>
+                                            <td className="border-b px-6 py-4 text-center">
+                                                <div className="flex justify-center items-center space-x-4">
+                                                    <button
+                                                        onClick={() =>
+                                                            router.visit(`/tvpssInfoPPD/${school.schoolCode}/edit`)
+                                                        }
+                                                        className="text-gray-400 hover:text-gray-600"
+                                                    >
+                                                        <FaEdit size={18} />
+                                                    </button>
+                                                    <button
+                                                        className="text-gray-400 hover:text-gray-600"
+                                                    >
+                                                        <FaTrash size={18} />
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
+                        <div className="flex justify-between items-center mt-6">
+                            <button
+                                onClick={handlePrevPage}
+                                className={`px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 focus:ring-2 focus:ring-gray-400 focus:outline-none text-gray-600 font-medium disabled:opacity-50 ${
+                                    currentPage === 1 && "cursor-not-allowed"
+                                }`}
+                                disabled={currentPage === 1}
+                            >
+                                Sebelum
+                            </button>
+                            <span className="inline-flex items-center px-4 py-2 rounded-lg bg-[#f1f5f9] text-[#455185] font-semibold shadow-sm text-sm">
+                                Halaman {currentPage} daripada {totalPages}
+                            </span>
+                            <button
+                                onClick={handleNextPage}
+                                className={`px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 focus:ring-2 focus:ring-gray-400 focus:outline-none text-gray-600 font-medium disabled:opacity-50 ${
+                                    currentPage === totalPages && "cursor-not-allowed"
+                                }`}
+                                disabled={currentPage === totalPages}
+                            >
+                                Seterusnya
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

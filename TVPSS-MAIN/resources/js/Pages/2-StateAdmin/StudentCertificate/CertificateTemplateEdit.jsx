@@ -2,6 +2,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm, Link } from '@inertiajs/react'; // Import Link
 import { useState } from 'react';
 import jsPDF from 'jspdf'; // Import jsPDF for PDF generation
+import StateAdminSideBar from '../StateAdminSideBar';
 
 export default function CertificateTemplateEdit({ template }) {
     const { data, setData, post, processing, errors } = useForm({
@@ -245,20 +246,29 @@ export default function CertificateTemplateEdit({ template }) {
     };
 
     return (
-        <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Edit Templat Sijil
-                </h2>
-            }
-        >
-            <Head title="Edit Certificate Template" />
-            <div className="flex min-h-screen bg-gray-100">
+        <AuthenticatedLayout>
+            <Head title="TVPSS | Sunting Templat" />
+            <div className="flex flex-col md:flex-row min-h-screen bg-gray-50">
                 {/* Sidebar */}
-
+                <div className="w-1/5">
+                    <StateAdminSideBar />
+                </div>
                 {/* Main Content Area */}
                 <div className="flex-1 p-8">
-                    <div className="max-w-5xl mx-auto bg-white shadow-md rounded-md border border-gray-200 p-8">
+                <nav className="mb-8">
+                        <ol className="flex items-center space-x-2 text-gray-600">
+                            <li>
+                                <a href="/listSchoolCertificate" className="text-[#4158A6] hover:text-blue-800 font-medium">
+                                    Jana Sijil Pelajar
+                                </a>
+                            </li>
+                            <li className="text-gray-500">/</li>
+                            <li className="text-gray-900 font-medium">
+                                Sunting Template
+                            </li>
+                        </ol>
+                    </nav>
+                <div className="max-w-5xl mx-auto">
                         <Link href={route('certList')} className="mb-4 inline-block px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700">
                             Kembali ke Senarai Templat
                         </Link>

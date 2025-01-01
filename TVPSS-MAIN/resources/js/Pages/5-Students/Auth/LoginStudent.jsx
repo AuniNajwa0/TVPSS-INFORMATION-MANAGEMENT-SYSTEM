@@ -1,215 +1,156 @@
-import React, { useState } from 'react';
-import { Head, Link, useForm } from "@inertiajs/react";
 import { Inertia } from '@inertiajs/inertia';
-import { Lock, Mail, EyeOff, Eye } from 'lucide-react';
+import { Head, Link, useForm } from "@inertiajs/react";
+import { ArrowLeft, Eye, EyeOff, Lock } from 'lucide-react';
+import { useState } from 'react';
 
 export default function StudentLogin({ status, canResetPassword }) {
   const { data, setData, post, processing, errors, reset } = useForm({
-    email: "",
-    password: "",
-    remember: false,
+    ic_num: "",
   });
 
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showIC, setShowIC] = useState(false);
 
   const handleLogin = (e) => {
     e.preventDefault();
     setError(""); // Reset any existing errors
 
     // Frontend validation
-    if (!data.email) {
-      setError("Email diperlukan");
+    const icPattern = /^\d{6}-\d{2}-\d{4}$/; // Example format: 000000-00-0000
+    if (!data.ic_num) {
+      setError("Kad Pengenalan diperlukan.");
       return;
     }
 
-    if (!data.email.endsWith("@moe.edu.my")) {
-      setError("Format email mesti @moe.edu.my.");
-      return;
-    }
-
-    if (!data.password) {
-      setError("Kata Laluan diperlukan.");
+    if (!icPattern.test(data.ic_num)) {
+      setError("Kad pengenalan diperlukan.");
       return;
     }
 
     // Submit login and redirect
-    post(route("login"), {
+    post(route('student.login'), {
       onSuccess: () => {
         // Redirect to dashboard after successful login
-        Inertia.visit(route("dashboard"));
+        Inertia.visit(route('student.dashboard'));
       },
       onError: (backendErrors) => {
-        // Display backend error messages if login fails
-        if (backendErrors.email || backendErrors.password) {
-          setError("Kata laluan atau email tidak sah.");
+        // Handle backend validation errors
+        if (backendErrors.ic_num) {
+          setError('Nombor kad pengenalan tidak sah.');
         }
       },
-      onFinish: () => reset("password"),
+      onFinish: () => reset('password'),
     });
+    
   };
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-white flex">
       <Head title="TVPSS | Login Pelajar" />
-      <div className="w-full max-w-xl bg-[#f8f9fa] border shadow rounded-3xl">
-        
-        <div className="p-8 md:p-12 flex flex-col justify-center">
-          <div className="w-full max-w-md mx-auto">
-            <div className="flex justify-center mb-8">
-              <img
-                src="/assets/TVPSSLogo.jpg"
-                alt="TVPSS Logo"
-                className="h-20 w-auto"
-              />
-            </div>
 
-            <h1 className="text-center text-4xl font-bold mb-3">
-          Log Masuk
-        </h1>
-
-        {/* Add the "Log Masuk Pelajar" text here */}
-        <div className="text-center text-gray-400 text-sm mb-2">
-          Sila masukkan maklumat untuk log masuk!
-        </div>
-
-            {error && (
-              <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded-lg mb-6 flex items-center">
-                <svg
-                  className="w-6 h-6 mr-3 text-red-500"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                {error}
-              </div>
-            )}
-
-            <form onSubmit={handleLogin} className="space-y-6">
-              {/* Email Input */}
-              <div>
-                <label htmlFor="email" className="block text-gray-700 font-medium mb-2">
-                  Email
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Mail className="text-gray-400" size={20} />
-                  </div>
-                  <input
-                    id="email"
-                    type="email"
-                    name="email"
-                    value={data.email}
-                    placeholder="pelajar@moe.edu.my"
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    autoComplete="username"
-                    autoFocus
-                    onChange={(e) => setData({ ...data, email: e.target.value })}
-                  />
-                </div>
-              </div>
-
-              {/* Password Input */}
-              <div>
-                <label htmlFor="password" className="block text-gray-700 font-medium mb-2">
-                  Kad Pengenalan
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="text-gray-400" size={20} />
-                  </div>
-                  <input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    name="password"
-                    value={data.password}
-                    placeholder="000000-00-0000"
-                    className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    autoComplete="current-password"
-                    onChange={(e) => setData({ ...data, password: e.target.value })}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
-                  >
-                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between mb-6">
-  {/* Remember Me Checkbox */}
-  <label className="flex items-center text-sm">
-    <input
-      type="checkbox"
-      name="remember"
-      checked={data.remember}
-      className="mr-2 border rounded"
-      onChange={(e) => setData({ ...data, remember: e.target.checked })}
-    />
-    <span className="text-gray-700">Ingat Saya</span>
-  </label>
-
-  {/* Lupa Email Link */}
-  <Link
-    href="/forgot-email"
-    className="text-sm text-[#4158A6] hover:underline"
-  >
-    Lupa Email?
-  </Link>
-</div>  
-
-              {/* Buttons */}
-              <div>
-                <button
-                  type="submit"
-                  className="w-full py-3 bg-[#4158A6] font-bold text-white shadow rounded-2xl hover:bg-[#3C4565] focus:ring focus:ring-blue-500"
-                  disabled={processing}
-                >
-                  {processing ? (
-                    <svg
-                      className="animate-spin h-5 w-5 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                  ) : (
-                    "Log Masuk"
-                  )}
-                </button>
-                <div className="mt-5 text-center">
-                <Link
-                  href="/dashboard"
-                  className="text-md text-[#4158A6] hover:underline"
-                >
-                  Kembali
-                </Link>
-              </div>
-              </div>
-            </form>
-          </div>
-        </div>
+     { /* Left Column - Image */}
+      <div className="hidden lg:flex w-[100%] bg-[#4158A6] items-center justify-center">
+        <img 
+          src="/assets/login1.jpg" 
+          alt="Login Illustration" 
+          className="w-full h-full object-cover"
+        />
       </div>
-    </div>
-  );
-}
+        {/* Right Column - Login Form */}
+              <div className="w-full lg:w-1/2 flex items-center justify-center px-8 py-12 relative bg-gradient-to-b from-gray-50 to-white">
+                {/* Decorative Elements */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50 rounded-full -mr-32 -mt-32 opacity-50" />
+                <div className="absolute bottom-0 right-0 w-48 h-48 bg-blue-100 rounded-full -mr-24 -mb-24 opacity-30" />
+                
+                {/* Back Button */}
+                <Link 
+                  href="/" 
+                  className="absolute top-8 left-8 p-3 rounded-full hover:bg-white/80 transition-all duration-200 flex items-center justify-center group"
+                  aria-label="Kembali"
+                >
+                  <ArrowLeft className="h-5 w-5 text-gray-600 group-hover:text-blue-600" /> 
+                </Link>
+        
+                <div className="w-full max-w-md relative">
+                  <div className="bg-white/80 backdrop-blur-sm px-8 py-12 rounded-2xl shadow-xl border border-gray-100">
+                    <div className="flex flex-col items-center mb-10">
+                      <div className="relative">
+                        <div className="absolute -inset-4 bg-white rounded-full blur-lg opacity-30" />
+                        <img 
+                          src="/assets/TVPSSLogo2.jpg" 
+                          alt="TVPSS Logo" 
+                          className="h-24 w-auto relative" 
+                        />
+                      </div>
+                      <h1 className="text-3xl font-bold bg-[#4158A6] bg-clip-text text-transparent mt-8 mb-2">
+                        Log Masuk | Pelajar
+                      </h1>
+                      <p className="text-gray-600 text-sm mb-2">
+                        Sila masukkan nombor kad pengenalan untuk log masuk!
+                      </p>
+                    </div>
+        
+                    {error && (
+                      <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-xl mb-6 animate-shake">
+                        <div className="flex items-center">
+                          <svg className="w-5 h-5 mr-2 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                          </svg>
+                          {error}
+                        </div>
+                      </div>
+                    )}
+        
+                    <form onSubmit={handleLogin} className="space-y-6">
+        
+                      {/* Password Input */}
+                      <div className="space-y-2">
+                        <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                          No Kad Pengenalan
+                        </label>
+                        <div className="relative group">
+                          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <Lock className="text-gray-400 group-focus-within:text-blue-500 transition-colors" size={18} />
+                          </div>
+                          <input
+                            id="ic_num"
+                            type="text"
+                            name="ic_num"
+                            value={data.ic_num}
+                            placeholder="Masukkan 12 digit Kad Pengenalan"
+                            className="w-full pl-10 pr-12 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                            onChange={(e) => setData({ ...data, ic_num: e.target.value })}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-blue-600 transition-colors"
+                          >
+                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                          </button>
+                        </div>
+                      </div>
+        
+                      {/* Login Button */}
+                      <button
+                        type="submit"
+                        className="w-full py-3 px-4 bg-[#4158A6] text-white font-semibold rounded-xl shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
+                        disabled={processing}
+                      >
+                        {processing ? (
+                          <svg className="animate-spin h-5 w-5 mx-auto text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                        ) : (
+                          "Log Masuk"
+                        )}
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        }
