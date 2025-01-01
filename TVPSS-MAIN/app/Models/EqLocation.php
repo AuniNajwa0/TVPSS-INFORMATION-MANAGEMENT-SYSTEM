@@ -18,6 +18,7 @@ class EqLocation extends Model
     protected $fillable = [
         'eqLocName',
         'eqLocType',
+        'school_info_id',
     ];
 
     public function eqLocation(){
@@ -32,5 +33,10 @@ class EqLocation extends Model
     public function updatedBy()
     {
         return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    public function school()
+    {
+        return $this->belongsTo(SchoolInfo::class, 'school_info_id');
     }
 }

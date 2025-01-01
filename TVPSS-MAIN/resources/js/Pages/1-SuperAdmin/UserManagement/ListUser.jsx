@@ -1,46 +1,39 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
-import { FaFilter, FaEdit, FaTrash } from 'react-icons/fa';
+import { FaUserPlus, FaSearch, FaEdit, FaTrash } from 'react-icons/fa';
 import SuperAdminSideBar from '../SuperAdminSideBar';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Inertia } from '@inertiajs/inertia';
+import { Button, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 
 export default function ListUser({ auth, users, pagination, selectedRole }) {
-    // State variables
-    const [rowsPerPage, setRowsPerPage] = useState(pagination.per_page);  // Default rows per page
+    const [rowsPerPage, setRowsPerPage] = useState(pagination.per_page);
     const [currentPage, setCurrentPage] = useState(pagination.current_page);
-    const [selectedRoleState, setSelectedRole] = useState(selectedRole);  // New state for selected role
+    const [selectedRoleState, setSelectedRole] = useState(selectedRole);
+    const [searchQuery, setSearchQuery] = useState('');
 
-    // Accessing the 'data' array from the 'users' prop
     const usersData = users.data;
 
-    // Filter users by role
-    const filteredUsers = selectedRoleState
-        ? usersData.filter(user => user.role === Number(selectedRoleState))  // Ensure comparison with number
-        : usersData;
+    const filteredUsers = usersData.filter((user) => {
+        const searchFields = [
+            user.name.toLowerCase(),
+            user.email.toLowerCase(),
+            user.state?.toLowerCase(),
+            getRoleLabel(user.role).toLowerCase()
+        ];
+        return searchFields.some(field => field.includes(searchQuery.toLowerCase()));
+    });
 
-    // Pagination logic
+    const roleFilteredUsers = selectedRoleState
+        ? filteredUsers.filter(user => user.role === Number(selectedRoleState))
+        : filteredUsers;
+
     const indexOfLastUser = currentPage * rowsPerPage;
     const indexOfFirstUser = indexOfLastUser - rowsPerPage;
+    const currentUsers = roleFilteredUsers.slice(indexOfFirstUser, indexOfLastUser);
 
-    // Get users for the current page manually without using slice
-    const currentUsers = [];
-    for (let i = indexOfFirstUser; i < indexOfLastUser; i++) {
-        if (filteredUsers[i]) {
-            currentUsers.push(filteredUsers[i]);
-        }
-    }
-
-    // Log filtered users and current users for debugging
-    useEffect(() => {
-        console.log("Users data:", usersData);  // Log the users data from the prop
-        console.log("Filtered users:", filteredUsers);  // Log filtered users after applying role filter
-        console.log("Current users:", currentUsers);  // Log current page's users
-    }, [usersData, filteredUsers, currentPage]);
-
-    // Handle page change
     const nextPage = () => {
-        if (currentPage < pagination.last_page) {
+        if (currentPage < Math.ceil(roleFilteredUsers.length / rowsPerPage)) {
             setCurrentPage(currentPage + 1);
         }
     };
@@ -53,132 +46,176 @@ export default function ListUser({ auth, users, pagination, selectedRole }) {
 
     const handleRowsPerPageChange = (e) => {
         setRowsPerPage(Number(e.target.value));
-        setCurrentPage(1);  
+        setCurrentPage(1);
     };
 
     const handleRoleChange = (e) => {
         setSelectedRole(e.target.value);
-        setCurrentPage(1);  // Reset to first page when role filter changes
+        setCurrentPage(1);
     };
 
-    // Handle user deletion
-    const handleDelete = async (userId) => {
+    const handleDelete = (userId) => {
         if (confirm('Are you sure you want to delete this user?')) {
-            await Inertia.delete(`/users/${userId}`);
+            Inertia.delete(`/users/${userId}`, {
+                onSuccess: () => alert('User successfully deleted!'),
+                onError: (errors) => alert('Failed to delete user: ' + errors.message),
+            });
         }
     };
 
     return (
-        <AuthenticatedLayout
-            user={auth.user}
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Pengurusan Pengguna
-                </h2>
-            }
-        >
+        <AuthenticatedLayout>
             <Head title="TVPSS | Pengurusan Pengguna" />
 
-            <div className="flex">
-                <div className="w-1/6 p-4 text-white min-h-screen">
+            <div className="flex flex-col md:flex-row min-h-screen bg-[#f8faff]">
+                <div className="w-1/6 bg-white shadow-lg">
                     <SuperAdminSideBar />
                 </div>
 
-                <div className="flex-1 p-6">
-                    <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-lg font-semibold">Semua Pengguna</h3>
-                        <button
-                            className="bg-[#455185] hover:bg-[#3C4565] text-white rounded-md px-4 py-2 shadow-md"
-                            onClick={() => Inertia.visit('/users/create')}  // Use Inertia.js navigation here
+                <div className="w-full md:ml-[120px] p-6">
+                    <div className="flex items-center justify-between mb-6">
+                        <h2 className="text-4xl font-bold text-gray-900 bg-clip-text hover:scale-105 transform transition duration-300 ease-in-out">
+                            Pengurusan Pengguna
+                        </h2>
+                        <a href="/addUser">
+                        <Button
+                            variant="contained"
+                            sx={{
+                                background: "#455185",
+                                color: "white",
+                                padding: "10px 20px",
+                                textTransform: "none",
+                                borderRadius: 2,
+                                height: "40px",
+                                "&:hover": {
+                                    background: "#3C4565",
+                                    transform: "scale(1.05)",
+                                    boxShadow: "0px 4px 15px rgba(0,0,0,0.2)",
+                                },
+                            }}
                         >
+                            <FaUserPlus />
                             Tambah Pengguna Baharu
-                        </button>
+                        </Button>
+                        </a>
                     </div>
 
                     <div className="max-w-8xl mx-auto p-6 text-gray-900 bg-white rounded shadow-md">
-                        {/* Search */}
                         <div className="flex items-center mb-4 justify-between">
-                            <div className="flex items-center space-x-2 w-full max-w-xs">
-                                <FaFilter className="text-gray-500 text-xl" />
+                            <div className="flex items-center w-full max-w-xs relative">
+                                <FaSearch className="absolute right-3 text-gray-400 text-xl" />
                                 <input
                                     type="text"
                                     placeholder="Cari Pengguna..."
-                                    className="w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all placeholder-gray-400"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="w-full pl-4 pr-4 py-3 bg-white border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#455185] focus:border-[#455185] transition-all placeholder-gray-400"
                                 />
                             </div>
 
-                            {/* Role Filter Dropdown */}
                             <div className="flex items-center space-x-4">
-                                <label htmlFor="roleFilter" className="text-sm font-medium">Jenis Pengguna :</label>
-                                <select
-                                    id="roleFilter"
-                                    value={selectedRoleState}
-                                    onChange={handleRoleChange}
-                                    className="px-4 py-2 bg-white text-[#455185] rounded-md border border-[#455185] shadow-lg transition-all hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#3C4565] hover:ring-2"
-                                >
-                                    <option value="">Semua</option>
-                                    <option value="0">Super Admin</option>
-                                    <option value="1">State Admin</option>
-                                    <option value="2">PPD Admin</option>
-                                    <option value="3">School Admin</option>
-                                </select>
+                                <FormControl variant="outlined" sx={{ minWidth: 160, borderRadius: 4 }}>
+                                    <InputLabel id="roleFilter-label" sx={{ fontSize: '0.875rem' }}>
+                                        Jenis Pengguna
+                                    </InputLabel>
+                                    <Select
+                                        labelId="roleFilter-label"
+                                        id="roleFilter"
+                                        value={selectedRoleState}
+                                        onChange={handleRoleChange}
+                                        label="Jenis Pengguna"
+                                        sx={{
+                                            fontSize: '1rem',
+                                            height: '50px',
+                                            borderRadius: '12px',
+                                            '& .MuiOutlinedInput-notchedOutline': {
+                                                borderRadius: '12px',
+                                            },
+                                        }}
+                                    >
+                                        <MenuItem value="">
+                                            <em>Semua</em>
+                                        </MenuItem>
+                                        <MenuItem value={0}>Super Admin</MenuItem>
+                                        <MenuItem value={1}>State Admin</MenuItem>
+                                        <MenuItem value={2}>PPD Admin</MenuItem>
+                                        <MenuItem value={3}>School Admin</MenuItem>
+                                    </Select>
+                                </FormControl>
 
-                                <label htmlFor="rowsPerPage" className="text-sm font-medium">Bilangan Data :</label>
-                                <select
-                                    id="rowsPerPage"
-                                    value={rowsPerPage}
-                                    onChange={handleRowsPerPageChange}
-                                    className="px-7 py-2 bg-white text-[#455185] rounded-md border border-[#455185] shadow-lg transition-all hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#3C4565] hover:ring-2"
-                                >
-                                    <option value="5">5</option>
-                                    <option value="10">10</option>
-                                    <option value="25">25</option>
-                                </select>
+                                <FormControl variant="outlined" sx={{ minWidth: 120, borderRadius: 4 }}>
+                                    <InputLabel id="rowsPerPage-label" sx={{ fontSize: '0.875rem' }}>
+                                    Bilangan Data
+                                    </InputLabel>
+                                    <Select
+                                        labelId="rowsPerPage-label"
+                                        id="rowsPerPage"
+                                        value={rowsPerPage}
+                                        onChange={handleRowsPerPageChange}
+                                        label="Bilangan Data"
+                                        sx={{
+                                            fontSize: '1rem',
+                                            height: '50px',
+                                            borderRadius: '12px',
+                                            '& .MuiOutlinedInput-notchedOutline': {
+                                                borderRadius: '12px',
+                                            },
+                                        }}
+                                    >
+                                        <MenuItem value={5}>5</MenuItem>
+                                        <MenuItem value={10}>10</MenuItem>
+                                        <MenuItem value={25}>25</MenuItem>
+                                    </Select>
+                                </FormControl>
                             </div>
                         </div>
 
-                        {/* User Table */}
-                        <table className="w-full text-left border-collapse">
+                        <table className="w-full text-left rounded-lg border-collapse">
                             <thead>
-                                <tr className="bg-gray-100">
-                                    <th className="border-b p-4">Bil</th>
-                                    <th className="border-b p-4">Nama Penuh</th>
-                                    <th className="border-b p-4">Alamat Email</th>
-                                    <th className="border-b p-4">Negeri</th>
-                                    <th className="border-b p-4">Jenis Pengguna</th>
-                                    <th className="border-b p-4">Aksi</th>
+                                <tr className="bg-white">
+                                    <th className="border-b px-4 py-6">Bil</th>
+                                    <th className="border-b px-4 py-6">Nama Penuh</th>
+                                    <th className="border-b px-4 py-6">Alamat Email</th>
+                                    <th className="border-b px-4 py-6 text-center">Negeri</th>
+                                    <th className="border-b px-4 py-6 text-center">Jenis Pengguna</th>
+                                    <th className="border-b px-4 py-6 text-center">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {currentUsers.length === 0 ? (
                                     <tr>
-                                        <td colSpan="6" className="text-center py-4">Tiada Data Ditemui</td>
+                                        <td colSpan="6" className="text-center py-4">
+                                            Tiada Data Ditemui
+                                        </td>
                                     </tr>
                                 ) : (
                                     currentUsers.map((user, index) => (
                                         <tr key={user.id} className="hover:bg-gray-50">
-                                            <td className="border-b p-4">{index + 1}</td>
-                                            <td className="border-b p-4">{user.name}</td>
-                                            <td className="border-b p-4">{user.email}</td>
-                                            <td className="border-b p-4">{user.state}</td>
-                                            <td className="border-b p-4">
-                                                <span className={`px-2 py-1 rounded-full text-white ${getRoleColor(user.role)}`}>
+                                            <td className="border-b px-4 py-6">{index + 1}</td>
+                                            <td className="border-b px-4 py-6">{user.name}</td>
+                                            <td className="border-b px-4 py-6">{user.email}</td>
+                                            <td className="border-b px-4 py-6 text-center">{user.state}</td>
+                                            <td className="border-b px-4 py-6 text-center">
+                                                <span
+                                                    className={`px-2 py-1.5 rounded-full ${getRoleColor(user.role)}`}
+                                                    style={{ color: getRoleTextColor(user.role) }}
+                                                >
                                                     {getRoleLabel(user.role)}
                                                 </span>
                                             </td>
-                                            <td className="border-b p-4">
-                                                <div className="flex items-center space-x-4">
+                                            <td className="border-b px-6 py-4 text-center">
+                                                <div className="flex justify-center items-center space-x-4">
                                                     <button
-                                                        onClick={() => Inertia.visit(`/users/${user.id}/edit`)}  // Use Inertia.js for edit navigation
-                                                        className="text-yellow-500 hover:text-yellow-700"
+                                                        onClick={() => Inertia.visit(`/updateUser/${user.id}`)}
+                                                        className="text-gray-400 hover:text-gray-600"
                                                     >
-                                                        <FaEdit />
+                                                        <FaEdit size={18} />
                                                     </button>
                                                     <button
                                                         onClick={() => handleDelete(user.id)}
-                                                        className="text-red-500 hover:text-red-700"
+                                                        className="text-gray-400 hover:text-gray-600"
                                                     >
-                                                        <FaTrash />
+                                                        <FaTrash size={18} />
                                                     </button>
                                                 </div>
                                             </td>
@@ -188,19 +225,33 @@ export default function ListUser({ auth, users, pagination, selectedRole }) {
                             </tbody>
                         </table>
 
-                        {/* Pagination */}
-                        <div className="flex justify-between items-center mt-4">
-                            <div>
-                                <button onClick={prevPage} className="text-[#455185] hover:text-[#3C4565]">
-                                    Prev
-                                </button>
-                                <span className="mx-2">
-                                    {currentPage} of {Math.ceil(filteredUsers.length / rowsPerPage)}
-                                </span>
-                                <button onClick={nextPage} className="text-[#455185] hover:text-[#3C4565]">
-                                    Next
-                                </button>
-                            </div>
+                        <div className="flex justify-between items-center mt-6">
+                            <button
+                                onClick={prevPage}
+                                className={`px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 focus:ring-2 focus:ring-gray-400 focus:outline-none text-gray-600 font-medium disabled:opacity-50 ${currentPage === 1 && 'cursor-not-allowed'}`}
+                                disabled={currentPage === 1}
+                            >
+                                Sebelum
+                            </button>
+
+                            <span className="inline-flex items-center px-4 py-2 rounded-lg bg-[#f1f5f9] text-[#455185] font-semibold shadow-sm text-sm">
+    <span className="text-gray-600 mr-2">Halaman</span> 
+    <span className="bg-white px-3 py-1 rounded-lg text-[#455185] shadow-md border border-gray-200 mx-1">
+        {currentPage}
+    </span> 
+    <span className="text-gray-600 ml-2">daripada</span>
+    <span className="bg-white px-3 py-1 rounded-lg text-[#455185] shadow-md border border-gray-200 mx-1">
+        {Math.ceil(roleFilteredUsers.length / rowsPerPage)}
+    </span>
+</span>
+
+                            <button
+                                onClick={nextPage}
+                                className={`px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 focus:ring-2 focus:ring-gray-400 focus:outline-none text-gray-600 font-medium disabled:opacity-50 ${currentPage === Math.ceil(roleFilteredUsers.length / rowsPerPage) && 'cursor-not-allowed'}`}
+                                disabled={currentPage === Math.ceil(roleFilteredUsers.length / rowsPerPage)}
+                            >
+                                Seterusnya
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -209,24 +260,47 @@ export default function ListUser({ auth, users, pagination, selectedRole }) {
     );
 }
 
-// Helper function to return color based on the role
 const getRoleColor = (role) => {
     switch (role) {
-        case 0: return 'bg-blue-600';   // Super Admin
-        case 1: return 'bg-green-600';  // State Admin
-        case 2: return 'bg-purple-600'; // PPD Admin
-        case 3: return 'bg-yellow-600'; // School Admin
-        default: return 'bg-gray-600';
+        case 0:
+            return 'bg-blue-100';
+        case 1:
+            return 'bg-green-100';
+        case 2:
+            return 'bg-purple-100';
+        case 3:
+            return 'bg-yellow-100';
+        default:
+            return 'bg-gray-100';
     }
 };
 
-// Helper function to return label based on the role
+const getRoleTextColor = (role) => {
+    switch (role) {
+        case 0:
+            return '#0000FF'; // Blue
+        case 1:
+            return '#1d8238'; // Green
+        case 2:
+            return '#800080'; // Purple
+        case 3:
+            return '#b3b300'; // Yellow
+        default:
+            return '#808080'; // Gray
+    }
+};
+
 const getRoleLabel = (role) => {
     switch (role) {
-        case 0: return 'Super Admin';
-        case 1: return 'State Admin';
-        case 2: return 'PPD Admin';
-        case 3: return 'School Admin';
-        default: return 'Unknown';
+        case 0:
+            return 'Super Admin';
+        case 1:
+            return 'State Admin';
+        case 2:
+            return 'PPD Admin';
+        case 3:
+            return 'School Admin';
+        default:
+            return 'Unknown';
     }
 };

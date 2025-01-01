@@ -4,90 +4,94 @@ import { useEffect, useState } from 'react';
 import SchoolAdminSideBar from '../SchoolAdminSideBar';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import MenuItem from '@mui/material/MenuItem'; 
+import MenuItem from '@mui/material/MenuItem';
 
-export default function UpdateSchoolInformation(props) {
-    const malaysianStates = [
-        "Johor",
-        "Kedah",
-        "Kelantan",
-        "Melaka",
-        "Negeri Sembilan",
-        "Pahang",
-        "Penang",
-        "Perak",
-        "Perlis",
-        "Sabah",
-        "Sarawak",
-        "Selangor",
-        "Terengganu",
-        "Kuala Lumpur",
-        "Labuan",
-        "Putrajaya",
-    ];
+const states = [
+    'Johor', 'Melaka', 'Pahang', 'Wilayah Persekutuan Kuala Lumpur', 'Selangor',
+    'Negeri Sembilan', 'Perak', 'Kedah', 'Pulau Pinang', 'Perlis', 'Kelantan',
+    'Terengganu', 'Sabah', 'Sarawak',
+];
 
+const districts = {
+    Johor: ['Johor Bahru', 'Muar', 'Kluang', 'Segamat', 'Mersing', 'Kota Tinggi', 'Batu Pahat', 'Pontian', 'Pasir Gudang', 'Tangkak', 'Kulaijaya'],
+    Pahang: ['Kuantan', 'Temerloh', 'Bera', 'Pekan', 'Rompin', 'Maran', 'Jerantut', 'Bentong'],
+    'Wilayah Persekutuan Kuala Lumpur': ['Kuala Lumpur'],
+    Selangor: ['Petaling', 'Hulu Langat', 'Sepang', 'Klang', 'Gombak', 'Kuala Selangor', 'Sabak Bernam', 'Selayang'],
+    'Negeri Sembilan': ['Seremban', 'Port Dickson', 'Rembau', 'Jelebu', 'Tampin', 'Gemenceh'],
+    Perak: ['Ipoh', 'Kuala Kangsar', 'Taiping', 'Teluk Intan', 'Sitiawan', 'Parit Buntar', 'Tanjung Malim', 'Kampar'],
+    Kedah: ['Alor Setar', 'Sungai Petani', 'Kuala Kedah', 'Kulim', 'Baling', 'Langkawi', 'Pokok Sena', 'Kubang Pasu'],
+    'Pulau Pinang': ['Georgetown', 'Bukit Mertajam', 'Nibong Tebal', 'Balik Pulau'],
+    Perlis: ['Kangar', 'Arau'],
+    Kelantan: ['Kota Bharu', 'Tumpat', 'Pasir Mas', 'Machang', 'Tanah Merah', 'Gua Musang', 'Kuala Krai'],
+    Terengganu: ['Kuala Terengganu', 'Dungun', 'Kemaman', 'Besut', 'Hulu Terengganu', 'Marang'],
+    Sabah: ['Kota Kinabalu', 'Sandakan', 'Tawau', 'Keningau', 'Beaufort', 'Lahad Datu', 'Semporna', 'Ranau', 'Papar'],
+    Sarawak: ['Kuching', 'Sibu', 'Miri', 'Bintulu', 'Sri Aman', 'Mukah', 'Betong', 'Limbang'],
+};
+
+export default function UpdateSchoolInformation({ schoolInfo }) {
     const { data, setData, post, processing, errors, reset } = useForm({
-        schoolCode: "",
-        schoolName: "",
-        schoolAddress1: "",
-        schoolAddress2: "",
-        postcode: "",
-        state: "",
-        noPhone: "",
-        schoolEmail: "",
-        noFax: "",
-        schoolLogo: "",
-        linkYoutube: "",
+        schoolCode: schoolInfo?.schoolCode || '',
+        schoolName: schoolInfo?.schoolName || '',
+        schoolAddress1: schoolInfo?.schoolAddress1 || '',
+        schoolAddress2: schoolInfo?.schoolAddress2 || '',
+        postcode: schoolInfo?.postcode || '',
+        state: schoolInfo?.state || '',
+        district: schoolInfo?.district || '',
+        noPhone: schoolInfo?.noPhone || '',
+        schoolEmail: schoolInfo?.schoolEmail || '',
+        noFax: schoolInfo?.noFax || '',
+        schoolLogo: null,
+        linkYoutube: schoolInfo?.linkYoutube || '',
     });
 
     const [imagePreview, setImagePreview] = useState(null);
+    const [currentDistricts, setCurrentDistricts] = useState([]);
 
     useEffect(() => {
-        if (props.schoolInfo) {
-            setData({
-                schoolCode: props.schoolInfo.schoolCode || "",
-                schoolName: props.schoolInfo.schoolName || "",
-                schoolAddress1: props.schoolInfo.schoolAddress1 || "",
-                schoolAddress2: props.schoolInfo.schoolAddress2 || "",
-                postcode: props.schoolInfo.postcode || "",
-                state: props.schoolInfo.state || "",
-                noPhone: props.schoolInfo.noPhone || "",
-                schoolEmail: props.schoolInfo.schoolEmail || "",
-                noFax: props.schoolInfo.noFax || "",
-                linkYoutube: props.schoolInfo.linkYoutube || "",
-                schoolLogo: props.schoolInfo.schoolLogo || null,
-            });
-
-            if (props.schoolInfo.schoolLogo) {
-                setImagePreview(props.schoolInfo.schoolLogo);
-            }
+        if (schoolInfo?.schoolLogo) {
+            setImagePreview(`${schoolInfo.schoolLogo}`);
         }
-    }, [props.schoolInfo]);
+
+        if (data.state) {
+            setCurrentDistricts(districts[data.state] || []);
+        }
+    }, [data.state, schoolInfo]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setData(name, value);
-    };
+        setData(prevData => ({
+            ...prevData,
+            [name]: value
+        }));
+    
+        if (name === 'state') {
+            setCurrentDistricts(districts[value] || []);
+            setData(prevData => ({
+                ...prevData,
+                district: ''
+            }));
+        }
+    };    
 
     const handleFileChange = (e) => {
         const { files } = e.target;
         if (files.length > 0) {
-            setData("schoolLogo", files[0]); 
-    
+            setData('schoolLogo', files[0]);
+
             const reader = new FileReader();
-            reader.onloadend = () => setImagePreview(reader.result); 
+            reader.onloadend = () => setImagePreview(reader.result);
             reader.readAsDataURL(files[0]);
         } else {
-            setData("schoolLogo", null); 
-            setImagePreview(null); 
+            setData('schoolLogo', null);
+            setImagePreview(null);
         }
-    };    
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
         post(route('school.update'), {
             onSuccess: () => {
-                console.log("School information updated!");
+                console.log('School information updated successfully!');
             },
             onError: (errors) => {
                 console.error(errors);
@@ -95,24 +99,23 @@ export default function UpdateSchoolInformation(props) {
         });
     };
 
+    const handleCancel = () => {
+        reset();
+        setImagePreview(schoolInfo?.schoolLogo ? `${schoolInfo.schoolLogo}` : null);
+    };
+
     return (
         <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Kemaskini Versi Sekolah
-                </h2>
-            }
+            header={<h2 className="text-xl font-semibold leading-tight text-gray-800">Kemaskini Maklumat Sekolah</h2>}
         >
-            <Head title="TVPSS | Kemaskini Versi Sekolah" />
+            <Head title="TVPSS | Kemaskini Maklumat Sekolah" />
             <div className="flex min-h-screen bg-gray-100">
                 <SchoolAdminSideBar />
                 <div className="flex-1 p-8">
                     <div className="max-w-5xl mx-auto bg-white shadow-md rounded-md border border-gray-200 p-8">
-                        <h3 className="text-2xl font-semibold text-gray-800 mb-6">
-                            Maklumat Versi Sekolah
-                        </h3>
-
+                        <h3 className="text-2xl font-semibold text-gray-800 mb-6">Maklumat Sekolah</h3>
                         <form onSubmit={handleSubmit} encType="multipart/form-data">
+                            {/* Logo Upload Section */}
                             <div className="mb-8 text-center">
                                 <input
                                     type="file"
@@ -124,9 +127,7 @@ export default function UpdateSchoolInformation(props) {
                                 />
                                 <div
                                     className="relative w-48 h-48 mx-auto bg-gray-100 border-4 border-solid border-blue-900 rounded-lg shadow-lg overflow-hidden cursor-pointer hover:shadow-xl transition-shadow"
-                                    onClick={() =>
-                                        document.getElementById('schoolLogoUpload').click()
-                                    }
+                                    onClick={() => document.getElementById('schoolLogoUpload').click()}
                                 >
                                     {imagePreview ? (
                                         <img
@@ -136,32 +137,15 @@ export default function UpdateSchoolInformation(props) {
                                         />
                                     ) : (
                                         <div className="flex items-center justify-center w-full h-full text-gray-500 text-sm">
-                                            Klik untuk Muat Naik Logo
+                                            Tiada logo tersedia
                                         </div>
                                     )}
-
-                                    <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-30 opacity-0 hover:opacity-100 transition-opacity">
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            className="w-12 h-12 text-white"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth={2}
-                                                d="M12 4v16m8-8H4"
-                                            />
-                                        </svg>
-                                    </div>
                                 </div>
-                                {errors.schoolLogo && (
-                                    <div className="text-red-500 mt-2">{errors.schoolLogo}</div>
-                                )}
+                                <div className="mt-2 text-sm text-gray-500">
+                                    Klik untuk memuat naik logo baharu (tidak wajib).
+                                </div>
                             </div>
-
+                            {/* Form Fields */}
                             <div className="grid grid-cols-2 gap-6 mb-6">
                                 <Box className="col-span-2">
                                     <TextField
@@ -235,15 +219,34 @@ export default function UpdateSchoolInformation(props) {
                                         error={!!errors.state}
                                         helperText={errors.state}
                                     >
-                                        {malaysianStates.map((state) => (
+                                        {states.map((state) => (
                                             <MenuItem key={state} value={state}>
                                                 {state}
                                             </MenuItem>
                                         ))}
                                     </TextField>
                                 </Box>
+                                <Box className="col-span-2">
+                                    <TextField
+                                        select
+                                        label="Daerah"
+                                        variant="outlined"
+                                        fullWidth
+                                        name="district"
+                                        value={data.district}
+                                        onChange={handleInputChange}
+                                        error={!!errors.district}
+                                        helperText={errors.district}
+                                        disabled={!currentDistricts.length}
+                                    >
+                                        {currentDistricts.map((district) => (
+                                            <MenuItem key={district} value={district}>
+                                                {district}
+                                            </MenuItem>
+                                        ))}
+                                    </TextField>
+                                </Box>
                             </div>
-
                             <div className="grid grid-cols-3 gap-6 mb-6">
                                 <Box>
                                     <TextField
@@ -282,7 +285,6 @@ export default function UpdateSchoolInformation(props) {
                                     />
                                 </Box>
                             </div>
-
                             <div className="mb-6">
                                 <TextField
                                     label="Link Video (YouTube)"
@@ -295,21 +297,20 @@ export default function UpdateSchoolInformation(props) {
                                     helperText={errors.linkYoutube}
                                 />
                             </div>
-
+                            {/* Buttons */}
                             <div className="flex justify-end space-x-4">
                                 <button
-                                    type="reset"
-                                    onClick={() => reset()}
                                     className="px-6 py-2 bg-gray-500 text-white rounded-md shadow-md hover:bg-gray-600 transition"
+                                    onClick={handleCancel}
                                 >
                                     Batal
                                 </button>
                                 <button
+                                    className="px-6 py-2 bg-[#455185] text-white rounded-md shadow-md hover:bg-[#3d4674] focus:outline-none focus:ring-2 focus:ring-[#455185] transition"
                                     type="submit"
                                     disabled={processing}
-                                    className="px-6 py-2 bg-[#455185] text-white rounded-md shadow-md hover:bg-[#3d4674] focus:outline-none focus:ring-2 focus:ring-[#455185] transition"
                                 >
-                                    {processing ? "Menghantar..." : "Kemaskini"}
+                                    {processing ? 'Menghantar...' : 'Kemaskini'}
                                 </button>
                             </div>
                         </form>

@@ -13,7 +13,7 @@ export default function UpdateUser({ user, roles }) {
         state: user.state || '',
         district: user.district || '', 
         password: user.password || '',
-        password_confirmation: '',
+        password_confirmation: user.password || '',
     });
 
     const [message, setMessage] = useState('');

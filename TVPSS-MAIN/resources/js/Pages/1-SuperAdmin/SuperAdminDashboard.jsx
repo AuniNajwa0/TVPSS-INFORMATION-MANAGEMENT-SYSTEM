@@ -1,274 +1,221 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
-import { useState, useEffect } from 'react';
-import { FaUsers, FaUserShield, FaSchool } from 'react-icons/fa';
-import { Bar, Doughnut, Line } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, ArcElement, Tooltip, Legend, PointElement, LineElement } from 'chart.js';
-import SuperAdminSideBar from './SuperAdminSideBar';
+import { Head } from "@inertiajs/react";
+import { useState, useEffect } from "react";
+import { FaUsers, FaUserShield, FaSchool, FaDownload } from "react-icons/fa";
+import { Bar, Doughnut } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  ArcElement,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import SuperAdminSideBar from "./SuperAdminSideBar";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { Select, MenuItem, TextField, Button, FormControl, InputLabel, Box } from "@mui/material";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, ArcElement, Tooltip, Legend, PointElement, LineElement);
-
-const fetch30MinuteUserCounts = async () => {
-    try {
-        const response = await fetch('/user-role-counts/30-minutes');
-        const data = await response.json();
-        return {
-            stateAdmin30Minutes: data.state_admin_30_minutes,
-            ppdAdmin30Minutes: data.ppd_admin_30_minutes,
-            schoolAdmin30Minutes: data.school_admin_30_minutes,
-        };
-    } catch (error) {
-        console.error('Error fetching 30-minute user counts:', error);
-        return { stateAdmin30Minutes: 0, ppdAdmin30Minutes: 0, schoolAdmin30Minutes: 0 };
-    }
-};
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, ArcElement, Tooltip, Legend);
 
 export default function Dashboard() {
-    const [timeRange, setTimeRange] = useState("Mingguan");
-    const [date, setDate] = useState("2024-07-02");
-    const [selectedRegion, setSelectedRegion] = useState("Semua Negeri");
+  const [timeRange, setTimeRange] = useState("Mingguan");
+  const [date, setDate] = useState("2024-07-02");
 
-    // New state to store user role counts
-    const [userCounts, setUserCounts] = useState({
-        stateAdmin: 0,
-        ppdAdmin: 0,
-        schoolAdmin: 0,
-    });
+  const [userCounts, setUserCounts] = useState({
+    stateAdmin: 0,
+    ppdAdmin: 0,
+    schoolAdmin: 0,
+  });
 
-    // New state for 30-minute user count
-    const [doughnutData30Minutes, setDoughnutData30Minutes] = useState({
-        labels: ['Admin State', 'Admin PPD', 'Admin Sekolah'],
-        datasets: [{
-            data: [10, 0, 0], // Default dummy data
-            backgroundColor: ['#455185', '#008080', '#00BFFF'],
-        }],
-    });
+  useEffect(() => {
+    async function fetchUserCounts() {
+      try {
+        const response = await fetch("/user-role-counts");
+        const data = await response.json();
+        setUserCounts({
+          stateAdmin: data.state_admin,
+          ppdAdmin: data.ppd_admin,
+          schoolAdmin: data.school_admin,
+        });
+      } catch (error) {
+        console.error("Error fetching user role counts:", error);
+      }
+    }
 
-    // Fetch data on component mount
-    useEffect(() => {
-        async function fetchUserCounts() {
-            try {
-                // Fetch the user role counts (state, ppd, and school admins)
-                const response = await fetch('/user-role-counts');
-                const data = await response.json();
-                setUserCounts({
-                    stateAdmin: data.state_admin,
-                    ppdAdmin: data.ppd_admin,
-                    schoolAdmin: data.school_admin,
-                });
-            } catch (error) {
-                console.error('Error fetching user role counts:', error);
-            }
-        }
+    fetchUserCounts();
+  }, []);
 
-        async function fetch30MinuteUserCounts() {
-            try {
-                // Fetch the 30-minute active user counts
-                const response = await fetch('/user-role-counts/30-minutes');
-                const data = await response.json();
-                setDoughnutData30Minutes({
-                    labels: ['Admin State', 'Admin PPD', 'Admin Sekolah'],
-                    datasets: [{
-                        data: [data.state_admin_30_minutes, data.ppd_admin_30_minutes, data.school_admin_30_minutes],
-                        backgroundColor: ['#455185', '#008080', '#00BFFF'],
-                    }],
-                });
-            } catch (error) {
-                console.error('Error fetching 30-minute user counts:', error);
-            }
-        }
+  // Bar chart data with border colors
+  const barData = {
+    labels: ["Admin State", "Admin PPD", "Admin Sekolah"],
+    datasets: [
+      {
+        label: "Bilangan Pengguna Mengikut Jenis",
+        data: [userCounts.stateAdmin, userCounts.ppdAdmin, userCounts.schoolAdmin],
+        backgroundColor: ["#455185", "#008080", "#00BFFF"],
+        borderColor: ["#1C2433", "#006666", "#005F9E"], // Border colors
+        borderWidth: 1, // Border thickness
+      },
+    ],
+  };
 
-        // Fetch the counts
-        fetchUserCounts();
-        fetch30MinuteUserCounts();
-    }, []); // Empty dependency array to run once when the component mounts
+  // Doughnut chart data with border colors
+  const doughnutData = {
+    labels: ["Admin State", "Admin PPD", "Admin Sekolah"],
+    datasets: [
+      {
+        label: "Bilangan Peratusan Pengguna Mengikut Jenis",
+        data: [userCounts.stateAdmin, userCounts.ppdAdmin, userCounts.schoolAdmin],
+        backgroundColor: ["#455185", "#FF6384", "#FFA500"],
+        borderColor: ["#1C2433", "#B22234", "#D2691E"], // Border colors
+        borderWidth: 2, // Border thickness
+        hoverOffset: 4,
+      },
+    ],
+  };
 
-    // Bar Chart data with dynamic user counts
-    const barData = {
-        labels: ['Admin State', 'Admin PPD', 'Admin Sekolah'],
-        datasets: [
-            {
-                label: 'Bilangan Pengguna Mengikut Jenis',
-                data: [userCounts.stateAdmin, userCounts.ppdAdmin, userCounts.schoolAdmin], // Use dynamic data
-                backgroundColor: ['#455185', '#008080', '#00BFFF'],
-            },
-        ],
-    };
+  return (
+    <AuthenticatedLayout>
+      <Head title="TVPSS | Dashboard" />
 
-    // Doughnut Chart data with dynamic user counts
-    const doughnutData = {
-        labels: ['Admin State', 'Admin PPD', 'Admin Sekolah'],
-        datasets: [
-            {
-                label: 'Bilangan Peratusan Pengguna Mengikut Jenis',
-                data: [userCounts.stateAdmin, userCounts.ppdAdmin, userCounts.schoolAdmin], // Use dynamic data
-                backgroundColor: ['#455185', '#FF6384', '#FFA500'],
-                hoverOffset: 4,
-            },
-        ],
-    };
+      <div className="flex flex-col md:flex-row min-h-screen bg-[#f8faff]">
+        <div className="w-1/6 bg-white shadow-lg">
+          <SuperAdminSideBar />
+        </div>
 
-    const lineData = {
-        labels: ['1 Jun', '2 Jun', '3 Jun', '4 Jun', '5 Jun', '6 Jun', '7 Jun'],
-        datasets: [
-            {
-                label: 'Admin State Login',
-                data: [1500, 300, 500, 3000, 800, 500, 700],
-                borderColor: '#4B0082',
-                backgroundColor: '#4B0082',
-                fill: false,
-                tension: 0.1,
-            },
-            {
-                label: 'Admin School Login',
-                data: [800, 500, 3500, 700, 2500, 800, 600],
-                borderColor: '#00BFFF',
-                backgroundColor: '#00BFFF',
-                fill: false,
-                tension: 0.1,
-            },
-            {
-                label: 'Admin PPD Login',
-                data: [500, 700, 2000, 400, 1000, 700, 500],
-                borderColor: '#20B2AA',
-                backgroundColor: '#20B2AA',
-                fill: false,
-                tension: 0.1,
-            },
-        ],
-    };
+        <div className="w-full md:ml-[120px] p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-4xl font-bold text-gray-900 bg-clip-text hover:scale-105 transform transition duration-300 ease-in-out">
+              Dashboard
+            </h2>
 
-    const lineOptions = {
-        responsive: true,
-        plugins: {
-            legend: {
-                position: 'top',
-            },
-        },
-        scales: {
-            y: {
-                beginAtZero: true,
-                max: 3500,
-            },
-        },
-    };
+            <Box component="form" className="flex items-center space-x-4">
+              {/* Time Range Dropdown */}
+              <FormControl sx={{ minWidth: 150, height: "40px" }}>
+                <InputLabel id="time-range-label" sx={{ fontSize: "16px" }}>
+                  Jenis
+                </InputLabel>
+                <Select
+                  labelId="time-range-label"
+                  value={timeRange}
+                  onChange={(e) => setTimeRange(e.target.value)}
+                  label="Jenis"
+                  size="small"
+                  sx={{
+                    backgroundColor: "#ffffff",
+                    height: "40px",
+                    borderRadius: 2,
+                    "& .MuiOutlinedInput-notchedOutline": { borderColor: "#455185" },
+                    "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#008080" },
+                    "& .MuiInputBase-input": { fontSize: "14px", padding: "10px 14px" },
+                  }}
+                >
+                  <MenuItem value="Harian">Harian</MenuItem>
+                  <MenuItem value="Mingguan">Mingguan</MenuItem>
+                  <MenuItem value="Bulanan">Bulanan</MenuItem>
+                </Select>
+              </FormControl>
 
-    return (
-        <AuthenticatedLayout
-            header={
-                <div className="flex items-center w-full">
-                    <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                        Selamat Datang Pengguna
-                    </h2>
-                    <div className="flex justify-end items-center space-x-4 ml-auto">
-                        <select
-                            className="border-2 border-[#455185] rounded-lg p-2 text-gray-700 bg-white hover:bg-[#f1f5f9] focus:ring-2 focus:ring-[#3C4565] focus:outline-none transition duration-300 ease-in-out shadow-md w-[150px]"
-                            value={timeRange}
-                            onChange={(e) => setTimeRange(e.target.value)}
-                        >
-                            <option value="Harian">Harian</option>
-                            <option value="Mingguan">Mingguan</option>
-                            <option value="Bulanan">Bulanan</option>
-                        </select>
-                        <input
-                            type="date"
-                            className="border-2 border-[#455185] rounded-lg shadow-md rounded p-2"
-                            value={date}
-                            onChange={(e) => setDate(e.target.value)}
-                        />
-                        <button className="bg-[#455185] hover:bg-[#3C4565] text-white p-2 rounded-lg min-w-[100px]">Export</button>
-                    </div>
-                </div>
-            }
-            noMaxWidth={true}
-        >
-            <Head title="Dashboard" />
+              {/* Date Input */}
+              <TextField
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                label="Tarikh"
+                size="small"
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    backgroundColor: "#ffffff",
+                    height: "40px",
+                    borderRadius: 2,
+                    "& fieldset": { borderColor: "#455185" },
+                    "&:hover fieldset": { borderColor: "#008080" },
+                  },
+                  "& .MuiInputLabel-root": { fontSize: "16px", top: "1px" },
+                  height: "40px",
+                }}
+              />
 
-            <div className="flex">
-                <div className="w-1/6 p-4 text-white min-h-screen">
-                    <SuperAdminSideBar />
-                </div>
+              {/* Export Button with Icon */}
+              <Button
+                variant="contained"
+                sx={{
+                  background: "#455185",
+                  color: "white",
+                  padding: "10px 20px",
+                  textTransform: "none",
+                  borderRadius: 2,
+                  height: "40px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "8px",
+                  "&:hover": {
+                    background: "#3C4565",
+                    transform: "scale(1.05)",
+                    boxShadow: "0px 4px 15px rgba(0,0,0,0.2)",
+                  },
+                }}
+              >
+                <FaDownload />
+                Export
+              </Button>
+            </Box>
+          </div>
 
-                <div className="w-5/6 p-4">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 ">
-                        <SummaryCard title="Bilangan State Admin" value={userCounts.stateAdmin} icon={<FaUsers className="text-[#455185] text-5xl" />} />
-                        <SummaryCard title="Bilangan PPD Admin" value={userCounts.ppdAdmin} icon={<FaUserShield className="text-[#455185] text-5xl" />} />
-                        <SummaryCard title="Bilangan Sekolah Admin" value={userCounts.schoolAdmin} icon={<FaSchool className="text-[#455185] text-5xl" />} />
-                    </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <SummaryCard
+              title="Bilangan State Admin"
+              value={userCounts.stateAdmin}
+              icon={<FaUsers className="text-white text-5xl" />}
+            />
+            <SummaryCard
+              title="Bilangan PPD Admin"
+              value={userCounts.ppdAdmin}
+              icon={<FaUserShield className="text-white text-5xl" />}
+            />
+            <SummaryCard
+              title="Bilangan Sekolah Admin"
+              value={userCounts.schoolAdmin}
+              icon={<FaSchool className="text-white text-5xl" />}
+            />
+          </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {/* Bar Chart */}
-                        <div className="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out col-span-1 md:col-span-2 flex flex-col justify-center items-center">
-                            <h3 className="text-center text-lg font-semibold text-[#455185] mb-6">Bilangan Pengguna Mengikut Jenis</h3>
-                            <div className="flex justify-center items-center w-full h-[300px]">
-                                <Bar data={barData} />
-                            </div>
-                        </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div className="bg-white p-6 rounded-lg border-2 border-gray-200">
+    <h3 className="text-lg text-center font-semibold text-[#455185] mb-4">
+      Bilangan Pengguna Mengikut Jenis
+    </h3>
+    <Bar data={barData} />
+  </div>
 
-                        {/* Doughnut Chart */}
-                        <div className="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out flex flex-col justify-center items-center">
-                            <h3 className="text-center text-lg font-semibold text-[#455185] mb-6">Bilangan Peratusan Pengguna Mengikut Jenis</h3>
-                            <div className="flex justify-center items-center w-full h-[300px]">
-                                <Doughnut data={doughnutData} />
-                            </div>
-                        </div>
+  <div className="bg-white p-6 rounded-lg border-2 border-gray-200">
+    <h3 className="text-lg text-center font-semibold text-[#455185] mb-4">
+      Bilangan Peratusan Pengguna Mengikut Jenis
+    </h3>
+    <Doughnut data={doughnutData} />
+  </div>
+</div>
 
-                        {/* Line Chart 
-                        <div className="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out col-span-1 md:col-span-2 flex flex-col justify-center items-center">
-                            <StatusHeader />
-                            <div className="flex justify-center items-center w-full h-[300px]">
-                                <Line data={lineData} options={lineOptions} />
-                            </div>
-                        </div>
+        </div>
+      </div>
 
-                        {/* Doughnut Chart (30 Minutes) 
-                        <div className="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out flex flex-col justify-center items-center">
-                            <h3 className="text-center text-lg font-semibold text-[#455185] mb-6">Pengguna Dalam Tempoh 30 Minit Terakhir</h3>
-                            <div className="flex justify-center items-center w-full h-[300px]">
-                                <Doughnut data={doughnutData30Minutes} />
-                            </div>
-                        </div>*/}
-                    </div>
-                </div>
-            </div>
-
-            {/* Footer */}
-            <footer className="text-center py-4 text-gray-600">
-                © 2024 Kementerian Pendidikan Malaysia (KPM)
-            </footer>
-        </AuthenticatedLayout>
-    );
+      <footer className="text-center py-4 bg-white text-[#455185]">
+        © 2024 Kementerian Pendidikan Malaysia (KPM)
+      </footer>
+    </AuthenticatedLayout>
+  );
 }
 
-/*function StatusHeader() {
-    return (
-        <div className="flex justify-around text-center mb-4">
-            <div>
-                <h4 className="text-[#455185] font-semibold p-4">Pengguna</h4>
-                <p className="text-[#455185] text-2xl font-bold">1200</p>
-            </div>
-            <div>
-                <h4 className="text-[#455185] font-semibold p-4">Purata Pengguna</h4>
-                <p className="text-[#455185] text-2xl font-bold">400</p>
-            </div>
-            <div>
-                <h4 className="text-[#455185] font-semibold p-4">Purata Aktif Pengguna (minit)</h4>
-                <p className="text-[#455185] text-2xl font-bold">120</p>
-            </div>
-        </div>
-    );
-}*/
-
 function SummaryCard({ title, value, icon }) {
-    return (
-        <div className="bg-gradient-to-r from-[#455185] to-[#008080] p-5 rounded-2xl shadow-lg flex items-center hover:scale-105 transform transition duration-300 ease-in-out">
-            <div className="mr-4 p-3 bg-white rounded-full shadow-xl flex items-center justify-center">
-                {icon}
-            </div>
-            <div className="text-white">
-                <h3 className="text-xl font-semibold">{title}</h3>
-                <p className="text-3xl font-bold">{value}</p>
-            </div>
-        </div>
-    );
+  return (
+    <div className="bg-white p-5 rounded-2xl border-2 border-gray-200 flex items-center hover:scale-105 transform transition duration-300 ease-in-out">
+      <div className="mr-4 p-3 bg-[#455185] rounded-3xl ">{icon}</div>
+      <div className="text-[#455185]">
+        <h3 className="text-xl font-semibold">{title}</h3>
+        <p className="text-3xl font-bold">{value}</p>
+      </div>
+    </div>
+  );
 }

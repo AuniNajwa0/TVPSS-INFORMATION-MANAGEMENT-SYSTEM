@@ -13,22 +13,39 @@ class SchoolInfo extends Model
 
     protected $fillable = [
         'schoolCode',
+        'user_id',
+        'schoolOfficer', 
         'schoolName',
         'schoolEmail',
         'schoolAddress1',
         'schoolAddress2',
+        'district',
         'postcode',
         'state',
         'noPhone',
         'noFax',
         'schoolLogo',
         'linkYoutube',
+        'user_id',
     ];
+
+    /**
+     * A school belongs to a user.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
     // point 2
     public function schoolVersion()
     {
         return $this->hasOne(TVPSSVersion::class, 'school_info_id');
+    }
+
+    public function students()
+    {
+        return $this->hasMany(Student::class);
     }
 
     public function updateLogo($file)

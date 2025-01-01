@@ -6,14 +6,13 @@ import SchoolAdminSideBar from '../SchoolAdminSideBar';
 import { Inertia } from '@inertiajs/inertia';
 
 export default function UpdateEquipment({ equipment, eqLocation }) {
-    // Initialize the form data with the equipment data
     const [formData, setFormData] = useState({
-        name: equipment?.name || '',
-        type: equipment?.type || '',
-        otherType: equipment?.type === 'other' ? equipment?.otherType : '',  // Preload the custom type if available
-        location: equipment?.location || '',  // Assuming location is stored as eqLocName
-        acquired_date: equipment?.acquired_date || '',
-        status: equipment?.status || ''
+        equipName: equipment?.equipName ?? '',
+        equipType: equipment?.equipType ?? '',
+        otherType: equipment?.equipType === 'other' ? equipment?.otherType ?? '' : '',
+        location: equipment?.location ?? '',
+        acquired_date: equipment?.acquired_date ?? '',
+        status: equipment?.status ?? ''
     });
 
     const [statusOptions, setStatusOptions] = useState([]);
@@ -37,12 +36,12 @@ export default function UpdateEquipment({ equipment, eqLocation }) {
 
     useEffect(() => {
         setFormData({
-            name: equipment?.name || '',
-            type: equipment?.type || '',
-            otherType: equipment?.type === 'other' ? equipment?.otherType : '',
-            location: equipment?.location || '',
-            acquired_date: equipment?.acquired_date || '',
-            status: equipment?.status || ''
+            equipName: equipment?.equipName ?? '',
+            equipType: equipment?.equipType ?? '',
+            otherType: equipment?.equipType === 'other' ? equipment?.otherType ?? '' : '',
+            location: equipment?.location ?? '',
+            acquired_date: equipment?.acquired_date ?? '',
+            status: equipment?.status ?? ''
         });
     }, [equipment]);
 
@@ -50,41 +49,31 @@ export default function UpdateEquipment({ equipment, eqLocation }) {
         const { name, value } = e.target;
         setFormData((prevData) => ({
             ...prevData,
-            [name]: value
+            [name]: value ?? ''
         }));
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-        setErrors({});  // Clear any previous errors
 
-        const newErrors = {};
-        if (!formData.name) newErrors.name = 'Nama Barang diperlukan!';
-        if (!formData.type) newErrors.type = 'Jenis diperlukan!';
-        if (!formData.location) newErrors.location = 'Lokasi diperlukan!';
-        if (!formData.acquired_date) newErrors.acquired_date = 'Tarikh Diperolehi diperlukan!';
-        if (!formData.status) newErrors.status = 'Status diperlukan!';
+        const updatedData = {
+            equipName: formData.equipName || '',
+            equipType: formData.equipType || '',
+            otherType: formData.otherType || '',
+            location: formData.location || '',
+            acquired_date: formData.acquired_date || '',
+            status: formData.status || '',
+        };
 
-        if (Object.keys(newErrors).length > 0) {
-            setErrors(newErrors);
-            return;
-        }
-
-        setIsLoading(true);
-        setMessage(''); 
-
-        try {
-            if (formData.type === 'other' && formData.otherType) {
-                formData.type = formData.otherType;
-            }
-
-            await Inertia.put(`/equipment/${equipment.id}`, formData);
-            setMessage('Barang berjaya dikemaskini!');
-        } catch (error) {
-            setMessage('Ralat berlaku, sila cuba lagi.');
-        } finally {
-            setIsLoading(false);
-        }
+        Inertia.put(`/equipment/${equipment.id}`, updatedData, {
+            onSuccess: () => {
+                console.log('Update successful');
+            },
+            onError: (errors) => {
+                setErrors(errors);
+                console.error('Validation Errors:', errors);
+            },
+        });
     };
 
     return (
@@ -116,23 +105,23 @@ export default function UpdateEquipment({ equipment, eqLocation }) {
                                     <FiClipboard className="text-gray-500 ml-3" size={20} />
                                     <input
                                         type="text"
-                                        id="name"
-                                        name="name"
-                                        value={formData.name}
+                                        id="equipName"
+                                        name="equipName"
+                                        value={formData.equipName || ''}
                                         onChange={handleInputChange}
                                         className="block w-full px-4 py-2 text-gray-700 placeholder-gray-400 bg-white border-0 focus:ring-0 rounded-lg"
                                         placeholder="Masukkan Nama Barang"
                                     />
                                 </div>
-                                {errors.name && <div className="text-red-500 text-sm">{errors.name}</div>}
+                                {errors.equipName && <div className="text-red-500 text-sm">{errors.equipName}</div>}
 
                                 {/* Jenis */}
                                 <div className="flex items-center border border-gray-300 rounded-lg focus-within:border-blue-500">
                                     <FiLayers className="text-gray-500 ml-3" size={20} />
                                     <select
-                                        id="type"
-                                        name="type"
-                                        value={formData.type}
+                                        id="equipType"
+                                        name="equipType"
+                                        value={formData.equipType || ''}
                                         onChange={handleInputChange}
                                         className="block w-full px-4 py-2 text-gray-700 bg-white border-0 focus:ring-0 rounded-lg"
                                     >
@@ -148,17 +137,17 @@ export default function UpdateEquipment({ equipment, eqLocation }) {
                                         <option value="other">Other (Please Specify)</option>
                                     </select>
                                 </div>
-                                {errors.type && <div className="text-red-500 text-sm">{errors.type}</div>}
+                                {errors.equipType && <div className="text-red-500 text-sm">{errors.equipType}</div>}
 
                                 {/* Show the additional "Other" field if "Other" is selected */}
-                                {formData.type === 'other' && (
+                                {formData.equipType === 'other' && (
                                     <div className="flex items-center border border-gray-300 rounded-lg focus-within:border-blue-500">
                                         <FiLayers className="text-gray-500 ml-3" size={20} />
                                         <input
                                             type="text"
                                             id="otherType"
                                             name="otherType"
-                                            value={formData.otherType}
+                                            value={formData.otherType || ''}
                                             onChange={handleInputChange}
                                             className="block w-full px-4 py-2 text-gray-700 placeholder-gray-400 bg-white border-0 focus:ring-0 rounded-lg"
                                             placeholder="Sila masukkan jenis peralatan lain"
@@ -172,7 +161,7 @@ export default function UpdateEquipment({ equipment, eqLocation }) {
                                     <select
                                         id="location"
                                         name="location"
-                                        value={formData.location}
+                                        value={formData.location || ''}
                                         onChange={handleInputChange}
                                         className="block w-full px-4 py-2 text-gray-700 bg-white border-0 focus:ring-0 rounded-lg"
                                     >
@@ -193,7 +182,7 @@ export default function UpdateEquipment({ equipment, eqLocation }) {
                                         type="date"
                                         id="acquired_date"
                                         name="acquired_date"
-                                        value={formData.acquired_date}
+                                        value={formData.acquired_date || ''}
                                         onChange={handleInputChange}
                                         className="block w-full px-4 py-2 text-gray-700 bg-white border-0 focus:ring-0 rounded-lg"
                                     />
@@ -206,7 +195,7 @@ export default function UpdateEquipment({ equipment, eqLocation }) {
                                     <select
                                         id="status"
                                         name="status"
-                                        value={formData.status}
+                                        value={formData.status || ''}
                                         onChange={handleInputChange}
                                         className="block w-full px-4 py-2 text-gray-700 bg-white border-0 focus:ring-0 rounded-lg"
                                     >
