@@ -642,7 +642,7 @@ class SchoolAdminController extends Controller
 
             Student::create([
                 'name' => $validatedData['name'],
-                'ic_num' => $validatedData['ic_num'],
+                'ic_num' => $validatedData['ic_num'], 
                 'email' => $validatedData['email'],
                 'crew' => $validatedData['crew'],
                 'state' => $schoolInfo->state,
