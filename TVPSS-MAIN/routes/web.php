@@ -49,9 +49,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::get('/studentLogin', [StudentController::class, 'showLogin'])->name('student.showLogin');
 Route::post('/studentLogin', [StudentController::class, 'login'])->name('student.login');
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/resultApply', [StudentController::class, 'resultApply'])->name('student.dashboard');
-});
+// Route::middleware(['auth', 'verified'])->group(function () {
+//     Route::get('/resultApply', [StudentController::class, 'resultApply'])->name('student.dashboard');
+// });
 
 
 // Profile routes
