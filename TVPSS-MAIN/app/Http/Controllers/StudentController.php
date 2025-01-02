@@ -82,6 +82,7 @@ class StudentController extends Controller
         $studcrew = Studcrew::create([
             'student_id' => $student->id,
             'jawatan' => $validated['jawatan'],
+            'status' => 'Permohonan Belum Diproses',
         ]);
 
         return Inertia::render('5-Students/ResultApply', [
@@ -91,22 +92,28 @@ class StudentController extends Controller
 
     public function resultApply()
     {
-        // Assuming you have a way to get the logged-in student's IC number
-        $ic_num = auth()->user()->ic_num; // Adjust this line based on your authentication logic
+        // Retrieve the IC number from the session
+        $ic_num = session('ic_num');
 
-        // Retrieve all applications for the logged-in student
-        $applications = Studcrew::with('student')
-            ->whereHas('student', function ($query) use ($ic_num) {
-                $query->where('ic_num', $ic_num);
-            })
+        // Retrieve the student record using the IC number
+        $student = Student::where('ic_num', $ic_num)->first();
+
+        if (!$student) {
+            return redirect()->route('student.applyCrew')->with('error', 'Student not found.');
+        }
+
+        // Retrieve all applications associated with the student
+        $applications = Studcrew::where('student_id', $student->id)
+            ->with('student:id,name') // Eager load student data
             ->get();
 
         if ($applications->isEmpty()) {
-            return redirect()->route('student.applyCrew')->with('error', 'Tiada permohonan dijumpai.');
+            return redirect()->route('student.applyCrew')->with('error', 'No applications found.');
         }
 
+        // Pass the applications to the view
         return Inertia::render('5-Students/ResultApply', [
-            'applications' => $applications, // Pass the applications to the view
+            'applications' => $applications,
         ]);
     }
 

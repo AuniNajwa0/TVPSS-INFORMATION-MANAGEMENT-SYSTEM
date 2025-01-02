@@ -13,7 +13,7 @@ class Studcrew extends Model
 
     protected $table = 'studcrew';
 
-    protected $guarded = [
+    protected $fillable = [
         'id',
         'jawatan',
         'status',
