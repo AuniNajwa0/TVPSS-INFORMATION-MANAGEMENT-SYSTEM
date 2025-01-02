@@ -3,7 +3,7 @@ import { CheckCircle, ChevronLeft, ChevronRight, Edit, Send } from 'lucide-react
 import { useEffect, useState } from 'react';
 import StudentNavBar from "./StudentNavBar";
 
-const LandingPage = (student) => {
+const LandingPage = () => {
   const [currentImage, setCurrentImage] = useState(0);
   const images = [
     "/assets/login1.jpg",
@@ -31,7 +31,7 @@ const LandingPage = (student) => {
       <Head title="TVPSS | Pelajar" />
       
       {/* Navbar */}
-      <div className=" bg-[#ebf8ff] ">
+      <div className=" bg-bg-gradient-to-b from-blue-50 to-white ">
         <StudentNavBar />
         </div>
 
@@ -49,7 +49,7 @@ const LandingPage = (student) => {
               Mohon sekarang dan jadilah sebahagian daripada pasukan!
             </p>
             <button 
-              onClick={() => window.location.assign('/applyCrew')}
+              onClick={() => (window.location.href = '/applyCrew')}
               className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-full text-lg font-semibold 
                         hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 
                         shadow-lg hover:shadow-xl"
