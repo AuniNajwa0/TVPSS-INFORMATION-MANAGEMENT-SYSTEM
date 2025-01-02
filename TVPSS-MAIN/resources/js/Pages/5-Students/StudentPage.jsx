@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
 import { Head } from "@inertiajs/react";
-import { Edit, Send, CheckCircle, ChevronLeft, ChevronRight } from 'lucide-react';
-import StudentNavBar from './StudentNavBar';
+import { CheckCircle, ChevronLeft, ChevronRight, Edit, Send } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import StudentNavBar from "./StudentNavBar";
 
 const LandingPage = () => {
   const [currentImage, setCurrentImage] = useState(0);
   const images = [
     "/assets/login1.jpg",
-    "/assets/equipmentPic.jpg",  // Replace with your actual image path
-    "/assets/imageMain.png"   // Replace with your actual image path
+    "/assets/equipmentPic.jpg",
+    "/assets/imageMain.png"
   ];
 
   useEffect(() => {
@@ -29,7 +29,11 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       <Head title="TVPSS | Pelajar" />
-      <StudentNavBar />
+      
+      {/* Navbar */}
+      <div className=" bg-bg-gradient-to-b from-blue-50 to-white ">
+        <StudentNavBar />
+        </div>
 
       {/* Hero Section */}
       <div className="max-w-7xl mx-auto px-4 pt-16 pb-8">
@@ -45,7 +49,7 @@ const LandingPage = () => {
               Mohon sekarang dan jadilah sebahagian daripada pasukan!
             </p>
             <button 
-              onClick={() => window.location.href = '/applyCrew'}
+              onClick={() => (window.location.href = '/applyCrew')}
               className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-full text-lg font-semibold 
                         hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 
                         shadow-lg hover:shadow-xl"
@@ -84,7 +88,6 @@ const LandingPage = () => {
               >
                 <ChevronRight className="w-6 h-6 text-gray-800" />
               </button>
-              {/* Dots indicator */}
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
                 {images.map((_, index) => (
                   <button
@@ -111,43 +114,27 @@ const LandingPage = () => {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {/* Step 1 */}
-            <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300">
-              <div className="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Edit className="w-8 h-8 text-red-500" />
+            {[
+              { icon: <Edit />, bg: "bg-red-100", text: "Masukkan nama pengguna dan kata laluan anda untuk mengakses sistem." },
+              { icon: <Send />, bg: "bg-green-100", text: "Lengkapkan borang permohonan dengan maklumat yang diperlukan." },
+              { icon: <CheckCircle />, bg: "bg-orange-100", text: "Tunggu keputusan melalui e-mel atau sistem notifikasi." },
+            ].map((step, index) => (
+              <div
+                key={index}
+                className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300"
+              >
+                <div className={`${step.bg} w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6`}>
+                  {step.icon}
+                </div>
+                <h3 className="text-xl font-semibold text-gray-800 mb-4">Langkah : {index + 1}</h3>
+                <p className="text-gray-600">{step.text}</p>
               </div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">Langkah : 1</h3>
-              <p className="text-gray-600">
-                Masukkan nama pengguna dan kata laluan anda untuk mengakses sistem.
-              </p>
-            </div>
-
-            {/* Step 2 */}
-            <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300">
-              <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Send className="w-8 h-8 text-green-500" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">Langkah : 2</h3>
-              <p className="text-gray-600">
-                Lengkapkan borang permohonan dengan maklumat yang diperlukan. Pastikan semua butiran adalah tepat sebelum menghantar.
-              </p>
-            </div>
-
-            {/* Step 3 */}
-            <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300">
-              <div className="bg-orange-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                <CheckCircle className="w-8 h-8 text-orange-500" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">Langkah : 3</h3>
-              <p className="text-gray-600">
-                Setelah menghantar permohonan, tunggu keputusan yang akan dimaklumkan melalui e-mel atau sistem notifikasi.
-              </p>
-            </div>
+            ))}
           </div>
 
           <div className="text-center mt-12">
             <button
-              onClick={() => window.location.href = '/applyCrew'}
+              onClick={() => (window.location.href = '/applyCrew')}
               className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-full text-lg font-semibold 
                         hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 
                         shadow-lg hover:shadow-xl"

@@ -26,8 +26,10 @@ class Student extends Model
         return $this->belongsTo(SchoolInfo::class, 'school_info_id');
     }
 
-    public function studcrew()
+    // In Student.php
+    public function studcrews()
     {
         return $this->hasMany(Studcrew::class);
     }
+
 }

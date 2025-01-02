@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { Head, Link, useForm } from "@inertiajs/react";
 import { Inertia } from '@inertiajs/inertia';
-import { Mail, Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { Head, Link, useForm } from "@inertiajs/react";
+import { ArrowLeft, Eye, EyeOff, Lock } from 'lucide-react';
+import { useState } from 'react';
 
 export default function StudentLogin({ status, canResetPassword }) {
   const { data, setData, post, processing, errors, reset } = useForm({
-    ic_number: "",
+    ic_num: "",
   });
 
   const [error, setError] = useState("");
@@ -14,35 +14,22 @@ export default function StudentLogin({ status, canResetPassword }) {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    setError(""); // Reset any existing errors
+    setError(""); // Reset error state
 
-    // Frontend validation
-    const icPattern = /^\d{6}-\d{2}-\d{4}$/; // Example format: 000000-00-0000
-    if (!data.ic_number) {
-      setError("Kad Pengenalan diperlukan.");
-      return;
-    }
-
-    if (!icPattern.test(data.ic_number)) {
-      setError("Kad pengenalan diperlukan.");
-      return;
-    }
-
-    // Submit login and redirect
-    post(route("login"), {
-      onSuccess: () => {
-        // Redirect to dashboard after successful login
-       Inertia.visit(route("student.dashboard"));
-      },
-      onError: (backendErrors) => {
-        // Display backend error messages if login fails
-        if (backendErrors.ic_number) {
-          setError("Nombor kad pengenalan tidak sah.");
-        }
-      },
-      onFinish: () => reset("password"),
+    post(route('student.login'), {
+        data: {
+            ic_num: data.ic_num,
+        },
+        onSuccess: () => {
+            // Redirect to the student dashboard on success
+            Inertia.visit(route('student.dashboard'));
+        },
+        onError: (backendErrors) => {
+            setError(backendErrors.ic_num || 'An error occurred.');
+        },
     });
-  };
+};
+
 
   return (
     <div className="min-h-screen bg-white flex">
@@ -113,14 +100,13 @@ export default function StudentLogin({ status, canResetPassword }) {
                             <Lock className="text-gray-400 group-focus-within:text-blue-500 transition-colors" size={18} />
                           </div>
                           <input
-                            id="password"
-                            type={showPassword ? "text" : "password"}
-                            name="password"
-                            value={data.password}
+                            id="ic_num"
+                            type="text"
+                            name="ic_num"
+                            value={data.ic_num}
                             placeholder="Masukkan 12 digit Kad Pengenalan"
                             className="w-full pl-10 pr-12 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                            autoComplete="current-password"
-                            onChange={(e) => setData({ ...data, password: e.target.value })}
+                            onChange={(e) => setData({ ...data, ic_num: e.target.value })}
                           />
                           <button
                             type="button"

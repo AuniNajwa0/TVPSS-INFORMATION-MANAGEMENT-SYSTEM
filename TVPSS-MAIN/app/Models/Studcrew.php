@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 //use Illuminate\Database\Eloquent\Model;
 use MongoDB\Laravel\Eloquent\Model as Model;
+use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
 class Studcrew extends Model
 {
@@ -21,6 +22,6 @@ class Studcrew extends Model
 
     public function student()
     {
-        return $this->belongsTo(Student::class);
+        return $this->belongsTo(Student::class, 'student_id');
     }
 }
