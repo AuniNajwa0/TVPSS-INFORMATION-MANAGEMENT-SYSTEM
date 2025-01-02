@@ -106,7 +106,7 @@ const ApprovePPDTvpss = () => {
                 {/* Sidebar */}
                 <Box
                     width="20%"
-                    bgcolor="#445184"
+                    bgcolor="#F4F6F9"
                     color="white"
                     minHeight="105vh"
                     p={3}
