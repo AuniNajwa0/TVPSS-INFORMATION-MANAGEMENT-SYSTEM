@@ -77,7 +77,6 @@ export default function AddEquipment() {
     
         Inertia.post('/equipment', updatedFormData);
     };      
-    
 
     const handleCancel = () => {
         Inertia.get('/listEquipment');
@@ -85,17 +84,36 @@ export default function AddEquipment() {
 
     return (
         <AuthenticatedLayout
-            header={<h2 className="text-xl font-semibold leading-tight text-gray-800">Tambah Barang</h2>}
+
         >
             <Head title="TVPSS | Tambah Barang" />
-            <div className="flex">
+            <div className="flex bg-white"> {/* Set background white here */}
                 {/* Sidebar */}
                 <div className="w-1/6 p-8 text-white min-h-screen">
                     <SchoolAdminSideBar />
                 </div>
 
                 {/* Main Content */}
-                <div className="flex-1 p-6">
+                <div className="flex-1 p-6 bg-white"> {/* Set background white here too */}
+                    {/* Breadcrumb Section */}
+                    <div className="w-full p-6">
+                        <div className="flex items-center text-left">
+                            <nav className="mb-8">
+                                <ol className="flex items-center space-x-2 text-gray-600">
+                                    <li>
+                                        <a href="/listEquipment" className="text-[#4158A6] hover:text-blue-800 font-medium">
+                                            Pengurusan Peralatan
+                                        </a>
+                                    </li>
+                                    <li className="text-gray-500">/</li>
+                                    <li className="text-gray-900 font-medium">
+                                        Tambah Barang
+                                    </li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+
                     <Box
                         component="form"
                         onSubmit={handleSubmit}
