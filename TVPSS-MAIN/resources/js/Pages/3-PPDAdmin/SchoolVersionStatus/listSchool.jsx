@@ -67,26 +67,21 @@ export default function ListPPDSchool({ schools = [] }) {
                     <PPDAdminSideBar />
                 </div>
 
-                <div className="flex-1 p-6 bg-gray-50 min-h-screen">
+                <div className="w-full md:ml-[120px] p-6">
                     <div className="flex items-center justify-between mb-6">
-                        {/* Breadcrumb Section */}
-                        <div>
-                            <h2 className="text-3xl font-bold text-gray-900 bg-clip-text pl-4">
-                                <a
-                                    href="/tvpssInfoPPDList"
-                                    className="text-[#455185] hover:underline"
-                                >
-                                    Informasi TVPSS Sekolah
-                                </a>
-                                <span className="mx-2 text-gray-500">{'>'}</span>
-                                <a
-                                    href="/tvpssInfoPPDList"
-                                    className="text-gray-700 hover:underline"
-                                >
+                        <nav className="mb-8">
+                            <ol className="flex items-center space-x-2 text-gray-600">
+                                <li>
+                                    <a href="/tvpssInfoPPDList" className="text-[#4158A6] hover:text-blue-800 font-medium">
+                                        Informasi TVPSS Sekolah
+                                    </a>
+                                </li>
+                                <li className="text-gray-500">/</li>
+                                <li className="text-gray-900 font-medium">
                                     Semua Sekolah
-                                </a>
-                            </h2>
-                        </div>
+                                </li>
+                            </ol>
+                        </nav>
                     </div>
 
                     <div className="max-w-8xl mx-auto p-6 text-gray-900 bg-white border border-gray-200 shadow rounded-2xl">
@@ -104,7 +99,7 @@ export default function ListPPDSchool({ schools = [] }) {
 
                             <div className="flex items-center space-x-4">
                                 <button
-                                    style={{ marginTop: "1.45rem" }}
+                                    style={{ marginTop: '1.45rem' }}
                                     className="px-4 py-2 bg-[#455185] text-white rounded-lg shadow hover:bg-[#3b477a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#455185] transition-all"
                                 >
                                     Eksport
@@ -179,9 +174,7 @@ export default function ListPPDSchool({ schools = [] }) {
                                                     >
                                                         <FaEdit size={18} />
                                                     </button>
-                                                    <button
-                                                        className="text-gray-400 hover:text-gray-600"
-                                                    >
+                                                    <button className="text-gray-400 hover:text-gray-600">
                                                         <FaTrash size={18} />
                                                     </button>
                                                 </div>
@@ -194,9 +187,7 @@ export default function ListPPDSchool({ schools = [] }) {
                         <div className="flex justify-between items-center mt-6">
                             <button
                                 onClick={handlePrevPage}
-                                className={`px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 focus:ring-2 focus:ring-gray-400 focus:outline-none text-gray-600 font-medium disabled:opacity-50 ${
-                                    currentPage === 1 && "cursor-not-allowed"
-                                }`}
+                                className={`px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 focus:ring-2 focus:ring-gray-400 focus:outline-none text-gray-600 font-medium disabled:opacity-50 ${currentPage === 1 && "cursor-not-allowed"}`}
                                 disabled={currentPage === 1}
                             >
                                 Sebelum
@@ -206,9 +197,7 @@ export default function ListPPDSchool({ schools = [] }) {
                             </span>
                             <button
                                 onClick={handleNextPage}
-                                className={`px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 focus:ring-2 focus:ring-gray-400 focus:outline-none text-gray-600 font-medium disabled:opacity-50 ${
-                                    currentPage === totalPages && "cursor-not-allowed"
-                                }`}
+                                className={`px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 focus:ring-2 focus:ring-gray-400 focus:outline-none text-gray-600 font-medium disabled:opacity-50 ${currentPage === totalPages && "cursor-not-allowed"}`}
                                 disabled={currentPage === totalPages}
                             >
                                 Seterusnya
