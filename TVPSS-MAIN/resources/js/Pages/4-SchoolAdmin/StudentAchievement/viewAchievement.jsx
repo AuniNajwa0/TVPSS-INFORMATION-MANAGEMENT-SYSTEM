@@ -4,7 +4,7 @@ import SchoolAdminSideBar from "../SchoolAdminSideBar";
 import { Head, usePage } from "@inertiajs/react";
 
 const ViewAchievement = () => {
-    const { achievement } = usePage().props; 
+    const { achievement } = usePage().props;
 
     return (
         <AuthenticatedLayout>
@@ -14,18 +14,31 @@ const ViewAchievement = () => {
                     <SchoolAdminSideBar />
                 </div>
                 <div className="flex-1 p-6 bg-white min-h-screen">
-                    <h1 className="text-2xl font-semibold mb-6">Pencapaian Pelajar Sekolah</h1>
-                    <div className="text-sm text-gray-600 mb-6">
-                        <span>Pencapaian Pelajar</span>
-                        <span className="mx-2">›</span>
-                        <span>Permohonan Sijil</span>
-                        <span className="mx-2">›</span>
-                        <span>{achievement.id}</span>
+                    {/* Breadcrumb Section */}
+                    <div className="w-full p-6">
+                        <div className="flex items-center text-left">
+                            <nav className="mb-8">
+                                <ol className="flex items-center space-x-2 text-gray-600">
+                                    <li>
+                                        <a href="/achievementList" className="text-[#4158A6] hover:text-blue-800 font-medium">
+                                            Pencapaian Pelajar
+                                        </a>
+                                    </li>
+                                    <li className="text-gray-500">/</li>
+                                    <li className="text-gray-500">Permohonan Sijil</li>
+                                    <li className="text-gray-500">/</li>
+                                    <li className="text-gray-900 font-medium">
+                                        {achievement.id}
+                                    </li>
+                                </ol>
+                            </nav>
+                        </div>
                     </div>
+
 
                     {achievement.type_of_application === "Individu" ? (
                         // Individual Achievement View
-                        <div className="bg-white p-6 rounded-md shadow-md">
+                        <div className="bg-white p-6 rounded-md shadow-md max-w-7xl mx-auto">
                             <h2 className="text-lg font-semibold mb-4">Permohonan Sijil Pelajar</h2>
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
@@ -75,7 +88,7 @@ const ViewAchievement = () => {
                         </div>
                     ) : (
                         // Group Achievement View
-                        <div className="bg-white p-6 rounded-md shadow-md">
+                        <div className="bg-white p-6 rounded-md shadow-md max-w-4xl mx-auto">
                             <h2 className="text-lg font-semibold mb-4">Pencapaian Pelajar</h2>
                             <table className="w-full bg-white shadow-md rounded-md overflow-hidden">
                                 <thead className="bg-gray-100">
