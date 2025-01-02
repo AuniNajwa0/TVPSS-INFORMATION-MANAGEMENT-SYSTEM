@@ -109,12 +109,25 @@ export default function UpdateSchoolTVPSSVersion({ schoolInfo }) {
 
     return (
         <AuthenticatedLayout
-            header={<h2 className="text-xl font-semibold leading-tight text-gray-800">Kemaskini Versi Sekolah</h2>}
+            
         >
             <Head title="TVPSS | Kemaskini Maklumat Sekolah" />
-            <div className="flex min-h-screen bg-gray-100">
+            <div className="flex min-h-screen bg-white">
                 <SchoolAdminSideBar />
-                <div className="flex-1 p-8">
+                <div className="flex-1 p-8 ml-[350px]">
+                    {/* Breadcrumb Section*/}
+                    <div className="mb-4">
+                        <nav className="text-sm font-medium text-gray-500">
+                            <ol className="list-reset flex">
+                                <li>
+                                    <a href="/updateSchoolTVPSSVersion" className="text-[#4158A6] hover:text-blue-800">Submit Versi TVPSS</a>
+                                </li>
+                                <li className="mx-2">/</li>
+                                <li className="text-gray-500">Kemaskini Versi Sekolah</li>
+                            </ol>
+                        </nav>
+                    </div>
+
                     <div className="max-w-5xl mx-auto bg-white shadow-md rounded-md border border-gray-200 p-8">
                         <h3 className="text-2xl font-semibold text-gray-800 mb-6">Maklumat Versi Sekolah</h3>
                         <form onSubmit={handleSubmit} encType="multipart/form-data">
