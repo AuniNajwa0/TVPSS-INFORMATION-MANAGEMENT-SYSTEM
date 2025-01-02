@@ -66,20 +66,25 @@ export default function UpdateSchoolVersionInfo2({ schoolInfo, schoolVersion }) 
 
     return (
         <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Informasi Versi TVPSS Sekolah
-                </h2>
-            }
+
         >
             <Head title="TVPSS | Kemaskini Versi TVPSS" />
-            <div className="flex min-h-screen bg-gray-100">
+            <div className="flex min-h-screen bg-white">
                 <SchoolAdminSideBar />
-                <div className="flex-1 p-8">
+                <div className="flex-1 p-8 ml-[350px]">
+                    {/* Breadcrumb Section*/}
+                <div className="mb-4">
+                        <nav className="text-sm font-medium text-gray-500">
+                            <ol className="list-reset flex">
+                                <li>
+                                    <a href="/updateSchoolTVPSSVersion" className="text-[#4158A6] hover:text-blue-800">Submit Versi TVPSS</a>
+                                </li>
+                                <li className="mx-2">/</li>
+                                <li className="text-gray-500">Informasi Versi TVPSS Sekolah</li>
+                            </ol>
+                        </nav>
+                    </div>
                     <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-lg border border-gray-300 p-8">
-                        <h3 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
-                            Maklumat TVPSS
-                        </h3>
                         <form onSubmit={handleSubmit} encType="multipart/form-data">
                             {/* TVPSS Logo */}
                             <Box className="mb-6 text-center">
@@ -92,7 +97,9 @@ export default function UpdateSchoolVersionInfo2({ schoolInfo, schoolVersion }) 
                                     id="tvpssLogoUpload"
                                 />
                                 <div
-                                    className="relative w-48 h-48 mx-auto bg-gray-100 border-4 border-solid border-blue-500 rounded-lg shadow-lg overflow-hidden cursor-pointer hover:shadow-xl transition-shadow"
+                                    className="relative w-48 h-48 mx-auto bg-gray-100
+                                    
+                                    border-4 border-solid border-blue-500 rounded-lg shadow-lg overflow-hidden cursor-pointer hover:shadow-xl transition-shadow"
                                     onClick={() => document.getElementById('tvpssLogoUpload').click()}
                                 >
                                     {tvpssLogoPreview ? (
@@ -178,21 +185,33 @@ export default function UpdateSchoolVersionInfo2({ schoolInfo, schoolVersion }) 
 
                             {/* Buttons */}
                             <div className="flex justify-end space-x-4">
-                                <Button
-                                    variant="contained"
-                                    color="secondary"
-                                    href={route('tvpss1')}
-                                >
-                                    Kembali
-                                </Button>
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    type="submit"
-                                    disabled={errors.processing}
-                                >
-                                    Hantar Informasi TVPSS
-                                </Button>
+                            <Button
+    variant="contained"
+    style={{
+        backgroundColor: '#adb5bd',
+        color: 'white',
+        '&:hover': {
+            backgroundColor: '8898aa',
+        },
+    }}
+    href={route('tvpss1')}
+>
+    Kembali
+</Button>
+<Button
+    variant="contained"
+    style={{
+        backgroundColor: '#455185',
+        color: 'white',
+        '&:hover': {
+            backgroundColor: '#3d4674',
+        },
+    }}
+    type="submit"
+    disabled={errors.processing}
+>
+    Hantar Informasi TVPSS
+</Button>
                             </div>
                         </form>
                     </div>

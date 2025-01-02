@@ -67,26 +67,21 @@ export default function ListSchool({ schools = [] }) {
                     <StateAdminSideBar />
                 </div>
 
-                <div className="flex-1 p-6 bg-gray-50 min-h-screen">
+                <div className="w-full md:ml-[120px] p-6">
                     <div className="flex items-center justify-between mb-6">
-                        {/* Breadcrumbs Section */}
-                        <div>
-                            <h2 className="text-3xl font-bold text-gray-900 bg-clip-text pl-4">
-                                <a
-                                    href="/tvpssInfo"
-                                    className="text-[#455185] hover:underline"
-                                >
-                                    Informasi TVPSS Sekolah
-                                </a>
-                                <span className="mx-2 text-gray-500">{'>'}</span>
-                                <a
-                                    href="/tvpssInfo"
-                                    className="text-gray-700 hover:underline"
-                                >
+                        <nav className="mb-8">
+                            <ol className="flex items-center space-x-2 text-gray-600">
+                                <li>
+                                    <a href="/tvpssInfo" className="text-[#4158A6] hover:text-blue-800 font-medium">
+                                        Informasi TVPSS Sekolah
+                                    </a>
+                                </li>
+                                <li className="text-gray-500">/</li>
+                                <li className="text-gray-900 font-medium">
                                     Semua Sekolah
-                                </a>
-                            </h2>
-                        </div>
+                                </li>
+                            </ol>
+                        </nav>
                     </div>
 
                     <div className="max-w-8xl mx-auto p-6 text-gray-900 bg-white border border-gray-200 shadow rounded-2xl">
@@ -103,7 +98,7 @@ export default function ListSchool({ schools = [] }) {
                             </div>
 
                             <div className="flex items-center space-x-4">
-                            <button
+                                <button
                                     style={{ marginTop: '1.45rem' }}
                                     className="px-4 py-2 bg-[#455185] text-white rounded-lg shadow hover:bg-[#3b477a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#455185] transition-all"
                                 >

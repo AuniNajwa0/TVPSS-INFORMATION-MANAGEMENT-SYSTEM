@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaSearch, FaEdit, FaTrash } from "react-icons/fa";
+import { FaSearch, FaEdit, FaTrashAlt } from "react-icons/fa";
 import { router, Head } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import PPDAdminSideBar from "../PPDAdminSideBar";
@@ -182,7 +182,7 @@ export default function ListPPDSchool({ schools = [] }) {
                                                     <button
                                                         className="text-gray-400 hover:text-gray-600"
                                                     >
-                                                        <FaTrash size={18} />
+                                                        <FaTrashAlt size={18} />
                                                     </button>
                                                 </div>
                                             </td>

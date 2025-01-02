@@ -93,7 +93,25 @@ export default function AddAchievement({ students = [] }) {
                     <SchoolAdminSideBar />
                 </div>
                 <div className="flex-1 p-8 bg-white min-h-screen">
-                    <h1 className="text-2xl font-semibold mb-6">Hantar Borang Pencapaian Pelajar</h1>
+                    {/* Breadcrumb section */}
+                    <div className="w-full p-6">
+                        <div className="flex items-center text-left">
+                            <nav className="mb-8">
+                                <ol className="flex items-center space-x-2 text-gray-600">
+                                    <li>
+                                        <a href="/listAchievement" className="text-[#4158A6] hover:text-blue-800 font-medium">
+                                            Pencapaian Pelajar
+                                        </a>
+                                    </li>
+                                    <li className="text-gray-500">/</li>
+                                    <li className="text-gray-900 font-medium">
+                                        Hantar Borang Pencapaian Pelajar
+                                    </li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+
                     <form
                         onSubmit={handleSubmit}
                         className="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow"
@@ -216,7 +234,7 @@ export default function AddAchievement({ students = [] }) {
                             </button>
                             <button
                                 type="submit"
-                                className="px-6 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
+                                className="px-6 py-2.5 bg-[#455185] text-white rounded-xl hover:bg-blue-700"
                             >
                                 Hantar Borang Permohonan
                             </button>

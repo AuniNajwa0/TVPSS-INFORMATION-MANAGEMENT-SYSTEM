@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Eye, Trash2 } from "lucide-react";
+import { FaEye, FaTrashAlt } from "react-icons/fa";
 import SchoolAdminSideBar from "../SchoolAdminSideBar";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, router, usePage } from "@inertiajs/react";
@@ -45,106 +45,126 @@ const StudentAchievements = () => {
     return (
         <AuthenticatedLayout>
             <Head title="TVPSS | Pencapaian Pelajar" />
-            <div className="flex">
-                <div className="w-1/6 p-4 bg-gray-800 text-white min-h-screen">
+            <div className="flex flex-col md:flex-row min-h-screen bg-white">
+                {/* Sidebar */}
+                <div className="w-1/6 bg-white shadow-lg">
                     <SchoolAdminSideBar />
                 </div>
 
-                <div className="flex-1 p-6 bg-white min-h-screen">
-                    <h1 className="text-2xl font-semibold mb-2">Pencapaian Pelajar</h1>
-                    <div className="text-sm text-gray-600 mb-6">
-                        <span>Pencapaian Pelajar</span>
-                        <span className="mx-2">›</span>
-                        <span>Semua Pencapaian</span>
+                {/* Main Content */}
+                <div className="w-full md:ml-[120px] p-6">
+                    {/* Breadcrumb */}
+                    <div className="flex items-center justify-between mb-6">
+                        <nav className="mb-8">
+                            <ol className="flex items-center space-x-2 text-gray-600">
+                                <li>
+                                    <a href="#" className="text-[#4158A6] hover:text-blue-800 font-medium">
+                                        Pencapaian Pelajar
+                                    </a>
+                                </li>
+                                <li className="text-gray-500">/</li>
+                                <li className="text-gray-900 font-medium">Semua Pencapaian</li>
+                            </ol>
+                        </nav>
                     </div>
 
                     {/* Search and Actions */}
-                    <div className="flex justify-between items-center mb-4 space-x-4">
-                        <div className="flex items-center space-x-4">
-                            <input
-                                type="text"
-                                placeholder="Cari Pencapaian..."
-                                value={searchQuery}
-                                onChange={handleSearch}
-                                className="px-4 py-2 w-64 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                            <button className="px-4 py-2 border rounded-md shadow-sm">
-                                Filter
-                            </button>
-                        </div>
-
-                        {/* Action Buttons */}
-                        <div className="flex items-center space-x-4">
-                            <div className="flex items-center space-x-2">
-                                <span className="text-sm font-medium">Tunjuk</span>
-                                <select
-                                    value={rowsPerPage}
-                                    onChange={handleRowsPerPageChange}
-                                    className="px-4 py-2 border rounded-md shadow-sm focus:outline-none"
-                                >
-                                    <option value={10}>10</option>
-                                    <option value={25}>25</option>
-                                    <option value={50}>50</option>
-                                </select>
+                    <div className="max-w-8xl mx-auto p-6 text-gray-900 bg-white border border-gray-200 shadow rounded-2xl">
+                        <div className="flex items-center mb-4 justify-between">
+                            <div className="flex items-center w-full max-w-xs relative">
+                                <input
+                                    type="text"
+                                    placeholder="Cari Pencapaian..."
+                                    value={searchQuery}
+                                    onChange={handleSearch}
+                                    className="w-full pl-4 pr-4 py-3 bg-white border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#455185] focus:border-[#455185] transition-all placeholder-gray-400"
+                                />
                             </div>
-                            <button
-                                onClick={handleHantarBorang}
-                                className="px-4 py-2 bg-indigo-600 text-white rounded-md shadow hover:bg-indigo-700"
-                            >
-                                Hantar Borang Pencapaian Pelajar
-                            </button>
-                        </div>
-                    </div>
 
-                    {/* Table */}
-                    <div className="bg-white shadow-md rounded-md overflow-hidden">
-                        <table className="w-full">
-                            <thead className="bg-gray-100">
-                                <tr>
-                                    <th className="text-left p-4 w-8">
-                                        <input type="checkbox" className="rounded" />
-                                    </th>
-                                    <th className="text-left p-4">Bil</th>
-                                    <th className="text-left p-4">Jenis Pencapaian</th>
-                                    <th className="text-left p-4">Kod</th>
-                                    <th className="text-left p-4">Jenis Permohonan</th>
-                                    <th className="text-left p-4">Status</th>
-                                    <th className="text-right p-4">Aksi</th>
+                            <div className="flex items-center space-x-4">
+                                <button
+                                    onClick={handleHantarBorang}
+                                    style={{ marginTop: '1.45rem' }}
+                                    className="px-4 py-2 bg-[#455185] text-white rounded-lg shadow bg-[#455185] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#455185] transition-all"
+                                >
+                                    Hantar Borang Pencapaian
+                                </button>
+
+                                <div>
+                                    <label
+                                        htmlFor="rowsPerPage"
+                                        className="block text-sm font-medium text-gray-700"
+                                    >
+                                        Bilangan Data
+                                    </label>
+                                    <select
+                                        id="rowsPerPage"
+                                        value={rowsPerPage}
+                                        onChange={handleRowsPerPageChange}
+                                        className="mt-1 block pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-[#455185] focus:border-[#455185] sm:text-sm rounded-md"
+                                    >
+                                        <option value={5}>5</option>
+                                        <option value={10}>10</option>
+                                        <option value={25}>25</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Table */}
+                        <table className="w-full text-left rounded-lg border-collapse">
+                            <thead>
+                                <tr className="bg-white">
+                                    <th className="border-b px-4 py-6">Bil</th>
+                                    <th className="border-b px-4 py-6">Jenis Pencapaian</th>
+                                    <th className="border-b px-4 py-6">Kod</th>
+                                    <th className="border-b px-4 py-6">Jenis Permohonan</th>
+                                    <th className="border-b px-4 py-6">Status</th>
+                                    <th className="border-b px-4 py-6 text-center">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {paginatedData.length > 0 ? (
+                                {paginatedData.length === 0 ? (
+                                    <tr>
+                                        <td colSpan="6" className="text-center py-4">
+                                            Tiada Data Ditemui
+                                        </td>
+                                    </tr>
+                                ) : (
                                     paginatedData.map((achievement, index) => (
-                                        <tr key={achievement.id} className="hover:bg-gray-50 border-b">
-                                            <td className="p-4">
-                                                <input type="checkbox" className="rounded" />
+                                        <tr key={achievement.id} className="hover:bg-gray-50">
+                                            <td className="border-b px-4 py-6">
+                                                {(currentPage - 1) * rowsPerPage + index + 1}
                                             </td>
-                                            <td className="p-4">
-                                                {index + 1 + (currentPage - 1) * rowsPerPage}
+                                            <td className="border-b px-4 py-6">
+                                                {achievement.type_of_achievement}
                                             </td>
-                                            <td className="p-4">{achievement.type_of_achievement}</td>
-                                            <td className="p-4">{achievement.id}</td>
-                                            <td className="p-4">{achievement.type_of_application}</td>
-                                            <td className="p-4">
+                                            <td className="border-b px-4 py-6">{achievement.id}</td>
+                                            <td className="border-b px-4 py-6">
+                                                {achievement.type_of_application}
+                                            </td>
+                                            <td className="border-b px-4 py-6">
                                                 <span
-                                                    className={`px-3 py-1 rounded-full text-sm ${
+                                                    className={`px-2 py-1 rounded-full ${
                                                         achievement.status === "Pending"
-                                                            ? "bg-yellow-100 text-yellow-800"
+                                                            ? "bg-yellow-200 text-yellow-700"
                                                             : achievement.status === "Approved"
-                                                            ? "bg-green-100 text-green-800"
-                                                            : "bg-red-100 text-red-800"
+                                                            ? "bg-green-200 text-green-700"
+                                                            : "bg-red-200 text-red-700"
                                                     }`}
                                                 >
                                                     {achievement.status}
                                                 </span>
                                             </td>
-                                            <td className="p-4">
-                                                <div className="flex justify-end space-x-2">
+                                            <td className="border-b px-6 py-4 text-center">
+                                                <div className="flex justify-center items-center space-x-4">
                                                     <button
-                                                        onClick={() => router.visit(`/achievements/${achievement.id}`)}
-                                                        className="p-1 text-white bg-indigo-600 rounded hover:bg-indigo-700"
+                                                        onClick={() =>
+                                                            router.visit(`/achievements/${achievement.id}`)
+                                                        }
+                                                        className="text-gray-400 hover:text-gray-600"
                                                     >
-                                                        <Eye className="h-4 w-4" />
+                                                        <FaEye size={18} />
                                                     </button>
                                                     <button
                                                         onClick={() => {
@@ -156,30 +176,42 @@ const StudentAchievements = () => {
                                                                 router.delete(`/achievements/${achievement.id}`);
                                                             }
                                                         }}
-                                                        className="p-1 text-gray-500 hover:text-red-500"
+                                                        className="text-gray-400 hover:text-gray-600"
                                                     >
-                                                        <Trash2 className="h-4 w-4" />
+                                                        <FaTrashAlt size={18} />
                                                     </button>
                                                 </div>
                                             </td>
                                         </tr>
                                     ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan="7" className="text-center py-4">
-                                            No data found
-                                        </td>
-                                    </tr>
                                 )}
                             </tbody>
                         </table>
-                    </div>
 
-                    {/* Pagination Info */}
-                    <div className="mt-4 text-sm text-gray-600">
-                        Menunjukkan {paginatedData.length > 0 ? (currentPage - 1) * rowsPerPage + 1 : 0} hingga{" "}
-                        {Math.min(currentPage * rowsPerPage, filteredAchievements.length)} daripada{" "}
-                        {filteredAchievements.length} entri
+                        {/* Pagination */}
+                        <div className="flex justify-between items-center mt-6">
+                            <button
+                                disabled={currentPage === 1}
+                                onClick={() => setCurrentPage(currentPage - 1)}
+                                className={`px-4 py-2 bg-gray-200 rounded-lg ${
+                                    currentPage === 1 ? "cursor-not-allowed opacity-50" : "hover:bg-gray-300"
+                                }`}
+                            >
+                                Sebelum
+                            </button>
+                            <span className="inline-flex items-center px-4 py-2 rounded-lg bg-[#f1f5f9] text-[#455185] font-semibold shadow-sm text-sm">
+                                Halaman {currentPage} daripada {totalPages}
+                            </span>
+                            <button
+                                disabled={currentPage === totalPages}
+                                onClick={() => setCurrentPage(currentPage + 1)}
+                                className={`px-4 py-2 bg-gray-200 rounded-lg ${
+                                    currentPage === totalPages ? "cursor-not-allowed opacity-50" : "hover:bg-gray-300"
+                                }`}
+                            >
+                                Seterusnya
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

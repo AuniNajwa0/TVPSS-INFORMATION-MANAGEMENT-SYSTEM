@@ -52,7 +52,7 @@ export default function AddStudent({ schoolInfo }) {
     };
 
     const InputField = ({ icon: Icon, label, name, type = "text", ...props }) => (
-        <div className="relative group">
+        <div className="relative">
             <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
             <div className="relative">
                 <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-hover:text-blue-500 transition-colors">
@@ -65,8 +65,7 @@ export default function AddStudent({ schoolInfo }) {
                     autoComplete="off"
                     className={`w-full pl-12 pr-4 py-3 bg-white border-2 ${
                         errors[name] ? "border-red-300" : "border-gray-100"
-                    } rounded-md focus:outline-none focus:border-blue-400 hover:border-gray-200 transition duration-200
-                    ${props.disabled ? "bg-gray-50" : ""}`}
+                    } rounded-md focus:outline-none focus:border-blue-400 hover:border-gray-200 transition duration-200 ${props.disabled ? "bg-gray-50" : ""}`}
                     value={formData[name]}
                     onChange={handleInputChange}
                     {...props}
@@ -89,25 +88,44 @@ export default function AddStudent({ schoolInfo }) {
         <AuthenticatedLayout>
             <Head title="Add Student" />
 
-            <div className="flex min-h-screen bg-gray-50">
+            <div className="flex min-h-screen bg-white">
                 <div className="w-64 bg-white shadow-lg">
                     <SchoolAdminSideBar />
                 </div>
 
                 <div className="flex-1 p-8">
-                    <div className="max-w-4xl mx-auto">
-                        <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-t-md p-6 shadow-lg">
-                            <h2 className="text-2xl font-bold text-white mb-2">Add Student</h2>
-                            <p className="text-blue-100">Please fill in the student details below</p>
+                    <div className="max-w-7xl mx-auto">
+                        {/* Breadcrumb Section */}
+                        <div className="w-full p-6">
+                            <div className="flex items-center text-left">
+                                <nav className="mb-8">
+                                    <ol className="flex items-center space-x-2 text-gray-600">
+                                        <li>
+                                            <a href="/listStudent" className="text-[#4158A6] hover:text-blue-800 font-medium">
+                                                Pengurusan Pelajar
+                                            </a>
+                                        </li>
+                                        <li className="text-gray-500">/</li>
+                                        <li className="text-gray-900 font-medium">
+                                            Tambah Pelajar
+                                        </li>
+                                    </ol>
+                                </nav>
+                            </div>
+                        </div>
+
+                        <div className="bg-white rounded-t-md p-6 shadow-lg">
+                            <h2 className="text-2xl font-semibold text-gray-800 mb-2">Tambah Pelajar</h2>
+                            <p className="text-sm text-gray-500">Sila isi maklumat pelajar di bawah</p>
                         </div>
 
                         <div className="bg-white rounded-b-md shadow-lg p-8">
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <InputField icon={FiUser} label="Full Name" name="name" />
-                                    <InputField icon={FiMapPin} label="IC Number" name="ic_num" />
-                                    <InputField icon={FiMail} label="Email" name="email" type="email" />
-                                    <InputField icon={FiBook} label="Crew" name="crew" />
+                                    <InputField icon={FiUser} label="Nama Penuh" name="name" />
+                                    <InputField icon={FiMapPin} label="Nombor Kad Pengenalan" name="ic_num" />
+                                    <InputField icon={FiMail} label="Alamat Email" name="email" type="email" />
+                                    <InputField icon={FiBook} label="Krew" name="crew" />
                                     <InputField icon={FiMap} label="State" name="state" disabled />
                                     <InputField icon={FiMap} label="District" name="district" disabled />
                                     <InputField icon={FiHome} label="School Name" name="schoolName" disabled />
@@ -123,7 +141,7 @@ export default function AddStudent({ schoolInfo }) {
                                     <button
                                         type="submit"
                                         disabled={isLoading}
-                                        className="px-6 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200 disabled:opacity-50"
+                                        className="px-6 py-3 bg-[#455185] text-white rounded-md hover:bg-[#455185] transition duration-200 disabled:opacity-50"
                                     >
                                         {isLoading ? (
                                             <div className="flex items-center gap-2">
@@ -131,7 +149,7 @@ export default function AddStudent({ schoolInfo }) {
                                                 Processing...
                                             </div>
                                         ) : (
-                                            "Add Student"
+                                            "Tambah Pelajar"
                                         )}
                                     </button>
                                 </div>

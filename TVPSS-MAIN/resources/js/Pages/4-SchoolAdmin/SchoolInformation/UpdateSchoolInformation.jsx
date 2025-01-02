@@ -106,12 +106,33 @@ export default function UpdateSchoolInformation({ schoolInfo }) {
 
     return (
         <AuthenticatedLayout
-            header={<h2 className="text-xl font-semibold leading-tight text-gray-800">Kemaskini Maklumat Sekolah</h2>}
+            
         >
             <Head title="TVPSS | Kemaskini Maklumat Sekolah" />
-            <div className="flex min-h-screen bg-gray-100">
+            <div className="flex min-h-screen bg-white">
                 <SchoolAdminSideBar />
-                <div className="flex-1 p-8">
+                <div className="flex-1 p-8 ml-[350px]"> 
+                    {/* Breadcrumb Section */}
+                    <div className="w-full p-6">
+                        <div className="flex items-center text-left">
+                            <nav className="mb-8">
+                                <ol className="flex items-center space-x-2 text-gray-600">
+                                    <li>
+                                        <a href="/updateSchool" className="text-[#4158A6] hover:text-blue-800 font-5xl">
+                                        Informasi Sekolah
+                                            
+                                        </a>
+                                        </li>
+                                        <li className="text-gray-500">/</li>
+                                        <li className="text-gray-900 font-medium">
+                                        Kemaskini Maklumat Sekolah
+                                    </li>
+                                    
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+
                     <div className="max-w-5xl mx-auto bg-white shadow-md rounded-md border border-gray-200 p-8">
                         <h3 className="text-2xl font-semibold text-gray-800 mb-6">Maklumat Sekolah</h3>
                         <form onSubmit={handleSubmit} encType="multipart/form-data">
@@ -250,7 +271,7 @@ export default function UpdateSchoolInformation({ schoolInfo }) {
                             <div className="grid grid-cols-3 gap-6 mb-6">
                                 <Box>
                                     <TextField
-                                        label="No Telefon"
+                                        label="No. Telefon"
                                         variant="outlined"
                                         fullWidth
                                         name="noPhone"
@@ -262,7 +283,7 @@ export default function UpdateSchoolInformation({ schoolInfo }) {
                                 </Box>
                                 <Box>
                                     <TextField
-                                        label="Email"
+                                        label="Emel Sekolah"
                                         variant="outlined"
                                         fullWidth
                                         name="schoolEmail"
@@ -274,7 +295,7 @@ export default function UpdateSchoolInformation({ schoolInfo }) {
                                 </Box>
                                 <Box>
                                     <TextField
-                                        label="No Fax"
+                                        label="No. Faks"
                                         variant="outlined"
                                         fullWidth
                                         name="noFax"
@@ -285,32 +306,21 @@ export default function UpdateSchoolInformation({ schoolInfo }) {
                                     />
                                 </Box>
                             </div>
-                            <div className="mb-6">
-                                <TextField
-                                    label="Link Video (YouTube)"
-                                    variant="outlined"
-                                    fullWidth
-                                    name="linkYoutube"
-                                    value={data.linkYoutube}
-                                    onChange={handleInputChange}
-                                    error={!!errors.linkYoutube}
-                                    helperText={errors.linkYoutube}
-                                />
-                            </div>
-                            {/* Buttons */}
-                            <div className="flex justify-end space-x-4">
+                            {/* Button Group */}
+                            <div className="flex justify-end gap-4">
                                 <button
-                                    className="px-6 py-2 bg-gray-500 text-white rounded-md shadow-md hover:bg-gray-600 transition"
+                                    type="button"
+                                    className="py-2 px-6 bg-gray-500 text-white rounded-md"
                                     onClick={handleCancel}
                                 >
                                     Batal
                                 </button>
                                 <button
-                                    className="px-6 py-2 bg-[#455185] text-white rounded-md shadow-md hover:bg-[#3d4674] focus:outline-none focus:ring-2 focus:ring-[#455185] transition"
                                     type="submit"
+                                    className="py-2 px-6 bg-[#455185] text-white rounded-md"
                                     disabled={processing}
                                 >
-                                    {processing ? 'Menghantar...' : 'Kemaskini'}
+                                    {processing ? 'Mengemaskini...' : 'Kemaskini'}
                                 </button>
                             </div>
                         </form>
