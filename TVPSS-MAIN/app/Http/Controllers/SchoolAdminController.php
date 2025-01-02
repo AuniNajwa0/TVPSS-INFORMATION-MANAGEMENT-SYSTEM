@@ -12,10 +12,12 @@ use App\Models\SchoolInfo;
 use App\Models\TVPSSVersion;
 use App\Models\Student;
 use App\Models\StudentAchievement;
+use App\Models\EqFollowUp;
 use App\Enums\StatusEnum;
 use App\Enums\versionEnum;
 use App\Enums\ApprovalStatusEnum;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 
 class SchoolAdminController extends Controller
@@ -67,7 +69,7 @@ class SchoolAdminController extends Controller
         ]);
     }
 
-    public function equipmentStore(StoreEquipmentRequest $request)
+    /*public function equipmentStore(StoreEquipmentRequest $request)
     {
         try {
             $data = $request->all();
@@ -86,6 +88,52 @@ class SchoolAdminController extends Controller
         } catch (\Exception $e) {
             //Log::error('Error in equipmentStore:', ['message' => $e->getMessage()]);
             return back()->with('error', 'An error occurred.');
+        }
+    }*/
+
+    public function equipmentStore(StoreEquipmentRequest $request)
+    {
+        try {
+            $data = $request->all();
+
+            // Start a transaction to handle both equipment and follow-up updates
+            DB::beginTransaction();
+
+            // Create the equipment
+            $equipment = Equipment::create([
+                'equipName' => $data['equipName'],
+                'equipType' => $data['equipType'],
+                'location' => $data['location'],
+                'acquired_date' => $data['acquired_date'],
+                'status' => $data['status'],
+                'school_info_id' => SchoolInfo::where('user_id', $request->user()->id)->value('id'),
+            ]);
+
+            // If status is "Tidak Berfungsi," add a follow-up update
+            if ($data['status'] === 'Tidak Berfungsi') {
+                $uploadPaths = [];
+                if ($request->hasFile('uploadBrEq')) {
+                    foreach ($request->file('uploadBrEq') as $file) {
+                        $uploadPaths[] = $file->store('uploads/follow-ups', 'public');
+                    }
+                }
+
+                EqFollowUp::create([
+                    'equipment_id' => $equipment->id,
+                    'user_id' => $request->user()->id,
+                    'uploadBrEq' => !empty($uploadPaths) ? json_encode($uploadPaths) : null,
+                    'content' => $data['followUpUpdateSchool'] ?? null,
+                    'date' => now()->format('Y-m-d'),
+                ]);
+            }
+
+            DB::commit();
+
+            return redirect()->route('equipment.equipmentIndex')->with('success', 'Equipment successfully added!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return back()->with('error', 'An error occurred: ' . $e->getMessage());
         }
     }
 
