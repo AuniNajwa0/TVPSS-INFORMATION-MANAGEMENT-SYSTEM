@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import { FaEdit, FaTrashAlt, FaSearch } from "react-icons/fa";
 import SchoolAdminSideBar from "../SchoolAdminSideBar";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, router, usePage } from "@inertiajs/react";
 
 const StudentList = () => {
-    const { students } = usePage().props; 
+    const { students } = usePage().props;
     const [searchQuery, setSearchQuery] = useState("");
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
@@ -27,7 +27,7 @@ const StudentList = () => {
 
     const handleRowsPerPageChange = (e) => {
         setRowsPerPage(Number(e.target.value));
-        setCurrentPage(1); 
+        setCurrentPage(1);
     };
 
     const handlePrevPage = () => {
@@ -54,131 +54,150 @@ const StudentList = () => {
     return (
         <AuthenticatedLayout>
             <Head title="TVPSS | Student Management" />
-            <div className="flex">
-                <div className="w-1/6 p-4 bg-gray-800 text-white min-h-screen">
+            <div className="flex flex-col md:flex-row min-h-screen bg-white">
+                <div className="w-1/6 bg-white shadow-lg">
                     <SchoolAdminSideBar />
                 </div>
 
-                <div className="flex-1 p-6 bg-white min-h-screen">
-                    <h1 className="text-2xl font-semibold mb-6">Pengurusan Pelajar</h1>
-
-                    {/* Search and Actions */}
-                    <div className="flex justify-between items-center mb-4 space-x-4">
-                        <div className="flex items-center space-x-2">
-                            <input
-                                type="text"
-                                placeholder="Search by name or IC number"
-                                value={searchQuery}
-                                onChange={handleSearch}
-                                className="px-4 py-2 w-64 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                        </div>
-
-                        {/* Action Buttons */}
-                        <div className="flex items-center space-x-4">
-                            <button
-                                onClick={handleTambahPelajar}
-                                className="px-4 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-blue-600"
-                            >
-                                Tambah Pelajar
-                            </button>
-                            <button
-                                onClick={handleExport}
-                                className="px-4 py-2 bg-[#666969] text-white rounded-md shadow hover:bg-[#5c5f5f]"
-                            >
-                                Export
-                            </button>
-                            <div className="flex items-center space-x-2">
-                                <span className="text-sm font-medium">Show</span>
-                                <select
-                                    value={rowsPerPage}
-                                    onChange={handleRowsPerPageChange}
-                                    className="px-4 py-2 border rounded-md shadow focus:outline-none"
-                                >
-                                    <option value={5}>5</option>
-                                    <option value={10}>10</option>
-                                    <option value={25}>25</option>
-                                    <option value={50}>50</option>
-                                    <option value={100}>100</option>
-                                </select>
-                                <span className="text-sm font-medium">Entries</span>
-                            </div>
-                        </div>
+                <div className="w-full md:ml-[120px] p-6">
+                    <div className="flex items-center justify-between mb-6">
+                        <nav className="mb-8">
+                            <ol className="flex items-center space-x-2 text-gray-600">
+                                <li>
+                                    <a href="/listStudent" className="text-[#4158A6] hover:text-blue-800 font-medium">
+                                        Pengurusan Pelajar
+                                    </a>
+                                </li>
+                                <li className="text-gray-500">/</li>
+                                <li className="text-gray-900 font-medium">
+                                    Semua Pelajar
+                                </li>
+                            </ol>
+                        </nav>
                     </div>
 
-                    {/* Table */}
-                    <table className="w-full bg-white shadow-md rounded-md overflow-hidden">
-                        <thead className="bg-gray-100">
-                            <tr>
-                                <th className="text-left p-4">Bil</th>
-                                <th className="text-left p-4">Nama Pelajar</th>
-                                <th className="text-left p-4">No Kad Pengenalan</th>
-                                <th className="text-left p-4">Email</th>
-                                <th className="text-left p-4">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {paginatedData.length > 0 ? (
-                                paginatedData.map((student, index) => (
-                                    <tr
-                                        key={student.id}
-                                        className="hover:bg-gray-50 border-b"
+                    <div className="max-w-8xl mx-auto p-6 text-gray-900 bg-white border border-gray-200 shadow rounded-2xl">
+                        <div className="flex items-center mb-4 justify-between">
+                            <div className="flex items-center w-full max-w-xs relative">
+                                <FaSearch className="absolute right-3 text-gray-400 text-xl" />
+                                <input
+                                    type="text"
+                                    placeholder="Cari Pelajar..."
+                                    value={searchQuery}
+                                    onChange={handleSearch}
+                                    className="w-full pl-4 pr-4 py-3 bg-white border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#455185] focus:border-[#455185] transition-all placeholder-gray-400"
+                                />
+                            </div>
+
+                            <div className="flex items-center space-x-4">
+                                <button
+                                    onClick={handleTambahPelajar}
+                                    style={{ marginTop: '1.45rem' }}
+                                    className="px-4 py-2 bg-[#455185] text-white rounded-lg shadow hover:bg-[#3b477a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#455185] transition-all"
+                                >
+                                    Tambah Pelajar
+                                </button>
+
+                                <button
+                                    onClick={handleExport}
+                                    style={{ marginTop: '1.45rem' }}
+                                    className="px-4 py-2 bg-[#666969] text-white rounded-lg shadow hover:bg-[#5c5f5f] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all"
+                                >
+                                    Eksport
+                                </button>
+
+                                <div>
+                                    <label
+                                        htmlFor="rowsPerPage"
+                                        className="block text-sm font-medium text-gray-700"
                                     >
-                                        <td className="p-4">
-                                            {index + 1 + (currentPage - 1) * rowsPerPage}
-                                        </td>
-                                        <td className="p-4">{student.name}</td>
-                                        <td className="p-4">{student.ic_num}</td>
-                                        <td className="p-4">{student.email}</td>
-                                        <td className="p-4 flex space-x-2">
-                                            <button
-                                                onClick={() => router.visit(`/students/${student.id}/edit`)}
-                                                className="text-blue-500 hover:text-blue-700"
-                                            >
-                                                <FaEdit />
-                                            </button>
-                                            <button
-                                                onClick={() => {
-                                                    if (window.confirm("Are you sure you want to delete this student?")) {
-                                                        router.delete(`/students/${student.id}`);
-                                                    }
-                                                }}
-                                                className="text-red-500 hover:text-red-700"
-                                            >
-                                                <FaTrashAlt />
-                                            </button>
+                                        Bilangan Data
+                                    </label>
+                                    <select
+                                        id="rowsPerPage"
+                                        value={rowsPerPage}
+                                        onChange={handleRowsPerPageChange}
+                                        className="mt-1 block pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-[#455185] focus:border-[#455185] sm:text-sm rounded-md"
+                                    >
+                                        <option value={5}>5</option>
+                                        <option value={10}>10</option>
+                                        <option value={25}>25</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <table className="w-full text-left rounded-lg border-collapse">
+                            <thead>
+                                <tr className="bg-white">
+                                    <th className="border-b px-4 py-6">Bil</th>
+                                    <th className="border-b px-4 py-6">Nama Pelajar</th>
+                                    <th className="border-b px-4 py-6">No Kad Pengenalan</th>
+                                    <th className="border-b px-4 py-6">Email</th>
+                                    <th className="border-b px-4 py-6 text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {paginatedData.length === 0 ? (
+                                    <tr>
+                                        <td colSpan="5" className="text-center py-4">
+                                            Tiada Data Ditemui
                                         </td>
                                     </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan="5" className="text-center py-4">
-                                        No data found
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
+                                ) : (
+                                    paginatedData.map((student, index) => (
+                                        <tr key={student.id} className="hover:bg-gray-50">
+                                            <td className="border-b px-4 py-6">
+                                                {(currentPage - 1) * rowsPerPage + index + 1}
+                                            </td>
+                                            <td className="border-b px-4 py-6">{student.name}</td>
+                                            <td className="border-b px-4 py-6">{student.ic_num}</td>
+                                            <td className="border-b px-4 py-6">{student.email}</td>
+                                            <td className="border-b px-6 py-4 text-center">
+                                                <div className="flex justify-center items-center space-x-4">
+                                                    <button
+                                                        onClick={() => router.visit(`/students/${student.id}/edit`)}
+                                                        className="text-gray-400 hover:text-gray-600"
+                                                    >
+                                                        <FaEdit size={18} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => {
+                                                            if (window.confirm("Are you sure you want to delete this student?")) {
+                                                                router.delete(`/students/${student.id}`);
+                                                            }
+                                                        }}
+                                                        className="text-gray-400 hover:text-gray-600"
+                                                    >
+                                                        <FaTrashAlt size={18} />
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
 
-                    {/* Pagination */}
-                    <div className="flex justify-between items-center mt-6">
-                        <button
-                            onClick={handlePrevPage}
-                            className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
-                            disabled={currentPage === 1}
-                        >
-                            Prev
-                        </button>
-                        <span className="text-sm text-gray-600 font-semibold">
-                            Page {currentPage} of {totalPages}
-                        </span>
-                        <button
-                            onClick={handleNextPage}
-                            className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
-                            disabled={currentPage === totalPages}
-                        >
-                            Next
-                        </button>
+                        <div className="flex justify-between items-center mt-6">
+                            <button
+                                onClick={handlePrevPage}
+                                className={`px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 focus:ring-2 focus:ring-gray-400 focus:outline-none text-gray-600 font-medium disabled:opacity-50 ${currentPage === 1 && "cursor-not-allowed"}`}
+                                disabled={currentPage === 1}
+                            >
+                                Sebelum
+                            </button>
+                            <span className="inline-flex items-center px-4 py-2 rounded-lg bg-[#f1f5f9] text-[#455185] font-semibold shadow-sm text-sm">
+                                Halaman {currentPage} daripada {totalPages}
+                            </span>
+                            <button
+                                onClick={handleNextPage}
+                                className={`px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 focus:ring-2 focus:ring-gray-400 focus:outline-none text-gray-600 font-medium disabled:opacity-50 ${currentPage === totalPages && "cursor-not-allowed"}`}
+                                disabled={currentPage === totalPages}
+                            >
+                                Seterusnya
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
