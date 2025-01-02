@@ -9,7 +9,7 @@ Route::get('/dashboardSuper', fn() => Inertia::render('1-SuperAdmin/SuperAdminDa
     ->name('dashboardSP');
 
 // User Management Route
-Route::resource('users', UserController::class);
+//Route::resource('users', UserController::class);
 Route::get('/listUsers', [UserController::class, 'index'])->name('users.index');
 Route::get('/addUser', [UserController::class, 'create'])->name('users.create');
 Route::post('/users', [UserController::class, 'store'])->name('users.store');

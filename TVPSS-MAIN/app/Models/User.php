@@ -86,4 +86,20 @@ class User extends Authenticatable
                 return 'unknown';
         }
     }
+
+    /**
+     * Check if the user has a specific role.
+     */
+    public function hasRole($role): bool
+    {
+        return $this->role === $role;
+    }
+
+    /**
+     * Get all schools created by the user (for school_admin role).
+     */
+    public function school()
+    {
+        return $this->hasMany(SchoolInfo::class, 'user_id');
+    }
 }

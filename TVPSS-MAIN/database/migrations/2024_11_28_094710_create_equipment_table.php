@@ -13,13 +13,16 @@ return new class extends Migration
     {
         Schema::create('equipment', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('school_info_id');
             $table->string('equipName'); 
             $table->string('equipType');
             $table->string('location'); 
-            //$table->date('acquired_date'); 
-            $table->date('acquired_date')->change();
+            $table->date('acquired_date');
             $table->enum('status', ['Berfungsi', 'Tidak Berfungsi', 'Penyelenggaraan']); 
+            $table->unsignedTinyInteger('level')->nullable();
             $table->timestamps();
+
+            $table->foreign('school_info_id')->references('id')->on('schoolinfo')->onDelete('cascade');
         });
     }
 

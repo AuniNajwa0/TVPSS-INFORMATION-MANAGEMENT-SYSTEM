@@ -1,17 +1,29 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
-import { useState } from 'react';
-import { FaUsers, FaUserShield, FaSchool, FaCheckCircle, FaTimesCircle, FaTruckLoading, FaClock, FaStar, FaUserFriends, FaSortNumericUp } from 'react-icons/fa';
-import { Bar, Doughnut, Line } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, ArcElement, Tooltip, Legend, PointElement, LineElement } from 'chart.js';
+import { useState, useEffect } from 'react';
+import { FaUsers, FaStar, FaUserFriends, FaSortNumericUp } from 'react-icons/fa';
+import { Bar, Doughnut } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, ArcElement, Tooltip, Legend } from 'chart.js';
 import SchoolAdminSideBar from './SchoolAdminSideBar';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, ArcElement, Tooltip, Legend, PointElement, LineElement);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, ArcElement, Tooltip, Legend);
 
 export default function Dashboard() {
     const [timeRange, setTimeRange] = useState("Mingguan");
     const [date, setDate] = useState("2024-07-02");
-    const [selectedRegion, setSelectedRegion] = useState("Semua Negeri");
+    const [tvpssVersion, setTvpssVersion] = useState("Memuatkan...");
+
+    useEffect(() => {
+        fetch('/get-tvpss-version')
+            .then((response) => response.json())
+            .then((data) => {
+                setTvpssVersion(data.version ?? "Tiada");
+            })
+            .catch((error) => {
+                console.error('Error fetching TVPSS version:', error);
+                setTvpssVersion("Error");
+            });
+    }, []);
 
     const barData = {
         labels: ['Januari', 'Februari', 'Mac', 'April', 'May', 'Jun'],
@@ -45,52 +57,6 @@ export default function Dashboard() {
         ],
     };
 
-    // Define lineData and lineOptions for the Line chart
-    const lineData = {
-        labels: ['1 Jun', '2 Jun', '3 Jun', '4 Jun', '5 Jun', '6 Jun', '7 Jun'],
-        datasets: [
-            {
-                label: 'Admin State Login',
-                data: [1500, 300, 500, 3000, 800, 500, 700],
-                borderColor: '#4B0082',
-                backgroundColor: '#4B0082',
-                fill: false,
-                tension: 0.1,
-            },
-            {
-                label: 'Admin School Login',
-                data: [800, 500, 3500, 700, 2500, 800, 600],
-                borderColor: '#00BFFF',
-                backgroundColor: '#00BFFF',
-                fill: false,
-                tension: 0.1,
-            },
-            {
-                label: 'Admin PPD Login',
-                data: [500, 700, 2000, 400, 1000, 700, 500],
-                borderColor: '#20B2AA',
-                backgroundColor: '#20B2AA',
-                fill: false,
-                tension: 0.1,
-            },
-        ],
-    };
-
-    const lineOptions = {
-        responsive: true,
-        plugins: {
-            legend: {
-                position: 'top',
-            },
-        },
-        scales: {
-            y: {
-                beginAtZero: true,
-                max: 3500,
-            },
-        },
-    };
-
     return (
         <AuthenticatedLayout
             header={
@@ -120,7 +86,7 @@ export default function Dashboard() {
             }
             noMaxWidth={true}
         >
-            <Head title="Dashboard" />
+            <Head title="TVPSS | Dashboard" />
 
             <div className="flex">
                 <div className="w-1/6 p-4 text-white min-h-screen">
@@ -132,13 +98,12 @@ export default function Dashboard() {
                         <SummaryCard title="Bilangan Pelajar Sekolah" value="20" icon={<FaUsers className="text-[#455185] text-5xl" />} />
                         <SummaryCard title="Bilangan Pencapaian" value="5" icon={<FaStar className="text-[#455185] text-5xl" />} />
                         <SummaryCard title="Bilangan Krew Pelajar" value="15" icon={<FaUserFriends className="text-[#455185] text-5xl" />} />
-                        <SummaryCard title="Versi TVPSS Terkini" value="30" icon={<FaSortNumericUp className="text-[#455185] text-5xl" />} /> {/* New Card */}
+                        <SummaryCard title="Versi TVPSS Terkini" value={tvpssVersion} icon={<FaSortNumericUp className="text-[#455185] text-5xl" />} />
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         <div className="bg-white p-8 shadow-md col-span-1 md:col-span-2">
                             <h3 className="text-center text-lg font-semibold text-[#455185] mb-4">Bilangan Krew Mengikut Bulanan</h3>
-                            <StatusHeader />
                             <Bar data={barData} options={barOptions} />
                         </div>
 
@@ -150,30 +115,10 @@ export default function Dashboard() {
                 </div>
             </div>
 
-            {/* Footer */}
             <footer className="text-center py-4 text-gray-600">
                 © 2024 Kementerian Pendidikan Malaysia (KPM)
             </footer>
         </AuthenticatedLayout>
-    );
-}
-
-function StatusHeader() {
-    return (
-        <div className="flex justify-around text-center mb-4">
-            <div>
-                <h4 className="text-[#455185] font-semibold">Bilangan Krew</h4>
-                <p className="text-[#455185] text-2xl font-bold">3</p>
-            </div>
-            <div>
-                <h4 className="text-[#455185] font-semibold">Purata Krew</h4>
-                <p className="text-[#455185] text-2xl font-bold">4</p>
-            </div>
-            <div>
-                <h4 className="text-[#455185] font-semibold">Purata Krew Mengikut Jantina</h4>
-                <p className="text-[#455185] text-2xl font-bold">25</p>
-            </div>
-        </div>
     );
 }
 

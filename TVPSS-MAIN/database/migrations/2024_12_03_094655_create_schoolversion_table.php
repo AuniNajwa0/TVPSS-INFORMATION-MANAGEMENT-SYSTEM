@@ -14,15 +14,24 @@ return new class extends Migration
         Schema::create('schoolversion', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('school_info_id');
-            $table->string('version')->nullable();
+            $table->integer('version')->nullable();
             $table->string('agency1_name')->nullable();
             $table->string('agency2_name')->nullable();
             $table->string('agencyManager1_name')->nullable();
             $table->string('agencyManager2_name')->nullable();
             $table->enum('recordEquipment', ['Ada', 'Tiada']);
+            $table->enum('tvpssStudio', ['Ada', 'Tiada']);
+            $table->enum('recInSchool', ['Ada', 'Tiada']);
+            $table->enum('recInOutSchool', ['Ada', 'Tiada']);
             $table->enum('greenScreen', ['Ada', 'Tiada']);
+            $table->enum('isFillSchoolName', ['Ada', 'Tiada'])->nullable();
+            $table->enum('isTvpssLogo', ['Ada', 'Tiada'])->nullable();
+            $table->enum('isUploadYoutube', ['Ada', 'Tiada'])->nullable();
+            $table->enum('isCollabAgency', ['Ada', 'Tiada'])->nullable();
+            $table->string('tvpssLogo')->nullable();
             $table->timestamps();
 
+            //point 1
             $table->foreign('school_info_id')->references('id')->on('schoolinfo')->onDelete('cascade');
         });
     }

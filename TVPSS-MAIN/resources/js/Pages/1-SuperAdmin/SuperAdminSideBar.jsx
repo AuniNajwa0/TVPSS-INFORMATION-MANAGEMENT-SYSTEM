@@ -1,71 +1,107 @@
-import React from 'react';
-import { FaCog, FaSignOutAlt, FaTh, FaUsers } from 'react-icons/fa';
-import { Link, usePage } from '@inertiajs/react';
+import React, { useState } from "react";
+import { PieChart, Settings, LogOut, Users, Menu, X } from "lucide-react";
+import { Link, usePage } from "@inertiajs/react";
 
 function SuperAdminSideBar() {
-  const { currentRouteName } = usePage(); 
+  const { url } = usePage(); // Get the current URL
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
+
+  // Toggle Sidebar
+  const toggleSidebar = () => {
+    setSidebarOpen(!isSidebarOpen);
+  };
 
   return (
-    <div className="fixed top-0 left-0 w-[310px] bg-gradient-to-t from-[#1f2a44] to-[#28334a] text-white h-screen p-6 border-r border-gray-300 flex flex-col">
-      {/* Logo Section */}
-      <div className="mb-10">
-        <img
-          src="/assets/LogoTVPSS.svg"
-          alt="TVPSS Logo"
-          className="mx-auto w-24 h-24 transition-transform duration-300 ease-in-out transform hover:scale-110"
-        />
-      </div>
+    <div>
+      {/* Sidebar Toggle Button */}
+      <button
+        onClick={toggleSidebar}
+        className="md:hidden fixed top-4 left-4 z-50 bg-[#455185] text-white p-2 rounded-lg shadow-lg"
+      >
+        {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
+      </button>
 
-      {/* Menu Items */}
-      <ul className="space-y-4">
-        {/* Dashboard */}
-        <li
-          className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-lg transition-all duration-200 ease-in-out ${
-            currentRouteName === 'dashboardSP' ? 'bg-[#1f2a44] text-white' : 'text-gray-300 hover:bg-[#1a2130]'
-          }`}
-        >
-          <Link href="/dashboardSuper" className="flex items-center space-x-3">
-            <FaTh className="text-2xl" />
-            <span className="font-medium">Dashboard</span>
-          </Link>
-        </li>
+      {/* Sidebar */}
+      <div
+        className={`fixed top-0 left-0 bg-[#f8f9fa] text-gray-800 h-screen p-6 flex flex-col z-40 border-r border-gray-200 transition-transform duration-300 ease-in-out 
+      ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
+      md:translate-x-0 md:w-[340px]`}
+      >
+        {/* Logo Section */}
+        <div className="mb-5 flex justify-left">
+          <img
+            src="/assets/TVPSSLogo.jpg"
+            alt="TVPSS Logo"
+            className="w-40 h-30 transition-transform duration-300 ease-in-out transform hover:scale-105"
+          />
+        </div>
 
-        {/* Pengurusan Pengguna */}
-        <li
-          className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-lg transition-all duration-200 ease-in-out ${
-            currentRouteName === '1-SuperAdmin/UserManagement/ListUser' ? 'bg-[#1f2a44] text-white' : 'text-gray-300 hover:bg-[#1a2130]'
-          }`}
-        >
-          <Link href={route("users.index")} className="flex items-center space-x-3">
-            <FaUsers className="text-2xl" />
-            <span className="font-medium">Pengurusan Pengguna</span>
-          </Link>
-        </li>
-      </ul>
+        {/* Menu Section */}
+        <div>
+          <h3 className="text-sm font-semibold text-gray-600 uppercase mb-4">
+            Menu
+          </h3>
+          <nav className="space-y-4">
+            <SidebarLink
+              href="/dashboardSuper"
+              icon={<PieChart size={20} />}
+              label="Dashboard"
+              active={url.startsWith("/dashboardSuper")}
+            />
 
-      {/* Bottom Items */}
-      <div className="mt-auto space-y-6">
-        {/* Tetapan */}
-        <li
-          className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-lg transition-all duration-200 ease-in-out ${
-            currentRouteName === 'superadmin.profile' ? 'bg-[#1f2a44] text-white' : 'text-gray-300 hover:bg-[#1a2130]'
-          }`}
-        >
-          <Link href="/profileSuperAdmin" className="flex items-center space-x-3">
-            <FaCog className="text-2xl" />
-            <span className="font-medium">Tetapan</span>
-          </Link>
-        </li>
+            <SidebarLink
+              href="/listUsers"
+              icon={<Users size={20} />}
+              label="Pengurusan Pengguna"
+              active={url.startsWith("/listUsers") || url.startsWith("/addUser") || url.startsWith("/updateUser/{user}")}
+            />
 
-        {/* Log Keluar */}
-        <li className="flex items-center space-x-3 px-4 py-3 text-gray-300 hover:bg-[#1a2130] rounded-lg text-lg transition-all duration-200 ease-in-out">
-          <Link href={route('logout')} method="post" className="flex items-center space-x-3">
-            <FaSignOutAlt className="text-2xl" />
-            <span className="font-medium">Log Keluar</span>
-          </Link>
-        </li>
+          </nav>
+        </div>
+
+        {/* Umum Section */}
+        <div className="mt-auto">
+        <hr className="my-5 border-t border-gray-300" />
+          <h3 className="text-sm font-semibold text-gray-600 uppercase mb-4">
+            Umum
+          </h3>
+          <nav className="space-y-4">
+            <SidebarLink
+              href="/profileSuperAdmin"
+              icon={<Settings size={20} />}
+              label="Tetapan"
+              active={url.startsWith("/profileSuperAdmin")}
+            />
+
+            {/* Log Out */}
+            <Link
+              href={route("logout")}
+              method="post"
+              className="flex items-center space-x-4 py-3 px-5 text-gray-400 hover:text-red-500 transition-all duration-200"
+            >
+              <LogOut size={20} />
+              <span className="text-lg font-medium">Log Keluar</span>
+            </Link>
+          </nav>
+        </div>
       </div>
     </div>
+  );
+}
+
+function SidebarLink({ href, icon, label, active }) {
+  return (
+    <Link
+      href={href}
+      className={`flex items-center space-x-5 py-2 px-5 rounded-2xl text-lg font-medium transition-all duration-200 ${
+        active
+          ? "bg-[#f8f9fa] text-[#4158A6]" // Highlighted style
+          : "hover:bg-gray-100 text-gray-500"
+      }`}
+    >
+      <div className="text-xl">{icon}</div>
+      <span>{label}</span>
+    </Link>
   );
 }
 
