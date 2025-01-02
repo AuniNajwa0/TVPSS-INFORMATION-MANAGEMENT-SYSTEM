@@ -26,9 +26,11 @@ class StoreEquipmentRequest extends FormRequest
             'equipName' => 'required|string|max:255',
             'equipType' => 'required|string|max:255',
             'location' => 'required|string|max:255',
-            //'acquired_date' => 'required|date',
             'acquired_date' => 'required|date_format:Y-m-d',
             'status' => ['required', 'string', 'in:' . implode(',', StatusEnum::getValues())], 
+            'followUpUpdateSchool' => 'nullable|string|max:500', 
+            'uploadBrEq' => 'nullable|array|max:2', 
+            'uploadBrEq.*' => 'nullable|file|image|max:2048', 
         ];
     }
 
