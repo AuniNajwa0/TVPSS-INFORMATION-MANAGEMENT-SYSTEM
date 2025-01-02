@@ -91,7 +91,7 @@ const ApproveStateTvpss = () => {
             <Box display="flex" height="100vh">
                 <Box
                     width="20%"
-                    bgcolor="#445184"
+                    bgcolor="#F4F6F9"
                     color="white"
                     minHeight="100vh"
                     p={3}
