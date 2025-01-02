@@ -3,17 +3,18 @@ import { Briefcase, CheckCircle, Mail, MapPin, School, Send, User } from "lucide
 import { useState } from "react";
 import StudentNavBar from "./StudentNavBar";
 
-function ApplyCrew() {
+function ApplyCrew({ student }) { // Accept student as a prop
     const [isModalVisible, setIsModalVisible] = useState(false);
 
+    // Initialize form data with student information
     const { data, setData, post, errors } = useForm({
-        ic_num: '',
-        name: '',
-        email: '',
-        state: '',
-        district: '',
-        schoolName: '',
-        jawatan: '',
+        ic_num: student.ic_num || '', // Initialize with student data
+        name: student.name || '', // Initialize with student data
+        email: student.email || '', // Initialize with student data
+        state: student.state || '', // Initialize with student data
+        district: student.district || '', // Initialize with student data
+        schoolName: student.schoolName || '', // Initialize with student data
+        jawatan: '', // Only the jawatan is required
     });
 
     const handleInputChange = (e) => {
@@ -39,9 +40,10 @@ function ApplyCrew() {
     // CSS styles
     const styles = {
         page: { 
-          backgroundColor: "#f0f7ff", 
-          minHeight: "100vh", 
-          padding: "20px" },
+            backgroundColor: "#f0f7ff", 
+            minHeight: "100vh", 
+            padding: "20px" 
+        },
         formContainer: {
             maxWidth: "600px",
             margin: "20px auto",
@@ -143,28 +145,28 @@ function ApplyCrew() {
                     <div style={styles.sectionTitle}>Maklumat Peribadi</div>
                     <div style={styles.formGroup}>
                         <div style={styles.iconContainer}>
-                            <User size={18} />
+                            <User  size={18} />
                         </div>
                         <input
                             type="text"
                             name="ic_num"
                             placeholder="Nombor Kad Pengenalan (000000-00-0000)"
                             style={styles.input}
-                            value={data.ic_num}
-                            onChange={handleInputChange}
+                            value={data.ic_num} // Use student data
+                            readOnly // Make it read-only
                         />
                     </div>
                     <div style={styles.formGroup}>
                         <div style={styles.iconContainer}>
-                            <User size={18} />
+                            <User  size={18} />
                         </div>
                         <input
                             type="text"
                             name="name"
                             placeholder="Nama Pelajar"
                             style={styles.input}
-                            value={data.name}
-                            onChange={handleInputChange}
+                            value={data.name} // Use student data
+                            readOnly // Make it read-only
                         />
                     </div>
                     <div style={styles.formGroup}>
@@ -176,8 +178,8 @@ function ApplyCrew() {
                             name="email"
                             placeholder="Email Pelajar"
                             style={styles.input}
-                            value={data.email}
-                            onChange={handleInputChange}
+                            value={data.email} // Use student data
+                            readOnly // Make it read-only
                         />
                     </div>
 
@@ -191,8 +193,8 @@ function ApplyCrew() {
                             name="state"
                             placeholder="Negeri"
                             style={styles.input}
-                            value={data.state}
-                            onChange={handleInputChange}
+                            value={data.state} // Use student data
+                            readOnly // Make it read-only
                         />
                     </div>
                     <div style={styles.formGroup}>
@@ -204,8 +206,8 @@ function ApplyCrew() {
                             name="district"
                             placeholder="Daerah"
                             style={styles.input}
-                            value={data.district}
-                            onChange={handleInputChange}
+                            value={data.district} // Use student data
+                            readOnly // Make it read-only
                         />
                     </div>
                     <div style={styles.formGroup}>
@@ -217,8 +219,8 @@ function ApplyCrew() {
                             name="schoolName"
                             placeholder="Nama Sekolah"
                             style={styles.input}
-                            value={data.schoolName}
-                            onChange={handleInputChange}
+                            value={data.schoolName} // Use student data
+                            readOnly // Make it read-only
                         />
                     </div>
 
@@ -240,7 +242,7 @@ function ApplyCrew() {
                         </select>
                     </div>
 
-                    <button type="submit" style={styles.button}>
+ <button type="submit" style={styles.button}>
                         <Send size={20} />
                         Hantar Permohonan
                     </button>

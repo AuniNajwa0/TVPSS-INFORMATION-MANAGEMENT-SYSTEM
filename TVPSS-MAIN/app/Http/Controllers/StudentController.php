@@ -38,30 +38,30 @@ class StudentController extends Controller
 
     // First index method for StudentPage
     public function index()
-{
-    $ic_num = session('ic_num');
-    $student = Student::where('ic_num', $ic_num)->first();
-    
-    return Inertia::render('5-Students/StudentPage', [
-        'student' => $student, // Pass the student data to the view
-    ]);
-}
-
-public function applyCrew()
-{
-    $ic_num = session('ic_num');
-
-    // Retrieve the student data based on IC number
-    $student = Student::where('ic_num', $ic_num)->first();
-
-    if (!$student) {
-        return redirect()->route('student.dashboard')->with('error', 'Pelajar tidak dijumpai.');
+    {
+        $ic_num = session('ic_num');
+        $student = Student::where('ic_num', $ic_num)->first();
+        
+        return Inertia::render('5-Students/StudentPage', [
+            'student' => $student, // Pass the student data to the view
+        ]);
     }
 
-    return Inertia::render('5-Students/ApplyCrew', [
-        'student' => $student, // Pass the student data to the view
-    ]);
-}
+    public function applyCrew()
+    {
+        $ic_num = session('ic_num');
+
+        // Retrieve the student data based on IC number
+        $student = Student::where('ic_num', $ic_num)->first();
+
+        if (!$student) {
+            return redirect()->route('student.dashboard')->with('error', 'Pelajar tidak dijumpai.');
+        }
+
+        return Inertia::render('5-Students/ApplyCrew', [
+            'student' => $student, // Pass the student data to the view
+        ]);
+    }
 
     public function applyCrewSubmit(Request $request)
     {
@@ -84,32 +84,30 @@ public function applyCrew()
             'jawatan' => $validated['jawatan'],
         ]);
 
-        // Redirect to resultApply with success message
-        // return redirect()->route('student.resultApply', ['id' => $studcrew->id])
-        //     ->with('success', 'Permohonan Krew berjaya dihantar!');
-        return redirect()->route('student.dashboard');
+        return Inertia::render('5-Students/ResultApply', [
+            'student' => $student, // Pass the student data to the view
+        ]);
     }
 
-    public function resultApply($id)
+    public function resultApply()
     {
-        $studcrew = Studcrew::with('student')->find($id);
+        // Assuming you have a way to get the logged-in student's IC number
+        $ic_num = auth()->user()->ic_num; // Adjust this line based on your authentication logic
 
-    if (!$studcrew) {
-        return redirect()->route('student.applyCrew')->with('error', 'Rekod krew tidak dijumpai.');
-    }
+        // Retrieve all applications for the logged-in student
+        $applications = Studcrew::with('student')
+            ->whereHas('student', function ($query) use ($ic_num) {
+                $query->where('ic_num', $ic_num);
+            })
+            ->get();
 
-    if (!$studcrew->student) {
-        return redirect()->route('student.applyCrew')->with('error', 'Maklumat pelajar tidak dijumpai.');
-    }
+        if ($applications->isEmpty()) {
+            return redirect()->route('student.applyCrew')->with('error', 'Tiada permohonan dijumpai.');
+        }
 
-    return Inertia::render('5-Students/ResultApply', [
-        'ic_num' => $studcrew->student->ic_num,
-        'name' => $studcrew->student->name,
-        'email' => $studcrew->student->email,
-        'state' => $studcrew->student->state,
-        'district' => $studcrew->student->district,
-        'schoolName' => $studcrew->student->schoolName,
-    ]);
+        return Inertia::render('5-Students/ResultApply', [
+            'applications' => $applications, // Pass the applications to the view
+        ]);
     }
 
     // Store method for creating a new student

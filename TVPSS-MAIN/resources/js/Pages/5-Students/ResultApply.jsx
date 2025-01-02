@@ -1,47 +1,16 @@
 import React, { useState } from 'react';
 import StudentNavBar from './StudentNavBar';
 import { Head } from "@inertiajs/react";
-import { Search, ChevronDown, ChevronUp, Eye, Filter } from 'lucide-react';
+import { Search, Eye } from 'lucide-react';
 
-function ToggleButton() {
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedApplication, setSelectedApplication] = useState(null);
+function ResultApply({ applications }) { // Accept applications as a prop
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortField, setSortField] = useState('');
-  const [sortDirection, setSortDirection] = useState('asc');
 
-  const applications = [
-    {
-      id: 1,
-      ic_num: "901010-10-1010",
-      name: "Ali Ahmad",
-      email: "ali@gmail.com",
-      negeri: "Johor",
-      daerah: "Muar",
-      jawatan: "Jurukamera",
-      status: "Dalam Proses",
-    },
-    {
-      id: 2,
-      ic_num: "920202-02-2020",
-      name: "Fatimah Binti Omar",
-      email: "fatimah@gmail.com",
-      negeri: "Selangor",
-      daerah: "Petaling",
-      jawatan: "Penemuduga",
-      status: "Diluluskan",
-    },
-    {
-      id: 3,
-      ic_num: "930303-03-3030",
-      name: "Ahmad Badrul",
-      email: "ahmad@gmail.com",
-      negeri: "Perak",
-      daerah: "Ipoh",
-      jawatan: "Jurufoto",
-      status: "Gagal",
-    },
-  ];
+  const filteredApplications = applications.filter((app) =>
+    Object.values(app).some((value) =>
+      value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  );
 
   const pageStyle = {
     backgroundColor: '#f0f7ff',
@@ -155,34 +124,6 @@ function ToggleButton() {
     display: 'inline-block',
   });
 
-  const handleSort = (field) => {
-    if (sortField === field) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortField(field);
-      setSortDirection('asc');
-    }
-  };
-
-  const handleViewClick = (application) => {
-    setSelectedApplication(application);
-    setIsModalVisible(true);
-  };
-
-  const filteredApplications = applications
-    .filter((app) =>
-      Object.values(app).some((value) =>
-        value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    )
-    .sort((a, b) => {
-      if (!sortField) return 0;
-      if (sortDirection === 'asc') {
-        return a[sortField] > b[sortField] ? 1 : -1;
-      }
-      return a[sortField] < b[sortField] ? 1 : -1;
-    });
-
   return (
     <div style={pageStyle}>
       <Head title="TVPSS | Keputusan Permohonan" />
@@ -191,7 +132,7 @@ function ToggleButton() {
       <div style={containerStyle}>
         <div style={headerStyle}>
           <h1 style={titleStyle}>
-            <Filter size={24} color="#4158A6" /> Keputusan Permohonan
+            Keputusan Permohonan
           </h1>
           <div style={searchContainerStyle}>
             <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#718096' }} />
@@ -210,24 +151,12 @@ function ToggleButton() {
             <table style={tableStyle}>
               <thead>
                 <tr>
-                  <th style={thStyle} onClick={() => handleSort('id')}>
-                    #
-                  </th>
-                  <th style={thStyle} onClick={() => handleSort('ic_num')}>
-                    Nombor ID
-                  </th>
-                  <th style={thStyle} onClick={() => handleSort('name')}>
-                    Nama
-                  </th>
-                  <th style={thStyle} onClick={() => handleSort('email')}>
-                    Email
-                  </th>
-                  <th style={thStyle} onClick={() => handleSort('jawatan')}>
-                    Jawatan
-                  </th>
-                  <th style={thStyle} onClick={() => handleSort('status')}>
-                    Status
-                  </th>
+                  <th style={thStyle}>#</th>
+                  <th style={thStyle}>Nombor ID</th>
+                  <th style={thStyle}>Nama</th>
+                  <th style={thStyle}>Email</th>
+                  <th style={thStyle}>Jawatan</th>
+                  <th style={thStyle}>Status</th>
                   <th style={thStyle}>Aksi</th>
                 </tr>
               </thead>
@@ -245,7 +174,7 @@ function ToggleButton() {
                       </span>
                     </td>
                     <td style={tdStyle(index)}>
-                      <button style={buttonStyle} onClick={() => handleViewClick(application)}>
+                      <button style={buttonStyle}>
                         <Eye size={16} /> Lihat
                       </button>
                     </td>
@@ -267,82 +196,9 @@ function ToggleButton() {
             </div>
           )}
         </div>
-
-        {isModalVisible && (
-          <div
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              backgroundColor: 'rgba(0, 0, 0, 0.5)',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              zIndex: 1000,
-            }}
-            onClick={() => setIsModalVisible(false)}
-          >
-            <div
-              style={{
-                width: '400px',
-                backgroundColor: '#fff',
-                borderRadius: '8px',
-                padding: '20px',
-                boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)',
-                textAlign: 'center',
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <h2 style={{ color: '#1a202c', marginBottom: '20px' }}>
-                {selectedApplication.status === 'Diluluskan'
-                  ? 'Tahniah!'
-                  : selectedApplication.status === 'Dalam Proses'
-                  ? 'Masih Dalam Proses'
-                  : 'Gagal'}
-              </h2>
-              <div
-                style={{
-                  marginBottom: '20px',
-                  color: '#1a202c',
-                  fontSize: '14px',
-                  lineHeight: '1.6',
-                }}
-              >
-                {selectedApplication.status === 'Diluluskan' &&
-                  'Permohonan anda sebagai krew telah diluluskan, sila cetak slip ini.'}
-                {selectedApplication.status === 'Dalam Proses' &&
-                  'Permohonan anda sebagai krew masih dalam proses.'}
-                {selectedApplication.status === 'Gagal' &&
-                  'Permohonan anda sebagai krew telah ditolak, sila mohon sekali lagi.'}
-              </div>
-              {selectedApplication.status === 'Diluluskan' && (
-                <button
-                  style={{
-                    ...buttonStyle,
-                    backgroundColor: '#38a169',
-                    marginRight: '10px',
-                  }}
-                >
-                  Cetak Slip
-                </button>
-              )}
-              <button
-                style={{
-                  ...buttonStyle,
-                  backgroundColor: '#718096',
-                }}
-                onClick={() => setIsModalVisible(false)}
-              >
-                Kembali
-              </button>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
 }
 
-export default ToggleButton;
+export default ResultApply;
