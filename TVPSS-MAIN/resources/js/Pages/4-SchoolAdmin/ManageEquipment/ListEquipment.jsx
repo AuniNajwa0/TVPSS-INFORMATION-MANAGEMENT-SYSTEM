@@ -1,16 +1,16 @@
-import { useState } from 'react';
-import { FaEdit, FaTrash } from 'react-icons/fa';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
-import SchoolAdminSideBar from '../SchoolAdminSideBar';
-import { Inertia } from '@inertiajs/inertia';
+import { useState } from "react";
+import { FaEdit, FaTrashAlt, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { Head } from "@inertiajs/react";
+import SchoolAdminSideBar from "../SchoolAdminSideBar";
+import { Inertia } from "@inertiajs/inertia";
 
 export default function ListEquipment({ equipment, eqLocation }) {
     const [selectedItems, setSelectedItems] = useState([]);
-    const [searchEquipment, setSearchEquipment] = useState('');
-    const [searchLocation, setSearchLocation] = useState('');
-    const [sortField, setSortField] = useState('');
-    const [sortOrder, setSortOrder] = useState('asc');
+    const [searchEquipment, setSearchEquipment] = useState("");
+    const [searchLocation, setSearchLocation] = useState("");
+    const [sortField, setSortField] = useState("");
+    const [sortOrder, setSortOrder] = useState("asc");
 
     const equipmentRowsPerPage = equipment.per_page;
     const equipmentCurrentPage = equipment.current_page;
@@ -21,7 +21,7 @@ export default function ListEquipment({ equipment, eqLocation }) {
     const [locationCurrentPage, setLocationCurrentPage] = useState(1);
 
     const handleSort = (field) => {
-        const order = sortField === field && sortOrder === 'asc' ? 'desc' : 'asc';
+        const order = sortField === field && sortOrder === "asc" ? "desc" : "asc";
         setSortField(field);
         setSortOrder(order);
         Inertia.get(`/equipment`, { sortField: field, sortOrder: order, search: searchEquipment });
@@ -40,7 +40,7 @@ export default function ListEquipment({ equipment, eqLocation }) {
     const handleDeleteSelected = () => {
         const confirmed = window.confirm("Padam barang yang dipilih?");
         if (confirmed) {
-            Inertia.delete(route('equipment.deleteSelected'), {
+            Inertia.delete(route("equipment.deleteSelected"), {
                 ids: selectedItems,
             });
         }
@@ -53,7 +53,9 @@ export default function ListEquipment({ equipment, eqLocation }) {
     };
 
     const sortedLocations = eqLocation
-        .filter((location) => location.eqLocName.toLowerCase().includes(searchLocation.toLowerCase()))
+        .filter((location) =>
+            location.eqLocName.toLowerCase().includes(searchLocation.toLowerCase())
+        )
         .slice(
             (locationCurrentPage - 1) * locationRowsPerPage,
             locationCurrentPage * locationRowsPerPage
@@ -74,186 +76,211 @@ export default function ListEquipment({ equipment, eqLocation }) {
     };
 
     return (
-        <AuthenticatedLayout header={<h2 className="text-xl font-semibold leading-tight text-gray-800">Pengurusan Barang</h2>}>
+        <AuthenticatedLayout>
             <Head title="TVPSS | Pengurusan Bilangan Barang" />
-            <div className="flex">
-                <div className="w-1/6 p-4 text-white min-h-screen">
+            <div className="flex flex-col md:flex-row min-h-screen bg-white">
+                {/* Sidebar */}
+                <div className="w-1/6 bg-white shadow-lg">
                     <SchoolAdminSideBar />
                 </div>
 
-                <div className="flex-1 p-6">
-                    {/* Equipment Table */}
-                    <div className="mb-6">
-                        <div className="flex justify-end items-center mb-4">
-                            <button
-                                className="bg-[#455185] hover:bg-[#3C4565] text-white rounded-md px-4 py-2 shadow-md mr-2"
-                                onClick={() => window.location.href = '/equipment/create'}
-                            >
-                                Tambah Barang
-                            </button>
-                            <button
-                                className="bg-red-600 hover:bg-red-700 text-white rounded-md px-4 py-2 shadow-md"
-                                onClick={handleDeleteSelected}
-                                disabled={selectedItems.length === 0}
-                            >
-                                Padam Barang
-                            </button>
-                        </div>
+                {/* Main Content */}
+                <div className="w-full md:ml-[120px] p-6">
+                    {/* Breadcrumb Section */}
+                    <nav className="mb-8">
+                        <ol className="flex items-center space-x-2 text-gray-600">
+                            <li>
+                                <a href="/listEquipment" className="text-[#4158A6] hover:text-blue-800 font-medium">
+                                    Pengurusan Peralatan
+                                </a>
+                            </li>
+                            <li className="text-gray-500">/</li>
+                            <li className="text-gray-900 font-medium">
+                                Semua Peralatan
+                            </li>
+                        </ol>
+                    </nav>
 
-                        <div className="mb-4">
+                    {/* Equipment Section */}
+                    <div className="max-w-8xl mx-auto p-6 text-gray-900 bg-white border border-gray-200 shadow rounded-2xl mb-8">
+                        <div className="flex justify-between items-center mb-4">
                             <input
                                 type="text"
                                 placeholder="Cari Nama Peralatan"
                                 value={searchEquipment}
                                 onChange={handleSearchEquipment}
-                                className="w-full p-2 border border-gray-300 rounded-md shadow-sm"
+                                className="w-full max-w-xs pl-4 pr-4 py-3 bg-white border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#455185] focus:border-[#455185] transition-all placeholder-gray-400"
                             />
+                            <div className="flex space-x-4">
+                                <button
+                                    onClick={() => (window.location.href = "/equipment/create")}
+                                    className="bg-[#455185] hover:bg-[#3C4565] text-white rounded-md px-4 py-2 shadow-md"
+                                >
+                                    Tambah Barang
+                                </button>
+                                <button
+                                    onClick={handleDeleteSelected}
+                                    className="bg-red-600 hover:bg-red-700 text-white rounded-md px-4 py-2 shadow-md"
+                                    disabled={selectedItems.length === 0}
+                                >
+                                    Padam Barang
+                                </button>
+                            </div>
                         </div>
 
-                        <div className="max-w-8xl mx-auto p-6 text-gray-900 bg-white rounded shadow-md">
-                            <table className="w-full text-left border-collapse">
-                                <thead>
-                                    <tr className="bg-gray-100">
-                                        <th className="border-b p-4">
+                        <table className="w-full text-left rounded-lg border-collapse">
+                            <thead>
+                                <tr className="bg-white">
+                                    <th className="border-b px-4 py-6">
+                                        <input
+                                            type="checkbox"
+                                            onChange={(e) =>
+                                                setSelectedItems(
+                                                    e.target.checked ? equipmentData.map((item) => item.id) : []
+                                                )
+                                            }
+                                            checked={selectedItems.length === equipmentData.length}
+                                        />
+                                    </th>
+                                    <th className="border-b px-4 py-6">Bil</th>
+                                    <th
+                                        className="border-b px-4 py-6 cursor-pointer"
+                                        onClick={() => handleSort("name")}
+                                    >
+                                        Nama Peralatan
+                                        {sortField === "name" && (sortOrder === "asc" ? " ▲" : " ▼")}
+                                    </th>
+                                    <th className="border-b px-4 py-6">Jenis</th>
+                                    <th
+                                        className="border-b px-4 py-6 cursor-pointer"
+                                        onClick={() => handleSort("location")}
+                                    >
+                                        Lokasi
+                                        {sortField === "location" && (sortOrder === "asc" ? " ▲" : " ▼")}
+                                    </th>
+                                    <th className="border-b px-4 py-6">Tarikh Diperolehi</th>
+                                    <th className="border-b px-4 py-6">Status</th>
+                                    <th className="border-b px-4 py-6">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {equipmentData.map((item, index) => (
+                                    <tr key={item.id} className="hover:bg-gray-50">
+                                        <td className="border-b px-4 py-6">
                                             <input
                                                 type="checkbox"
-                                                onChange={(e) => {
-                                                    if (e.target.checked) {
-                                                        setSelectedItems(equipmentData.map((item) => item.id));
-                                                    } else {
-                                                        setSelectedItems([]);
+                                                onChange={() => handleSelectItem(item.id)}
+                                                checked={selectedItems.includes(item.id)}
+                                            />
+                                        </td>
+                                        <td className="border-b px-4 py-6">
+                                            {index + 1 + (equipmentCurrentPage - 1) * equipmentRowsPerPage}
+                                        </td>
+                                        <td className="border-b px-4 py-6">{item.equipName}</td>
+                                        <td className="border-b px-4 py-6">{item.equipType}</td>
+                                        <td className="border-b px-4 py-6">{item.location}</td>
+                                        <td className="border-b px-4 py-6">{item.acquired_date}</td>
+                                        <td className="border-b px-4 py-6">
+                                            <span
+                                                className={`px-2 py-1 rounded-full ${
+                                                    item.status === "Berfungsi"
+                                                        ? "bg-green-200 text-green-700"
+                                                        : item.status === "Penyelenggaraan"
+                                                        ? "bg-yellow-200 text-yellow-700"
+                                                        : "bg-red-200 text-red-700"
+                                                }`}
+                                            >
+                                                {item.status}
+                                            </span>
+                                        </td>
+                                        <td className="border-b px-4 py-6 flex space-x-4 items-center">
+                                            <button
+                                                onClick={() => Inertia.get(`/equipment/${item.id}/edit`)}
+                                                className="text-gray-400 hover:text-gray-600"
+                                            >
+                                                <FaEdit />
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    const confirmed = window.confirm("Padam barang?");
+                                                    if (confirmed) {
+                                                        Inertia.delete(`/equipment/${item.id}`);
                                                     }
                                                 }}
-                                                checked={selectedItems.length === equipmentData.length}
-                                            />
-                                        </th>
-                                        <th className="border-b p-4">Bil</th>
-                                        <th
-                                            className="border-b p-4 cursor-pointer"
-                                            onClick={() => handleSort('name')}
-                                        >
-                                            Nama Peralatan
-                                            {sortField === 'name' && (sortOrder === 'asc' ? ' ▲' : ' ▼')}
-                                        </th>
-                                        <th className="border-b p-4">Jenis</th>
-                                        <th
-                                            className="border-b p-4 cursor-pointer"
-                                            onClick={() => handleSort('location')}
-                                        >
-                                            Lokasi
-                                            {sortField === 'location' && (sortOrder === 'asc' ? ' ▲' : ' ▼')}
-                                        </th>
-                                        <th className="border-b p-4">Tarikh Diperolehi</th>
-                                        <th className="border-b p-4">Status</th>
-                                        <th className="border-b p-4">Aksi</th>
+                                                className="text-gray-400 hover:text-gray-600"
+                                            >
+                                                <FaTrashAlt />
+                                            </button>
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    {equipmentData.map((item, index) => (
-                                        <tr key={item.id} className="hover:bg-gray-50">
-                                            <td className="border-b p-4">
-                                                <input
-                                                    type="checkbox"
-                                                    onChange={() => handleSelectItem(item.id)}
-                                                    checked={selectedItems.includes(item.id)}
-                                                />
-                                            </td>
-                                            <td className="border-b p-4">{index + 1}</td>
-                                            <td className="border-b p-4">{item.equipName}</td>
-                                            <td className="border-b p-4">{item.equipType}</td>
-                                            <td className="border-b p-4">{item.location}</td>
-                                            <td className="border-b p-4">{item.acquired_date}</td>
-                                            <td className="border-b p-4">
-                                                <span
-                                                    className={`px-3 py-1 rounded-full text-xs ${item.status === 'Berfungsi' ? 'bg-green-100 text-green-700' : item.status === 'Penyelenggaraan' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}`}
-                                                >
-                                                    {item.status}
-                                                </span>
-                                            </td>
-                                            <td className="border-b p-4">
-                                                <button
-                                                    className="mr-2 text-blue-600 hover:text-blue-800"
-                                                    onClick={() => Inertia.get(`/equipment/${item.id}/edit`)}
-                                                >
-                                                    <FaEdit />
-                                                </button>
-                                                <button
-                                                    className="text-red-600 hover:text-red-800"
-                                                    onClick={() => {
-                                                        const confirmed = window.confirm("Padam barang?");
-                                                        if (confirmed) {
-                                                            Inertia.delete(`/equipment/${item.id}`);
-                                                        }
-                                                    }}
-                                                >
-                                                    <FaTrash />
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                                ))}
+                            </tbody>
+                        </table>
                     </div>
 
-                    {/* Location Table */}
-                    <div className="mb-6">
+                    {/* Location Section */}
+                    <div className="max-w-8xl mx-auto p-6 text-gray-900 bg-white border border-gray-200 shadow rounded-2xl">
                         <div className="flex justify-between items-center mb-4">
                             <input
                                 type="text"
                                 placeholder="Cari Lokasi"
                                 value={searchLocation}
                                 onChange={handleSearchLocation}
-                                className="w-5/6 p-2 border border-gray-300 rounded-md shadow-sm"
+                                className="w-full max-w-xs pl-4 pr-4 py-3 bg-white border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#455185] focus:border-[#455185] transition-all placeholder-gray-400"
                             />
                             <button
+                                onClick={() => (window.location.href = "/eqLoc/create")}
                                 className="bg-[#455185] hover:bg-[#3C4565] text-white rounded-md px-4 py-2 shadow-md"
-                                onClick={() => window.location.href = '/eqLoc/create'}
                             >
                                 Tambah Lokasi
                             </button>
                         </div>
 
-                        <div className="max-w-8xl mx-auto p-6 text-gray-900 bg-white rounded shadow-md">
-                            <table className="w-full border-collapse">
-                                <thead>
-                                    <tr className="bg-gray-100">
-                                        <th className="text-center border-b p-4 w-1">Bil</th>
-                                        <th className="text-left border-b p-4 w-3/6">Lokasi</th>
-                                        <th className="text-center border-b p-4 w-2/6">Jenis Lokasi</th>
-                                        <th className="text-center border-b p-4">Aksi</th>
+                        <table className="w-full text-left rounded-lg border-collapse">
+                            <thead>
+                                <tr className="bg-white">
+                                    <th className="border-b px-4 py-6">Bil</th>
+                                    <th
+                                        className="border-b px-4 py-6 cursor-pointer"
+                                        onClick={() => handleSort("eqLocName")}
+                                    >
+                                        Nama Lokasi
+                                    </th>
+                                    <th className="border-b px-4 py-6">Jenis Lokasi</th>
+                                    <th className="border-b px-4 py-6">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {sortedLocations.map((location, index) => (
+                                    <tr key={location.id} className="hover:bg-gray-50">
+                                        <td className="border-b px-4 py-6">
+                                            {index + 1 + (locationCurrentPage - 1) * locationRowsPerPage}
+                                        </td>
+                                        <td className="border-b px-4 py-6">{location.eqLocName}</td>
+                                        <td className="border-b px-4 py-6">{location.eqLocType}</td>
+                                        <td className="border-b px-4 py-6 flex space-x-4 items-center">
+                                            <button
+                                                onClick={() => Inertia.get(`/eqLoc/${location.id}/edit`)}
+                                                className="text-gray-400 hover:text-gray-600"
+                                            >
+                                                <FaEdit />
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    const confirmed = window.confirm("Padam lokasi?");
+                                                    if (confirmed) {
+                                                        Inertia.delete(`/eqLoc/${location.id}`);
+                                                    }
+                                                }}
+                                                className="text-gray-400 hover:text-gray-600"
+                                            >
+                                                <FaTrashAlt />
+                                            </button>
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    {sortedLocations.map((item, index) => (
-                                        <tr key={item.id} className="hover:bg-gray-50">
-                                            <td className="text-center border-b p-4">{index + 1 + (locationCurrentPage - 1) * locationRowsPerPage}</td>
-                                            <td className="text-left border-b p-4">{item.eqLocName}</td>
-                                            <td className="text-center border-b p-4">{item.eqLocType}</td>
-                                            <td className="text-center border-b p-4">
-                                                <button
-                                                    className="mr-2 text-blue-600 hover:text-blue-800"
-                                                    onClick={() => Inertia.get(`/eqLoc/${item.id}/edit`)}
-                                                >
-                                                    <FaEdit />
-                                                </button>
-                                                <button
-                                                    className="text-red-600 hover:text-red-800"
-                                                    onClick={() => {
-                                                        const confirmed = window.confirm("Padam lokasi?");
-                                                        if (confirmed) {
-                                                            Inertia.delete(`/eqLoc/${item.id}`);
-                                                        }
-                                                    }}
-                                                >
-                                                    <FaTrash />
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                                ))}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
