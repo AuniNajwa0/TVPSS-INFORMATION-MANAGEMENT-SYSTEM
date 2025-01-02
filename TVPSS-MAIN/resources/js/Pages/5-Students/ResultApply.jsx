@@ -1,18 +1,50 @@
 import React, { useState } from 'react';
 import StudentNavBar from './StudentNavBar';
-import { Head, usePage } from "@inertiajs/react";
+import { Head } from "@inertiajs/react";
 import { Search, ChevronDown, ChevronUp, Eye, Filter } from 'lucide-react';
 
 function ToggleButton() {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedApplication, setSelectedApplication] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortField, setSortField] = useState('');
   const [sortDirection, setSortDirection] = useState('asc');
 
-  const { applications } = usePage().props;
+  const applications = [
+    {
+      id: 1,
+      ic_num: "901010-10-1010",
+      name: "Ali Ahmad",
+      email: "ali@gmail.com",
+      negeri: "Johor",
+      daerah: "Muar",
+      jawatan: "Jurukamera",
+      status: "Dalam Proses",
+    },
+    {
+      id: 2,
+      ic_num: "920202-02-2020",
+      name: "Fatimah Binti Omar",
+      email: "fatimah@gmail.com",
+      negeri: "Selangor",
+      daerah: "Petaling",
+      jawatan: "Penemuduga",
+      status: "Diluluskan",
+    },
+    {
+      id: 3,
+      ic_num: "930303-03-3030",
+      name: "Ahmad Badrul",
+      email: "ahmad@gmail.com",
+      negeri: "Perak",
+      daerah: "Ipoh",
+      jawatan: "Jurufoto",
+      status: "Gagal",
+    },
+  ];
 
   const pageStyle = {
-    backgroundColor: '#ebf8ff',
+    backgroundColor: '#f0f7ff',
     minHeight: '100vh',
     padding: '20px',
   };
@@ -47,14 +79,6 @@ function ToggleButton() {
   const searchContainerStyle = {
     position: 'relative',
     width: '300px',
-  };
-
-  const searchIconStyle = {
-    position: 'absolute',
-    left: '12px',
-    top: '50%',
-    transform: 'translateY(-50%)',
-    color: '#718096',
   };
 
   const searchInputStyle = {
@@ -126,16 +150,9 @@ function ToggleButton() {
     borderRadius: '20px',
     fontSize: '13px',
     fontWeight: '500',
-    backgroundColor: status === 'Diluluskan' ? '#dcfce7' : '#fee2e2',
-    color: status === 'Diluluskan' ? '#166534' : '#991b1b',
+    backgroundColor: status === 'Diluluskan' ? '#dcfce7' : status === 'Dalam Proses' ? '#fef08a' : '#fee2e2',
+    color: status === 'Diluluskan' ? '#166534' : status === 'Dalam Proses' ? '#92400e' : '#991b1b',
     display: 'inline-block',
-  });
-
-  const sortIconStyle = (field) => ({
-    display: 'inline-flex',
-    marginLeft: '4px',
-    color: sortField === field ? '#4158A6' : '#718096',
-    transition: 'transform 0.2s ease',
   });
 
   const handleSort = (field) => {
@@ -147,9 +164,14 @@ function ToggleButton() {
     }
   };
 
+  const handleViewClick = (application) => {
+    setSelectedApplication(application);
+    setIsModalVisible(true);
+  };
+
   const filteredApplications = applications
-    .filter(app => 
-      Object.values(app).some(value => 
+    .filter((app) =>
+      Object.values(app).some((value) =>
         value.toString().toLowerCase().includes(searchTerm.toLowerCase())
       )
     )
@@ -165,15 +187,14 @@ function ToggleButton() {
     <div style={pageStyle}>
       <Head title="TVPSS | Keputusan Permohonan" />
       <StudentNavBar />
-      
+
       <div style={containerStyle}>
         <div style={headerStyle}>
           <h1 style={titleStyle}>
-            <Filter size={24} color="#4158A6" />
-            Keputusan Permohonan
+            <Filter size={24} color="#4158A6" /> Keputusan Permohonan
           </h1>
           <div style={searchContainerStyle}>
-            <Search style={searchIconStyle} size={18} />
+            <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#718096' }} />
             <input
               type="text"
               placeholder="Cari permohonan..."
@@ -185,54 +206,38 @@ function ToggleButton() {
         </div>
 
         <div style={tableContainerStyle}>
-          {applications.length > 0 ? (
+          {filteredApplications.length > 0 ? (
             <table style={tableStyle}>
               <thead>
                 <tr>
                   <th style={thStyle} onClick={() => handleSort('id')}>
-                    # {sortField === 'id' && (
-                      <span style={sortIconStyle('id')}>
-                        {sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                      </span>
-                    )}
+                    #
                   </th>
                   <th style={thStyle} onClick={() => handleSort('ic_num')}>
-                    No. Kad Pengenalan {sortField === 'ic_num' && (
-                      <span style={sortIconStyle('ic_num')}>
-                        {sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                      </span>
-                    )}
+                    Nombor ID
                   </th>
                   <th style={thStyle} onClick={() => handleSort('name')}>
-                    Nama {sortField === 'name' && (
-                      <span style={sortIconStyle('name')}>
-                        {sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                      </span>
-                    )}
+                    Nama
                   </th>
-                  <th style={thStyle} onClick={() => handleSort('email')}>Email</th>
-                  <th style={thStyle} onClick={() => handleSort('negeri')}>Negeri</th>
-                  <th style={thStyle} onClick={() => handleSort('daerah')}>Daerah</th>
-                  <th style={thStyle} onClick={() => handleSort('jawatan')}>Jawatan</th>
-                  <th style={thStyle} onClick={() => handleSort('status')}>Status</th>
+                  <th style={thStyle} onClick={() => handleSort('email')}>
+                    Email
+                  </th>
+                  <th style={thStyle} onClick={() => handleSort('jawatan')}>
+                    Jawatan
+                  </th>
+                  <th style={thStyle} onClick={() => handleSort('status')}>
+                    Status
+                  </th>
                   <th style={thStyle}>Aksi</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredApplications.map((application, index) => (
-                  <tr 
-                    key={application.id}
-                    style={{ 
-                      transition: 'all 0.2s ease',
-                      ':hover': { backgroundColor: '#f1f5f9' }
-                    }}
-                  >
+                  <tr key={application.id}>
                     <td style={tdStyle(index)}>{index + 1}</td>
                     <td style={tdStyle(index)}>{application.ic_num}</td>
                     <td style={tdStyle(index)}>{application.name}</td>
                     <td style={tdStyle(index)}>{application.email}</td>
-                    <td style={tdStyle(index)}>{application.negeri}</td>
-                    <td style={tdStyle(index)}>{application.daerah}</td>
                     <td style={tdStyle(index)}>{application.jawatan}</td>
                     <td style={tdStyle(index)}>
                       <span style={statusBadgeStyle(application.status)}>
@@ -240,19 +245,8 @@ function ToggleButton() {
                       </span>
                     </td>
                     <td style={tdStyle(index)}>
-                      <button 
-                        style={buttonStyle}
-                        onMouseOver={e => {
-                          e.currentTarget.style.backgroundColor = '#344985';
-                          e.currentTarget.style.transform = 'translateY(-1px)';
-                        }}
-                        onMouseOut={e => {
-                          e.currentTarget.style.backgroundColor = '#4158A6';
-                          e.currentTarget.style.transform = 'translateY(0)';
-                        }}
-                      >
-                        <Eye size={16} />
-                        Lihat
+                      <button style={buttonStyle} onClick={() => handleViewClick(application)}>
+                        <Eye size={16} /> Lihat
                       </button>
                     </td>
                   </tr>
@@ -260,17 +254,92 @@ function ToggleButton() {
               </tbody>
             </table>
           ) : (
-            <div style={{
-              textAlign: 'center',
-              padding: '40px',
-              color: '#718096',
-              fontSize: '16px',
-              backgroundColor: '#f8fafc',
-            }}>
+            <div
+              style={{
+                textAlign: 'center',
+                padding: '40px',
+                color: '#718096',
+                fontSize: '16px',
+                backgroundColor: '#f8fafc',
+              }}
+            >
               Tiada Sebarang Permohonan
             </div>
           )}
         </div>
+
+        {isModalVisible && (
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              zIndex: 1000,
+            }}
+            onClick={() => setIsModalVisible(false)}
+          >
+            <div
+              style={{
+                width: '400px',
+                backgroundColor: '#fff',
+                borderRadius: '8px',
+                padding: '20px',
+                boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)',
+                textAlign: 'center',
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h2 style={{ color: '#1a202c', marginBottom: '20px' }}>
+                {selectedApplication.status === 'Diluluskan'
+                  ? 'Tahniah!'
+                  : selectedApplication.status === 'Dalam Proses'
+                  ? 'Masih Dalam Proses'
+                  : 'Gagal'}
+              </h2>
+              <div
+                style={{
+                  marginBottom: '20px',
+                  color: '#1a202c',
+                  fontSize: '14px',
+                  lineHeight: '1.6',
+                }}
+              >
+                {selectedApplication.status === 'Diluluskan' &&
+                  'Permohonan anda sebagai krew telah diluluskan, sila cetak slip ini.'}
+                {selectedApplication.status === 'Dalam Proses' &&
+                  'Permohonan anda sebagai krew masih dalam proses.'}
+                {selectedApplication.status === 'Gagal' &&
+                  'Permohonan anda sebagai krew telah ditolak, sila mohon sekali lagi.'}
+              </div>
+              {selectedApplication.status === 'Diluluskan' && (
+                <button
+                  style={{
+                    ...buttonStyle,
+                    backgroundColor: '#38a169',
+                    marginRight: '10px',
+                  }}
+                >
+                  Cetak Slip
+                </button>
+              )}
+              <button
+                style={{
+                  ...buttonStyle,
+                  backgroundColor: '#718096',
+                }}
+                onClick={() => setIsModalVisible(false)}
+              >
+                Kembali
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
