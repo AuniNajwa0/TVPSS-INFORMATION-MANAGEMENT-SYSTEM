@@ -1,39 +1,45 @@
-import { Link, useForm } from '@inertiajs/react';
-import { useEffect, useState } from 'react'; // Import useState and useEffect
-import { FaArrowLeft } from "react-icons/fa"; // Correct import for the ArrowLeft icon
+import { Head, useForm } from "@inertiajs/react";
+import { Briefcase, CheckCircle, Mail, MapPin, School, Send, User } from "lucide-react";
+import { useState } from "react";
+import StudentNavBar from "./StudentNavBar";
 
-export default function ApplyCrew({ student }) {
-    console.log('Student data:', student); // Log the student data
+function ApplyCrew() {
+    const [isModalVisible, setIsModalVisible] = useState(false);
 
-    const { data, setData, post, processing, errors, reset } = useForm({
-        jawatan: "", // Only the jawatan is required
+    const { data, setData, post, errors } = useForm({
+        ic_num: '',
+        name: '',
+        email: '',
+        state: '',
+        district: '',
+        schoolName: '',
+        jawatan: '',
     });
 
-    const [isModalVisible, setIsModalVisible] = useState(false); // Define the modal visibility state
+    const handleInputChange = (e) => {
+        setData(e.target.name, e.target.value);
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('Submitting form with data:', {
-            ic_num: student.ic_num, // Pass the IC number from the student data
-            jawatan: data.jawatan, // Pass the selected jawatan
-        });
         post(route("student.applyCrewSubmit"), {
-            data: {
-                ic_num: student.ic_num,
-                jawatan: data.jawatan,
+            onSuccess: () => {
+                setIsModalVisible(true);
+            },
+            onError: (errors) => {
+                console.error(errors);
             },
         });
     };
 
-    useEffect(() => {
-        if (errors) {
-            console.log('Form submission errors:', errors);
-        }
-    }, [errors]);
+    const handleCloseModal = () => {
+        setIsModalVisible(false);
+    };
 
+    // CSS styles
     const styles = {
         page: { 
-          backgroundColor: "#ebf8ff", 
+          backgroundColor: "#f0f7ff", 
           minHeight: "100vh", 
           padding: "20px" },
         formContainer: {
@@ -123,71 +129,135 @@ export default function ApplyCrew({ student }) {
     };
 
     return (
-        <div className="min-h-screen bg-white flex">
-            {/* Left Column - Image */}
-            <div className="hidden lg:flex w-[100%] bg-[#4158A6] items-center justify-center">
-                <img
-                    src="/assets/login1.jpg"
-                    alt="Login Illustration"
-                    className="w-full h-full object-cover"
-                />
-            </div>
+        <div style={styles.page}>
+            <Head title="TVPSS | Permohonan Krew TVPSS" />
+            <StudentNavBar />
 
-            {/* Right Column - Apply Crew Form */}
-            <div className="w-full lg:w-1/2 flex items-center justify-center px-8 py-12 relative bg-gradient-to-b from-gray-50 to-white">
-                {/* Back Button */}
-                <Link
-                    href="/"
-                    className="absolute top-8 left-8 p-3 rounded-full hover:bg-white/80 transition-all duration-200 flex items-center justify-center group"
-                    aria-label="Kembali"
-                >
-                    <FaArrowLeft className="h-5 w-5 text-gray-600 group-hover:text-blue-600" />
-                </Link>
+            <div style={styles.formContainer}>
+                <div style={styles.formHeader}>
+                    <h1 style={styles.formTitle}>Permohonan Krew TVPSS</h1>
+                    <p style={styles.formSubtitle}>Sila isi maklumat anda dengan lengkap dan tepat</p>
+                </div>
 
-                {/* Form */}
-                <form onSubmit={handleSubmit} className="w-full max-w-md">
-                    <h2 className="text-2xl font-bold mb-6">Permohonan Krew</h2>
-
-                    {/* Display Student Data */}
-                    <div className="mb-4">
-                        <p className="text-sm font-medium text-gray-700">Nama Pelajar:</p>
-                        <p className="bg-gray-100 py-2 px-4 rounded-md">{student.name}</p>
-                    </div>
-                    <div className="mb-4">
-                        <p className="text-sm font-medium text-gray-700">IC No:</p>
-                        <p className="bg-gray-100 py-2 px-4 rounded-md">{student.ic_num}</p>
-                    </div>
-
-                    {/* Jawatan Input */}
-                    <div className="mb-4">
-                        <label htmlFor="jawatan" className="block text-sm font-medium text-gray-700">Jawatan</label>
+                <form onSubmit={handleSubmit}>
+                    <div style={styles.sectionTitle}>Maklumat Peribadi</div>
+                    <div style={styles.formGroup}>
+                        <div style={styles.iconContainer}>
+                            <User size={18} />
+                        </div>
                         <input
                             type="text"
-                            id="jawatan"
-                            value={data.jawatan}
-                            onChange={e => setData('jawatan', e.target.value)}
-                            className="mt- 1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-500"
+                            name="ic_num"
+                            placeholder="Nombor Kad Pengenalan (000000-00-0000)"
+                            style={styles.input}
+                            value={data.ic_num}
+                            onChange={handleInputChange}
                         />
-                        {errors.jawatan && <span className="text-red-500 text-sm">{errors.jawatan}</span>}
+                    </div>
+                    <div style={styles.formGroup}>
+                        <div style={styles.iconContainer}>
+                            <User size={18} />
+                        </div>
+                        <input
+                            type="text"
+                            name="name"
+                            placeholder="Nama Pelajar"
+                            style={styles.input}
+                            value={data.name}
+                            onChange={handleInputChange}
+                        />
+                    </div>
+                    <div style={styles.formGroup}>
+                        <div style={styles.iconContainer}>
+                            <Mail size={18} />
+                        </div>
+                        <input
+                            type="email"
+                            name="email"
+                            placeholder="Email Pelajar"
+                            style={styles.input}
+                            value={data.email}
+                            onChange={handleInputChange}
+                        />
                     </div>
 
-                    {/* Submit Button */}
-                    <button
-                        type="submit"
-                        className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-200"
-                        disabled={processing}
-                    >
-                        {processing ? (
-                            <svg className="animate-spin h-5 w-5 mx-auto text-white" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="4"></circle>
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
-                            </svg>
-                        ) : (
-                            "Hantar Permohonan"
-                        )}
+                    <div style={styles.sectionTitle}>Maklumat Sekolah</div>
+                    <div style={styles.formGroup}>
+                        <div style={styles.iconContainer}>
+                            <MapPin size={18} />
+                        </div>
+                        <input
+                            type="text"
+                            name="state"
+                            placeholder="Negeri"
+                            style={styles.input}
+                            value={data.state}
+                            onChange={handleInputChange}
+                        />
+                    </div>
+                    <div style={styles.formGroup}>
+                        <div style={styles.iconContainer}>
+                            <MapPin size={18} />
+                        </div>
+                        <input
+                            type="text"
+                            name="district"
+                            placeholder="Daerah"
+                            style={styles.input}
+                            value={data.district}
+                            onChange={handleInputChange}
+                        />
+                    </div>
+                    <div style={styles.formGroup}>
+                        <div style={styles.iconContainer}>
+                            <School size={18} />
+                        </div>
+                        <input
+                            type="text"
+                            name="schoolName"
+                            placeholder="Nama Sekolah"
+                            style={styles.input}
+                            value={data.schoolName}
+                            onChange={handleInputChange}
+                        />
+                    </div>
+
+                    <div style={styles.sectionTitle}>Maklumat Jawatan</div>
+                    <div style={styles.formGroup}>
+                        <div style={styles.iconContainer}>
+                            <Briefcase size={18} />
+                        </div>
+                        <select
+                            name="jawatan"
+                            style={styles.input}
+                            value={data.jawatan}
+                            onChange={handleInputChange}
+                        >
+                            <option value="">Pilih Jawatan Krew</option>
+                            <option value="Jurukamera">Jurukamera</option>
+                            <option value="Gaffer">Gaffer</option>
+                            <option value="Penemuduga">Penemuduga</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" style={styles.button}>
+                        <Send size={20} />
+                        Hantar Permohonan
                     </button>
                 </form>
+            </div>
+
+            <div style={styles.modal}>
+                <div style={styles.modalContent}>
+                    <CheckCircle size={50} style={styles.checkIcon} />
+                    <h2>Permohonan Berjaya Dihantar</h2>
+                    <button onClick={handleCloseModal} style={styles.okButton}>
+                        OK
+                    </button>
+                </div>
             </div>
         </div>
     );
 }
+
+export default ApplyCrew;
