@@ -95,32 +95,38 @@ class SchoolAdminController extends Controller
     {
         try {
             $data = $request->all();
-
-            // Start a transaction to handle both equipment and follow-up updates
             DB::beginTransaction();
 
-            // Create the equipment
+            $schoolId = SchoolInfo::where('user_id', $request->user()->id)->value('id');
+            $schoolFolder = "followUpEq/school_{$schoolId}";
+            $baseFolderPath = storage_path("app/public/{$schoolFolder}");
+
+            if (!is_dir($baseFolderPath)) {
+                mkdir($baseFolderPath, 0755, true); 
+            }
+
             $equipment = Equipment::create([
                 'equipName' => $data['equipName'],
                 'equipType' => $data['equipType'],
                 'location' => $data['location'],
                 'acquired_date' => $data['acquired_date'],
                 'status' => $data['status'],
-                'school_info_id' => SchoolInfo::where('user_id', $request->user()->id)->value('id'),
+                'school_info_id' => $schoolId,
             ]);
 
-            // If status is "Tidak Berfungsi," add a follow-up update
             if ($data['status'] === 'Tidak Berfungsi') {
                 $uploadPaths = [];
+
                 if ($request->hasFile('uploadBrEq')) {
                     foreach ($request->file('uploadBrEq') as $file) {
-                        $uploadPaths[] = $file->store('uploads/follow-ups', 'public');
+                        $filePath = $file->storeAs("public/{$schoolFolder}", $file->getClientOriginalName());
+                        $uploadPaths[] = str_replace('public/', '', $filePath); 
                     }
                 }
 
                 EqFollowUp::create([
-                    'equipment_id' => $equipment->id,
-                    'user_id' => $request->user()->id,
+                    'equipment_id' => $equipment->_id,
+                    'user_id' => $request->user()->_id,
                     'uploadBrEq' => !empty($uploadPaths) ? json_encode($uploadPaths) : null,
                     'content' => $data['followUpUpdateSchool'] ?? null,
                     'date' => now()->format('Y-m-d'),
