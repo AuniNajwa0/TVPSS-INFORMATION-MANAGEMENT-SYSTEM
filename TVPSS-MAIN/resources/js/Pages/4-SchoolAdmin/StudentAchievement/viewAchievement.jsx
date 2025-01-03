@@ -20,7 +20,7 @@ const ViewAchievement = () => {
                             <nav className="mb-8">
                                 <ol className="flex items-center space-x-2 text-gray-600">
                                     <li>
-                                        <a href="/achievementList" className="text-[#4158A6] hover:text-blue-800 font-medium">
+                                        <a href="/listAchievement" className="text-[#4158A6] hover:text-blue-800 font-medium">
                                             Pencapaian Pelajar
                                         </a>
                                     </li>
