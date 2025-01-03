@@ -55,10 +55,10 @@ function SchoolAdminSideBar() {
               active={url === "/listStudent"}
             />
             <SidebarLink
-              href="/permohonanKrew"
+              href="/studCrewList"
               icon={<FaPencilAlt size={20} />}
               label="Permohonan Krew"
-              active={url === "/permohonanKrew"}
+              active={url === "/studCrewList"}
             />
             <SidebarLink
               href="/listAchievement"
