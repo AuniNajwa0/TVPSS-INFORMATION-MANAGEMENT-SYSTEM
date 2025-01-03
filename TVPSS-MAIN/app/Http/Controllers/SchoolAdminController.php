@@ -12,6 +12,7 @@ use App\Models\SchoolInfo;
 use App\Models\TVPSSVersion;
 use App\Models\Student;
 use App\Models\StudentAchievement;
+use App\Models\Studcrew;
 use App\Models\EqFollowUp;
 use App\Enums\StatusEnum;
 use App\Enums\versionEnum;
@@ -773,6 +774,32 @@ class SchoolAdminController extends Controller
 
         return redirect()->route('student.studentList')->with('success', 'Student deleted successfully!');
     }
+
+    public function studCrewList(Request $request)
+    {
+        $user = $request->user();
+    
+        $school = SchoolInfo::where('user_id', $user->id)->first();
+    
+        // Fetch Studcrews with Student details
+        $query = Studcrew::with('student')->whereHas('student', function ($q) use ($school) {
+            $q->where('school_info_id', $school->id);
+        });
+    
+        if ($request->has('search')) {
+            $query->where('jawatan', 'like', '%' . $request->input('search') . '%')
+                  ->orWhere('status', 'like', '%' . $request->input('search') . '%');
+        }
+    
+        $studcrews = $query->paginate(10);
+    
+        return Inertia::render('4-SchoolAdmin/StudentManagement/studCrewList', [
+            'studcrews' => $studcrews,
+            'school' => $school,
+        ]);
+    }
+    
+
 
     public function achievementList(Request $request)
     {

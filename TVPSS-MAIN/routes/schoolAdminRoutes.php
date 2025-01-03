@@ -49,6 +49,9 @@ Route::post('/students', [SchoolAdminController::class, 'storeStudent'])->name('
 Route::get('/students/{id}/edit', [SchoolAdminController::class, 'studentEdit'])->name('student.edit');
 Route::put('/students/{id}', [SchoolAdminController::class, 'updateStudent'])->name('student.update');
 Route::delete('/students/{id}', [SchoolAdminController::class, 'deleteStudent'])->name('student.delete');
+// StudCrew Data
+Route::get('/studCrewList', [SchoolAdminController::class, 'studCrewList'])->name('studcrew.list');
+
 
 //Student Achievement
 Route::get('/listAchievement', [SchoolAdminController::class, 'achievementList'])->name('achievement.achievementList');
