@@ -1,39 +1,43 @@
 import React, { useState } from 'react';
 import { Head, router, usePage } from "@inertiajs/react";
-import { FaSearch, FaEdit, FaTrashAlt } from 'react-icons/fa'; 
-import SchoolAdminSideBar from "../SchoolAdminSideBar"; 
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout"; 
+import { FaSearch, FaEdit, FaTrashAlt } from 'react-icons/fa'; // Import the necessary icons
+import SchoolAdminSideBar from "../SchoolAdminSideBar"; // Import the sidebar component
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout"; // Import the authenticated layout
 
 const StudCrewList = ({ studcrews, school }) => {
     const [search, setSearch] = useState('');
-    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [rowsPerPage, setRowsPerPage] = useState(5); // State for rows per page
 
+    // Function to handle search
     const handleSearch = (e) => {
         e.preventDefault();
         Inertia.get(route('studcrew.list'), { search });
     };
 
-    
+    // Function to handle rows per page change
     const handleRowsPerPageChange = (e) => {
         setRowsPerPage(e.target.value);
         Inertia.get(route('studcrew.list'), { search, rowsPerPage: e.target.value });
     };
 
+    // Function to determine the status color
     const getStatusColor = (status) => {
         switch (status) {
-            case 'Active':
-                return 'bg-green-500 text-white';
-            case 'Inactive':
-                return 'bg-yellow-500 text-white';
             case 'Pending':
-                return 'bg-gray-500 text-white';
+                return 'bg-yellow-200 text-yellow-700';
+            case 'Approved':
+                return 'bg-green-200 text-green-700';
+            case 'Rejected':
+                return 'bg-red-200 text-red-700';
             default:
                 return 'bg-gray-200 text-gray-600';
         }
     };
 
+    // Function to handle export
     const handleExport = () => {
         console.log("Exporting data...");
+        // Add your export logic here (e.g., downloading a file, calling an API, etc.)
     };
 
     return (
@@ -70,7 +74,7 @@ const StudCrewList = ({ studcrews, school }) => {
                                 <FaSearch className="absolute right-3 text-gray-400 text-xl" />
                                 <input
                                     type="text"
-                                    placeholder="Cari Pelajar..."
+                                    placeholder="Cari Nama atau No. IC Pelajar..."
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
                                     onKeyPress={(e) => e.key === 'Enter' && handleSearch(e)} // Trigger search on Enter
@@ -80,10 +84,10 @@ const StudCrewList = ({ studcrews, school }) => {
 
                             {/* Export and Bilangan Data Dropdown */}
                             <div className="flex items-center space-x-4">
-                            <button
-                                    onClick={handleExport}
+                                <button
                                     style={{ marginTop: '1.45rem' }}
-                                    className="px-4 py-2 bg-[#666969] text-white rounded-lg shadow hover:bg-[#5c5f5f] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all"
+                                    onClick={handleExport} // Call handleExport on button click
+                                    className="bg-[#455185] text-white rounded-2xl px-6 py-3 ml-4 hover:bg-[#3d4674] transition-all"
                                 >
                                     Eksport
                                 </button>
@@ -115,16 +119,17 @@ const StudCrewList = ({ studcrews, school }) => {
                             <thead>
                                 <tr className="bg-white">
                                     <th className="border-b px-4 py-6">Bil</th>
+                                    <th className="border-b px-4 py-6">Nama Pelajar</th>
+                                    <th className="border-b px-4 py-6">No Kad Pengenalan</th>
                                     <th className="border-b px-4 py-6">Jawatan</th>
                                     <th className="border-b px-4 py-6">Status</th>
-                                    <th className="border-b px-4 py-6">No. ID Pelajar</th>
                                     <th className="border-b px-4 py-6 text-center">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {studcrews.data.length === 0 ? (
                                     <tr>
-                                        <td colSpan="5" className="text-center py-4">
+                                        <td colSpan="6" className="text-center py-4">
                                             Tiada Data Ditemui
                                         </td>
                                     </tr>
@@ -134,23 +139,21 @@ const StudCrewList = ({ studcrews, school }) => {
                                             <td className="border-b px-4 py-6">
                                                 {(studcrews.current_page - 1) * studcrews.per_page + index + 1}
                                             </td>
+                                            <td className="border-b px-4 py-6">{crew.student.name}</td> {/* Show student's name */}
+                                            <td className="border-b px-4 py-6">{crew.student.ic_num}</td> {/* Show student's IC number */}
                                             <td className="border-b px-4 py-6">{crew.jawatan}</td>
-                                            
-                                            {/* Status Column */}
                                             <td className="border-b px-4 py-6">
                                                 <span
-                                                    className={`inline-block px-3 py-1 rounded-full text-xs ${getStatusColor(crew.status)}`}
+                                                    className={`px-2 py-1 rounded-full ${getStatusColor(crew.status)}`}
                                                 >
                                                     {crew.status}
                                                 </span>
                                             </td>
-
-                                            <td className="border-b px-4 py-6">{crew.student_id}</td>
                                             <td className="border-b px-6 py-4 text-center">
                                                 <div className="flex justify-center items-center space-x-4">
                                                     {/* Edit and Delete Icons */}
                                                     <button
-                                                        onClick={() => Inertia.get(`/studcrew/${crew.id}`)}
+                                                        onClick={() => Inertia.get(`/studcrew/${crew.id}/edit`)}
                                                         className="text-gray-400 hover:text-gray-600"
                                                     >
                                                         <FaEdit size={18} />
