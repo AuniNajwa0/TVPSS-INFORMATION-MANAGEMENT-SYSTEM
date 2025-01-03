@@ -93,7 +93,6 @@ export default function AddEquipment() {
 
     return (
         <AuthenticatedLayout
-            header={<h2 className="text-xl font-semibold leading-tight text-gray-800">Tambah Barang</h2>}
         >
             <Head title="TVPSS | Tambah Barang" />
             <div className="flex">
@@ -102,6 +101,25 @@ export default function AddEquipment() {
                 </div>
 
                 <div className="flex-1 p-6">
+                    {/* Breadcrumb Section */}
+                    <div className="w-full p-6">
+                        <div className="flex items-center text-left">
+                            <nav className="mb-8">
+                                <ol className="flex items-center space-x-2 text-gray-600">
+                                    <li>
+                                        <a href="/listEquipment" className="text-[#4158A6] hover:text-blue-800 font-medium">
+                                            Pengurusan Peralatan
+                                        </a>
+                                    </li>
+                                    <li className="text-gray-500">/</li>
+                                    <li className="text-gray-900 font-medium">
+                                        Tambah Lokasi
+                                    </li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+
                     <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
                         <div className="p-6 border-b border-gray-200">
                             <div className="flex items-center space-x-2">
