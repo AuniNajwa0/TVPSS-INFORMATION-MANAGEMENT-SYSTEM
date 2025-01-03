@@ -899,7 +899,30 @@ class SchoolAdminController extends Controller
             'school' => $school,
         ]);
     }
-    
+
+    public function editStudcrew()
+    {
+        /*try {
+            $user = auth()->user();
+
+            $school = SchoolInfo::where('user_id', $user->id)->firstOrFail();
+
+            $studcrew = Studcrew::whereHas('student', function ($query) use ($school) {
+                $query->where('school_info_id', $school->id);
+            })
+            ->with('student')
+            ->firstOrFail(); 
+
+            return inertia('4-SchoolAdmin/StudentManagement/approveStudCrew', [
+                'studcrew' => $studcrew,
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Failed to fetch Studcrew details', ['error' => $e->getMessage()]);
+            return redirect()->back()->with('error', 'Failed to fetch Studcrew details. Please try again.');
+        }*/
+
+        return inertia('4-SchoolAdmin/StudentManagement/approveStudCrew');
+    }
 
 
     public function achievementList(Request $request)
