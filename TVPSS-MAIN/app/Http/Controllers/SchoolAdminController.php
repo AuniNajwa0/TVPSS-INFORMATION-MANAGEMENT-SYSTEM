@@ -95,7 +95,6 @@ class SchoolAdminController extends Controller
     {
         try {
             $data = $request->all();
-
             DB::beginTransaction();
 
             $school = SchoolInfo::where('user_id', $request->user()->id)->first();
@@ -281,12 +280,10 @@ class SchoolAdminController extends Controller
 
         try {
             $data = $request->all();
-
             if ($request->equipType === 'other' && $request->has('otherType')) {
-                $data['equipType'] = $request->input('otherType'); 
+                $data['equipType'] = $request->input('otherType');
             }
 
-            // Update the equipment details
             $equipment->update([
                 'equipName' => $data['equipName'],
                 'equipType' => $data['equipType'],
@@ -295,17 +292,22 @@ class SchoolAdminController extends Controller
                 'status' => $data['status'],
             ]);
 
-            // Handle follow-up updates if status is "Tidak Berfungsi"
-            if ($data['status'] === 'Tidak Berfungsi') {
-                $uploadPaths = [];
+            $uploadPaths = [];
 
-                if ($request->hasFile('uploadBrEq')) {
-                    foreach ($request->file('uploadBrEq') as $file) {
-                        $uploadPaths[] = $file->store('uploads/follow-ups', 'public');
-                    }
+            if ($request->hasFile('uploadBrEq')) {
+                foreach ($request->file('uploadBrEq') as $file) {
+                    $schoolFolder = "followUpEq/school_{$school->id}";
+                    $filePath = $file->storeAs(
+                        $schoolFolder,
+                        $file->getClientOriginalName(),
+                        'public'
+                    );
+
+                    $uploadPaths[] = "{$schoolFolder}/{$file->getClientOriginalName()}"; 
                 }
+            }
 
-                // Create a new follow-up record
+            if (!empty($data['followUpUpdateSchool']) || !empty($uploadPaths)) {
                 EqFollowUp::create([
                     'equipment_id' => $equipment->id,
                     'user_id' => $user->id,
@@ -321,7 +323,6 @@ class SchoolAdminController extends Controller
             return back()->with('error', 'An error occurred while updating equipment.');
         }
     }
-
 
     public function equipmentDestroy(Equipment $equipment)
     {
