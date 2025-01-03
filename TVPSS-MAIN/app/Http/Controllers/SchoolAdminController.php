@@ -96,14 +96,12 @@ class SchoolAdminController extends Controller
     {
         try {
             $data = $request->all();
+
             DB::beginTransaction();
 
-            $schoolId = SchoolInfo::where('user_id', $request->user()->id)->value('id');
-            $schoolFolder = "followUpEq/school_{$schoolId}";
-            $baseFolderPath = storage_path("app/public/{$schoolFolder}");
-
-            if (!is_dir($baseFolderPath)) {
-                mkdir($baseFolderPath, 0755, true); 
+            $school = SchoolInfo::where('user_id', $request->user()->id)->first();
+            if (!$school) {
+                throw new \Exception('School information not found.');
             }
 
             $equipment = Equipment::create([
@@ -112,7 +110,7 @@ class SchoolAdminController extends Controller
                 'location' => $data['location'],
                 'acquired_date' => $data['acquired_date'],
                 'status' => $data['status'],
-                'school_info_id' => $schoolId,
+                'school_info_id' => $school->id,
             ]);
 
             if ($data['status'] === 'Tidak Berfungsi') {
@@ -120,14 +118,21 @@ class SchoolAdminController extends Controller
 
                 if ($request->hasFile('uploadBrEq')) {
                     foreach ($request->file('uploadBrEq') as $file) {
-                        $filePath = $file->storeAs("public/{$schoolFolder}", $file->getClientOriginalName());
-                        $uploadPaths[] = str_replace('public/', '', $filePath); 
+                        $schoolFolder = "followUpEq/school_{$school->id}";
+
+                        $filePath = $file->storeAs(
+                            $schoolFolder,
+                            $file->getClientOriginalName(),
+                            'public'
+                        );
+
+                        $uploadPaths[] = "{$schoolFolder}/{$file->getClientOriginalName()}"; // Store the relative path
                     }
                 }
 
                 EqFollowUp::create([
-                    'equipment_id' => $equipment->_id,
-                    'user_id' => $request->user()->_id,
+                    'equipment_id' => $equipment->id,
+                    'user_id' => $request->user()->id,
                     'uploadBrEq' => !empty($uploadPaths) ? json_encode($uploadPaths) : null,
                     'content' => $data['followUpUpdateSchool'] ?? null,
                     'date' => now()->format('Y-m-d'),
@@ -139,10 +144,11 @@ class SchoolAdminController extends Controller
             return redirect()->route('equipment.equipmentIndex')->with('success', 'Equipment successfully added!');
         } catch (\Exception $e) {
             DB::rollBack();
-
-            return back()->with('error', 'An error occurred: ' . $e->getMessage());
+            Log::error('Error storing equipment: ' . $e->getMessage());
+            return back()->with('error', 'An error occurred while storing equipment.');
         }
     }
+
 
     public function equipmentShow(Equipment $equipment)
     {
@@ -157,7 +163,7 @@ class SchoolAdminController extends Controller
         ]);
     }
 
-    public function equipmentEdit($id)
+    /*public function equipmentEdit($id)
     {
         $user = request()->user();
 
@@ -181,9 +187,42 @@ class SchoolAdminController extends Controller
             'equipment' => $equipment,
             'eqLocation' => $eqLocation,
         ]);
+    }*/
+
+    public function equipmentEdit($id)
+    {
+        $user = request()->user();
+
+        $school = SchoolInfo::where('user_id', $user->id)->first();
+
+        if (!$school) {
+            return redirect()->route('school.edit')->with('error', 'Please complete your school information first.');
+        }
+
+        $equipment = Equipment::where('id', $id)
+            ->where('school_info_id', $school->id)
+            ->first();
+
+        if (!$equipment) {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $eqLocation = EqLocation::where('school_info_id', $school->id)->get();
+
+        // Fetch follow-up updates for the equipment
+        $followUps = EqFollowUp::where('equipment_id', $id)
+            ->with('user') // Include the user who submitted the update
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return Inertia::render('4-SchoolAdmin/ManageEquipment/UpdateEquipment', [
+            'equipment' => $equipment,
+            'eqLocation' => $eqLocation,
+            'followUps' => $followUps,
+        ]);
     }
 
-    public function equipmentUpdate(UpdateEquipmentRequest $request, $id)
+    /*public function equipmentUpdate(UpdateEquipmentRequest $request, $id)
     {
         $user = request()->user();
 
@@ -221,7 +260,69 @@ class SchoolAdminController extends Controller
             Log::error('Error updating equipment:', ['message' => $e->getMessage()]);
             return back()->with('error', 'An error occurred while updating equipment.');
         }
+    }*/
+
+    public function equipmentUpdate(UpdateEquipmentRequest $request, $id)
+    {
+        $user = request()->user();
+
+        $school = SchoolInfo::where('user_id', $user->id)->first();
+
+        if (!$school) {
+            return redirect()->route('school.edit')->with('error', 'Please complete your school information first.');
+        }
+
+        $equipment = Equipment::where('id', $id)
+            ->where('school_info_id', $school->id)
+            ->first();
+
+        if (!$equipment) {
+            abort(403, 'Unauthorized access.');
+        }
+
+        try {
+            $data = $request->all();
+
+            if ($request->equipType === 'other' && $request->has('otherType')) {
+                $data['equipType'] = $request->input('otherType'); 
+            }
+
+            // Update the equipment details
+            $equipment->update([
+                'equipName' => $data['equipName'],
+                'equipType' => $data['equipType'],
+                'location' => $data['location'],
+                'acquired_date' => $data['acquired_date'],
+                'status' => $data['status'],
+            ]);
+
+            // Handle follow-up updates if status is "Tidak Berfungsi"
+            if ($data['status'] === 'Tidak Berfungsi') {
+                $uploadPaths = [];
+
+                if ($request->hasFile('uploadBrEq')) {
+                    foreach ($request->file('uploadBrEq') as $file) {
+                        $uploadPaths[] = $file->store('uploads/follow-ups', 'public');
+                    }
+                }
+
+                // Create a new follow-up record
+                EqFollowUp::create([
+                    'equipment_id' => $equipment->id,
+                    'user_id' => $user->id,
+                    'uploadBrEq' => !empty($uploadPaths) ? json_encode($uploadPaths) : null,
+                    'content' => $data['followUpUpdateSchool'] ?? null,
+                    'date' => now()->format('Y-m-d'),
+                ]);
+            }
+
+            return redirect()->route('equipment.equipmentIndex')->with('success', 'Equipment successfully updated!');
+        } catch (\Exception $e) {
+            Log::error('Error updating equipment:', ['message' => $e->getMessage()]);
+            return back()->with('error', 'An error occurred while updating equipment.');
+        }
     }
+
 
     public function equipmentDestroy(Equipment $equipment)
     {
