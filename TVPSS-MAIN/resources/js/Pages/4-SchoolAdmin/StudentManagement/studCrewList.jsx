@@ -3,6 +3,7 @@ import { Head, router, usePage } from "@inertiajs/react";
 import { FaSearch, FaEdit, FaTrashAlt } from 'react-icons/fa'; // Import the necessary icons
 import SchoolAdminSideBar from "../SchoolAdminSideBar"; // Import the sidebar component
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout"; // Import the authenticated layout
+import { Inertia } from "@inertiajs/inertia";
 
 const StudCrewList = ({ studcrews, school }) => {
     const [search, setSearch] = useState('');
@@ -139,8 +140,8 @@ const StudCrewList = ({ studcrews, school }) => {
                                             <td className="border-b px-4 py-6">
                                                 {(studcrews.current_page - 1) * studcrews.per_page + index + 1}
                                             </td>
-                                            <td className="border-b px-4 py-6">{crew.student.name}</td> {/* Show student's name */}
-                                            <td className="border-b px-4 py-6">{crew.student.ic_num}</td> {/* Show student's IC number */}
+                                            <td className="border-b px-4 py-6">{crew.student.name}</td>
+                                            <td className="border-b px-4 py-6">{crew.student.ic_num}</td>
                                             <td className="border-b px-4 py-6">{crew.jawatan}</td>
                                             <td className="border-b px-4 py-6">
                                                 <span
@@ -153,7 +154,8 @@ const StudCrewList = ({ studcrews, school }) => {
                                                 <div className="flex justify-center items-center space-x-4">
                                                     {/* Edit and Delete Icons */}
                                                     <button
-                                                        onClick={() => Inertia.get(`/studcrew/${crew.id}/edit`)}
+                                                        //onClick={() => Inertia.get(`/studcrew/approve`)}
+                                                        onClick={() => Inertia.get(`/studcrew/approve`)}
                                                         className="text-gray-400 hover:text-gray-600"
                                                     >
                                                         <FaEdit size={18} />
