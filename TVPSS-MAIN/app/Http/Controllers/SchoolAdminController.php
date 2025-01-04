@@ -96,7 +96,6 @@ class SchoolAdminController extends Controller
     {
         try {
             $data = $request->all();
-
             DB::beginTransaction();
 
             $school = SchoolInfo::where('user_id', $request->user()->id)->first();
@@ -264,31 +263,24 @@ class SchoolAdminController extends Controller
 
     public function equipmentUpdate(UpdateEquipmentRequest $request, $id)
     {
-        $user = request()->user();
-
-        $school = SchoolInfo::where('user_id', $user->id)->first();
-
-        if (!$school) {
-            return redirect()->route('school.edit')->with('error', 'Please complete your school information first.');
-        }
-
-        $equipment = Equipment::where('id', $id)
-            ->where('school_info_id', $school->id)
-            ->first();
-
-        if (!$equipment) {
-            abort(403, 'Unauthorized access.');
-        }
-
         try {
-            $data = $request->all();
+            DB::beginTransaction();
 
-            if ($request->equipType === 'other' && $request->has('otherType')) {
-                $data['equipType'] = $request->input('otherType'); 
+            Log::info('Incoming Request:', $request->all());
+
+            $user = $request->user();
+            $school = SchoolInfo::where('user_id', $user->id)->firstOrFail();
+
+            $equipment = $school->equipment()->find($id);
+            if (!$equipment) {
+                throw new \Exception('Equipment not found or unauthorized access.');
             }
 
-            // Update the equipment details
-            $equipment->update([
+            $data = $request->validated();
+            Log::info('Validated Data:', $data);
+
+            // Update Equipment
+            $equipmentUpdated = $equipment->update([
                 'equipName' => $data['equipName'],
                 'equipType' => $data['equipType'],
                 'location' => $data['location'],
@@ -296,33 +288,47 @@ class SchoolAdminController extends Controller
                 'status' => $data['status'],
             ]);
 
-            // Handle follow-up updates if status is "Tidak Berfungsi"
-            if ($data['status'] === 'Tidak Berfungsi') {
-                $uploadPaths = [];
+            if (!$equipmentUpdated) {
+                throw new \Exception('Failed to update equipment.');
+            }
 
-                if ($request->hasFile('uploadBrEq')) {
-                    foreach ($request->file('uploadBrEq') as $file) {
-                        $uploadPaths[] = $file->store('uploads/follow-ups', 'public');
-                    }
+            Log::info('Equipment Updated:', ['success' => $equipmentUpdated]);
+
+            // Handle file uploads
+            $uploadPaths = [];
+            if ($request->hasFile('uploadBrEq')) {
+                foreach ($request->file('uploadBrEq') as $file) {
+                    $schoolFolder = "followUpEq/school_{$school->id}";
+                    $uploadPaths[] = $file->storeAs(
+                        $schoolFolder,
+                        time() . '_' . $file->getClientOriginalName(),
+                        'public'
+                    );
                 }
+            }
 
-                // Create a new follow-up record
-                EqFollowUp::create([
+            // Create Follow-Up
+            if (!empty($data['followUpUpdateSchool']) || !empty($uploadPaths)) {
+                $followUp = EqFollowUp::create([
                     'equipment_id' => $equipment->id,
                     'user_id' => $user->id,
                     'uploadBrEq' => !empty($uploadPaths) ? json_encode($uploadPaths) : null,
                     'content' => $data['followUpUpdateSchool'] ?? null,
                     'date' => now()->format('Y-m-d'),
                 ]);
+
+                Log::info('Follow-Up Created:', $followUp->toArray());
             }
+
+            DB::commit();
 
             return redirect()->route('equipment.equipmentIndex')->with('success', 'Equipment successfully updated!');
         } catch (\Exception $e) {
+            DB::rollBack();
             Log::error('Error updating equipment:', ['message' => $e->getMessage()]);
             return back()->with('error', 'An error occurred while updating equipment.');
         }
     }
-
 
     public function equipmentDestroy(Equipment $equipment)
     {
