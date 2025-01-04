@@ -95,8 +95,54 @@ export default function UpdateEquipment({ equipment, eqLocation, followUps }) {
         });
     };*/
 
-    const handleSubmit = (e) => {
+    const handleFollowUpSubmit = async (e) => {
         e.preventDefault();
+
+        const formDataToSubmit = new FormData();
+        formDataToSubmit.append(
+            "followUpUpdateSchool",
+            formData.followUpUpdateSchool || ""
+        );
+        if (formData.uploadBrEq) {
+            formData.uploadBrEq.forEach((file) => {
+                formDataToSubmit.append("uploadBrEq[]", file);
+            });
+        }
+
+        try {
+            const response = await fetch(
+                `/equipment/${equipment.id}/follow-up`,
+                {
+                    method: "POST",
+                    body: formDataToSubmit,
+                }
+            );
+
+            const result = await response.json();
+            if (result.success) {
+                const updatedFollowUps = await fetch(
+                    `/equipment/${equipment.id}/follow-ups`
+                ).then((res) => res.json());
+                setFollowUps(updatedFollowUps);
+                setFormData((prev) => ({
+                    ...prev,
+                    followUpUpdateSchool: "",
+                    uploadBrEq: [],
+                }));
+                setFilePreviews([]);
+                setMessage("Maklumat Kerosakan berjaya disimpan!");
+            } else {
+                setMessage("Gagal menyimpan maklumat kerosakan.");
+            }
+        } catch (error) {
+            console.error("Error saving follow-up:", error);
+            setMessage("Ralat berlaku semasa menyimpan maklumat kerosakan.");
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setIsLoading(true);
 
         const formDataToSubmit = new FormData();
         Object.entries(formData).forEach(([key, value]) => {
@@ -109,14 +155,32 @@ export default function UpdateEquipment({ equipment, eqLocation, followUps }) {
             }
         });
 
-        Inertia.put(
-            route("equipment.equipmentUpdate", { id: equipment.id }),
-            formDataToSubmit,
-            {
-                onSuccess: () => setMessage("Kemaskini berjaya!"),
-                onError: (errors) => setErrors(errors),
-            }
-        );
+        // Debugging: Log all FormData entries
+        console.log("FormData to submit:");
+        for (let [key, value] of formDataToSubmit.entries()) {
+            console.log(`${key}:`, value);
+        }
+
+        try {
+            // Send data using Inertia
+            await Inertia.put(`/equipment/${equipment.id}`, formDataToSubmit, {
+                preserveScroll: true, // Prevent scroll reset
+                onSuccess: () => {
+                    setMessage("Kemaskini berjaya!");
+                    console.log("Equipment updated successfully.");
+                    setIsLoading(false); // Reset loading state
+                },
+                onError: (errors) => {
+                    console.error("Validation errors:", errors);
+                    setErrors(errors); // Display validation errors
+                    setIsLoading(false); // Reset loading state
+                },
+            });
+        } catch (error) {
+            console.error("Unexpected error:", error);
+            setMessage("An unexpected error occurred.");
+            setIsLoading(false); // Reset loading state
+        }
     };
 
     const InputField = ({ icon: Icon, label, ...props }) => (
@@ -295,6 +359,46 @@ export default function UpdateEquipment({ equipment, eqLocation, followUps }) {
                                         ))}
                                     </SelectField>
 
+                                    <div className="flex justify-end space-x-4 mt-8">
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                Inertia.get("/listEquipment")
+                                            }
+                                            className="px-6 py-3 bg-gray-500 text-white rounded-xl shadow-md hover:bg-gray-600 transition-colors duration-300"
+                                        >
+                                            Batal
+                                        </button>
+                                        <button
+                                            type="submit"
+                                            disabled={isLoading}
+                                            className="px-6 py-3 bg-blue-600 text-white rounded-xl shadow-md hover:bg-blue-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        >
+                                            {isLoading ? (
+                                                <span className="flex items-center gap-2">
+                                                    <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
+                                                    Mengemaskini...
+                                                </span>
+                                            ) : (
+                                                "Kemaskini"
+                                            )}
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Follow-ups Section */}
+                    {followUps.length > 0 && (
+                        <div className="w-2/5">
+                            <div className="bg-white rounded-3xl shadow-xl border border-gray-100 transition-all duration-300 hover:shadow-2xl sticky top-8">
+                                <div className="p-6">
+                                    <h4 className="text-2xl font-bold text-blue-700 bg-gray-50 p-4 rounded-xl mb-4">
+                                        Follow-Up Updates
+                                    </h4>
+
+                                    {/* Add New Follow-Up Section */}
                                     {formData.status === "Tidak Berfungsi" && (
                                         <div className="space-y-6 p-6 bg-gray-50 rounded-xl border border-gray-200">
                                             <InputField
@@ -303,7 +407,8 @@ export default function UpdateEquipment({ equipment, eqLocation, followUps }) {
                                                 type="text"
                                                 name="followUpUpdateSchool"
                                                 value={
-                                                    formData.followUpUpdateSchool
+                                                    formData.followUpUpdateSchool ||
+                                                    ""
                                                 }
                                                 onChange={handleInputChange}
                                                 placeholder="Maklumat Kerosakan Barang"
@@ -373,9 +478,7 @@ export default function UpdateEquipment({ equipment, eqLocation, followUps }) {
                                                                                 newPreviews
                                                                             );
                                                                             const newFiles =
-                                                                                Array.from(
-                                                                                    formData.uploadBrEq
-                                                                                ).filter(
+                                                                                formData.uploadBrEq.filter(
                                                                                     (
                                                                                         _,
                                                                                         i
@@ -407,47 +510,26 @@ export default function UpdateEquipment({ equipment, eqLocation, followUps }) {
                                                     )}
                                                 </div>
                                             </div>
+
+                                            {/* Add Save Follow-Up Button */}
+                                            <div className="flex justify-end">
+                                                <button
+                                                    type="button"
+                                                    onClick={
+                                                        handleFollowUpSubmit
+                                                    }
+                                                    className="px-6 py-3 bg-green-600 text-white rounded-xl shadow-md hover:bg-green-700 transition-colors duration-300"
+                                                >
+                                                    Save Follow-Up
+                                                </button>
+                                            </div>
                                         </div>
                                     )}
 
-                                    <div className="flex justify-end space-x-4 mt-8">
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                Inertia.get("/listEquipment")
-                                            }
-                                            className="px-6 py-3 bg-gray-500 text-white rounded-xl shadow-md hover:bg-gray-600 transition-colors duration-300"
-                                        >
-                                            Batal
-                                        </button>
-                                        <button
-                                            type="submit"
-                                            disabled={isLoading}
-                                            className="px-6 py-3 bg-blue-600 text-white rounded-xl shadow-md hover:bg-blue-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                                        >
-                                            {isLoading ? (
-                                                <span className="flex items-center gap-2">
-                                                    <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
-                                                    Mengemaskini...
-                                                </span>
-                                            ) : (
-                                                "Kemaskini"
-                                            )}
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
+                                    <br></br>
+                                    <hr></hr>
 
-                    {/* Follow-ups Section */}
-                    {followUps.length > 0 && (
-                        <div className="w-2/5">
-                            <div className="bg-white rounded-3xl shadow-xl border border-gray-100 transition-all duration-300 hover:shadow-2xl sticky top-8">
-                                <div className="p-6">
-                                    <h4 className="text-2xl font-bold text-blue-700 bg-gray-50 p-4 rounded-xl mb-4">
-                                        Follow-Up Updates
-                                    </h4>
+                                    {/* Existing Follow-Ups */}
                                     <div className="space-y-4">
                                         {followUps.map((update, index) => (
                                             <div
@@ -456,7 +538,6 @@ export default function UpdateEquipment({ equipment, eqLocation, followUps }) {
                                             >
                                                 <div className="flex items-start gap-3">
                                                     <div className="flex-shrink-0">
-                                                        {/* User Avatar */}
                                                         <div className="w-12 h-12 rounded-full border-2 border-white shadow-lg overflow-hidden">
                                                             <div className="w-full h-full bg-white flex items-center justify-center">
                                                                 <FiUser
