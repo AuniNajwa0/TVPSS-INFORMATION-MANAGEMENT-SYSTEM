@@ -207,10 +207,8 @@ class SchoolAdminController extends Controller
         }
 
         $eqLocation = EqLocation::where('school_info_id', $school->id)->get();
-
-        // Fetch follow-up updates for the equipment
         $followUps = EqFollowUp::where('equipment_id', $id)
-            ->with('user') // Include the user who submitted the update
+            ->with('user') 
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -266,21 +264,16 @@ class SchoolAdminController extends Controller
         try {
             DB::beginTransaction();
 
-            Log::info('Incoming Request:', $request->all());
-
+            // Fetch authenticated user and associated school
             $user = $request->user();
             $school = SchoolInfo::where('user_id', $user->id)->firstOrFail();
 
-            $equipment = $school->equipment()->find($id);
-            if (!$equipment) {
-                throw new \Exception('Equipment not found or unauthorized access.');
-            }
+            // Find the equipment linked to the school and ID
+            $equipment = $school->equipment()->findOrFail($id);
 
+            // Update equipment details
             $data = $request->validated();
-            Log::info('Validated Data:', $data);
-
-            // Update Equipment
-            $equipmentUpdated = $equipment->update([
+            $equipment->update([
                 'equipName' => $data['equipName'],
                 'equipType' => $data['equipType'],
                 'location' => $data['location'],
@@ -288,46 +281,80 @@ class SchoolAdminController extends Controller
                 'status' => $data['status'],
             ]);
 
-            if (!$equipmentUpdated) {
-                throw new \Exception('Failed to update equipment.');
+            DB::commit();
+
+            return redirect()->route('equipment.edit', ['equipment' => $id])
+                ->with('success', 'Equipment successfully updated!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error updating equipment:', [
+                'message' => $e->getMessage(),
+                'equipment_id' => $id,
+                'user_id' => $request->user()->id,
+            ]);
+
+            return back()->with('error', 'An error occurred while updating equipment.');
+        }
+    }
+
+    public function saveFollowUp(Request $request, $equipmentId)
+    {
+        try {
+            DB::beginTransaction();
+
+            // Fetch authenticated user and associated equipment
+            $user = $request->user();
+            $equipment = Equipment::findOrFail($equipmentId);
+
+            if ($equipment->status !== 'Tidak Berfungsi') {
+                throw new \Exception('Follow-ups can only be created for equipment with status "Tidak Berfungsi".');
             }
 
-            Log::info('Equipment Updated:', ['success' => $equipmentUpdated]);
-
-            // Handle file uploads
+            // Process uploaded files
             $uploadPaths = [];
             if ($request->hasFile('uploadBrEq')) {
                 foreach ($request->file('uploadBrEq') as $file) {
-                    $schoolFolder = "followUpEq/school_{$school->id}";
-                    $uploadPaths[] = $file->storeAs(
-                        $schoolFolder,
-                        time() . '_' . $file->getClientOriginalName(),
-                        'public'
-                    );
+                    $schoolFolder = "followUpEq/school_{$equipment->school_info_id}";
+                    $uniqueFileName = time() . '_' . $file->getClientOriginalName();
+
+                    $filePath = $file->storeAs($schoolFolder, $uniqueFileName, 'public');
+                    $uploadPaths[] = "{$schoolFolder}/{$uniqueFileName}";
                 }
             }
 
-            // Create Follow-Up
-            if (!empty($data['followUpUpdateSchool']) || !empty($uploadPaths)) {
-                $followUp = EqFollowUp::create([
-                    'equipment_id' => $equipment->id,
-                    'user_id' => $user->id,
-                    'uploadBrEq' => !empty($uploadPaths) ? json_encode($uploadPaths) : null,
-                    'content' => $data['followUpUpdateSchool'] ?? null,
-                    'date' => now()->format('Y-m-d'),
-                ]);
-
-                Log::info('Follow-Up Created:', $followUp->toArray());
-            }
+            // Create a follow-up entry
+            EqFollowUp::create([
+                'equipment_id' => $equipment->id,
+                'user_id' => $user->id,
+                'uploadBrEq' => !empty($uploadPaths) ? json_encode($uploadPaths) : null,
+                'content' => $request->input('followUpUpdateSchool'),
+                'date' => now()->format('Y-m-d'),
+            ]);
 
             DB::commit();
 
-            return redirect()->route('equipment.equipmentIndex')->with('success', 'Equipment successfully updated!');
+            return redirect()->route('equipment.edit', ['equipment' => $equipmentId])
+                ->with('success', 'Follow-up successfully saved!');
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error updating equipment:', ['message' => $e->getMessage()]);
-            return back()->with('error', 'An error occurred while updating equipment.');
+            Log::error('Error saving follow-up:', [
+                'message' => $e->getMessage(),
+                'equipment_id' => $equipmentId,
+                'user_id' => $request->user()->id,
+            ]);
+
+            return back()->with('error', 'An error occurred while saving the follow-up.');
         }
+    }
+
+    public function getFollowUps($equipmentId)
+    {
+        $followUps = EqFollowUp::where('equipment_id', $equipmentId)
+            ->with('user')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json($followUps);
     }
 
     public function equipmentDestroy(Equipment $equipment)
