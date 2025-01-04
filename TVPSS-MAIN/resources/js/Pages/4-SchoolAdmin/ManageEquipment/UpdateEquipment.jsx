@@ -97,21 +97,27 @@ export default function UpdateEquipment({ equipment, eqLocation, followUps }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-    
+
         const formDataToSubmit = new FormData();
         Object.entries(formData).forEach(([key, value]) => {
             if (key === "uploadBrEq") {
-                value.forEach((file) => formDataToSubmit.append("uploadBrEq[]", file));
+                value.forEach((file) =>
+                    formDataToSubmit.append("uploadBrEq[]", file)
+                );
             } else {
                 formDataToSubmit.append(key, value);
             }
         });
-    
-        Inertia.put(route("equipment.equipmentUpdate", { id: equipment.id }), formDataToSubmit, {
-            onSuccess: () => setMessage("Kemaskini berjaya!"),
-            onError: (errors) => setErrors(errors),
-        });
-    };      
+
+        Inertia.put(
+            route("equipment.equipmentUpdate", { id: equipment.id }),
+            formDataToSubmit,
+            {
+                onSuccess: () => setMessage("Kemaskini berjaya!"),
+                onError: (errors) => setErrors(errors),
+            }
+        );
+    };
 
     const InputField = ({ icon: Icon, label, ...props }) => (
         <div className="relative group">
