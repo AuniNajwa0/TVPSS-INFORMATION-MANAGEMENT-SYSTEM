@@ -73,6 +73,11 @@ export default function ListUser({ auth, users, pagination, selectedRole }) {
                 </div>
 
                 <div className="w-full md:ml-[120px] p-6">
+                <div className="flex items-center justify-between ">
+            <h2 className="text-4xl font-bold text-gray-900 bg-clip-text mb-4">
+              Pengurusan Pengguna
+            </h2>
+          </div>
                     <div className="flex items-center justify-between mb-6">
                         {/* Breadcrumbs Section */}
                         <nav className="mb-8">

@@ -15,23 +15,24 @@ export default function Edit({ mustVerifyEmail, status }) {
         </div>
 
         <div className="w-full md:ml-[120px] p-6">
-        <div>
-                            <h2 className="text-3xl font-bold text-gray-900 bg-clip-text  ">
-                                <a
-                                    href="/profileSuperAdmin"
-                                    className="text-[#455185] hover:underline"
-                                >
+        <div className="flex items-center justify-between ">
+            <h2 className="text-4xl font-bold text-gray-900 bg-clip-text mb-4">
+              Tetapan
+            </h2>
+          </div>
+        <nav className="mb-8">
+                        <ol className="flex items-center space-x-2 text-gray-600">
+                            <li>
+                                <a href="/listUsers" className="text-[#4158A6] hover:text-blue-800 font-medium">
                                     Tetapan
                                 </a>
-                                <span className="mx-2 text-gray-500">{'>'}</span>
-                                <a
-                                    href="/profileSuperAdmin"
-                                    className="text-gray-700 "
-                                >
-                                    Kemas Kini Maklumat Peribadi
-                                </a>
-                            </h2>
-                        </div>
+                            </li>
+                            <li className="text-gray-500">/</li>
+                            <li className="text-gray-900 font-medium">
+                                Kemaskini Pengguna
+                            </li>
+                        </ol>
+                    </nav>
             
             <div className="p-12">
                 <div className="mx-auto max-w-4xl space-y-6 sm:px-6 lg:px-8">

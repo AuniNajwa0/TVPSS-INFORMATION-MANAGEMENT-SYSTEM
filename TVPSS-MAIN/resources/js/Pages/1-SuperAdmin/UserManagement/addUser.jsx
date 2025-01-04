@@ -251,6 +251,11 @@ export default function AddUser() {
             
             <div className="flex-1 p-6">
             <nav className="mb-8">
+            <div className="flex items-center justify-between ">
+            <h2 className="text-4xl font-bold text-gray-900 bg-clip-text mb-4">
+              Tambah Pengguna Baharu
+            </h2>
+          </div>
                         <ol className="flex items-center space-x-2 text-gray-600">
                             <li>
                                 <a href="/listUsers" className="text-[#4158A6] hover:text-blue-800 font-medium">
@@ -265,7 +270,7 @@ export default function AddUser() {
                     </nav>
 
                 <div className="max-w-4xl mx-auto bg-white p-8 shadow border rounded-lg">
-                    <h2 className="text-2xl font-bold mb-6 text-gray-700">Tambah Pengguna Baharu</h2>
+                    <h2 className="text-2xl font-bold mb-6 text-gray-700">Sila masukkan maklumat di bawah:</h2>
 
                     {message && (
                         <div

@@ -210,6 +210,11 @@ export default function UpdateUser({ user, roles }) {
             </div>
             
             <div className="flex-1 p-6">
+            <div className="flex items-center justify-between ">
+            <h2 className="text-4xl font-bold text-gray-900 bg-clip-text mb-4">
+              Kemaskini Pengguna
+            </h2>
+          </div>
             <nav className="mb-8">
                         <ol className="flex items-center space-x-2 text-gray-600">
                             <li>
@@ -225,7 +230,7 @@ export default function UpdateUser({ user, roles }) {
                     </nav>
 
                 <div className="max-w-4xl mx-auto bg-white p-8 shadow border rounded-lg">
-                    <h2 className="text-2xl font-bold mb-6 text-gray-700">Kemaskini Pengguna</h2>
+                    <h2 className="text-2xl font-bold mb-6 text-gray-700">Kemaskini maklumat dibawah:</h2>
 
                     {message && (
                         <div
