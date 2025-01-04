@@ -51,46 +51,47 @@ export default function UpdateEquipment({ equipment, eqLocation, followUps }) {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
+    
         setFormData((prevData) => ({
             ...prevData,
             [name]: value,
         }));
+    
+        // Show follow-up fields dynamically when status changes to "Tidak Berfungsi"
+        if (name === "status" && value === "Tidak Berfungsi") {
+            setFormData((prevData) => ({
+                ...prevData,
+                followUpUpdateSchool: "",
+                uploadBrEq: [],
+            }));
+        }
     };
+    
 
     const handleFileChange = (e) => {
-        const files = Array.from(e.target.files).slice(0, 2);
-        setFormData((prevData) => ({
-            ...prevData,
+        const files = Array.from(e.target.files);
+        setFormData((prev) => ({
+            ...prev,
             uploadBrEq: files,
         }));
-
+    
         const previews = files.map((file) => URL.createObjectURL(file));
         setFilePreviews(previews);
-    };
+    };    
 
     const handleFollowUpSubmit = (e) => {
         e.preventDefault();
     
         const formDataToSubmit = new FormData();
-        formDataToSubmit.append(
-            "followUpUpdateSchool",
-            formData.followUpUpdateSchool || ""
-        );
+        formDataToSubmit.append("followUpUpdateSchool", formData.followUpUpdateSchool || "");
     
         if (formData.uploadBrEq?.length > 0) {
-            formData.uploadBrEq.forEach((file) => {
-                formDataToSubmit.append("uploadBrEq[]", file);
-            });
+            formData.uploadBrEq.forEach((file) => formDataToSubmit.append("uploadBrEq[]", file));
         }
-    
-        console.log("Submitting Follow-Up:", [...formDataToSubmit.entries()]);
     
         Inertia.post(`/equipment/${equipment.id}/follow-up`, formDataToSubmit, {
             preserveScroll: true,
-            onSuccess: (page) => {
-                if (page.props.followUps) {
-                    setFollowUps(page.props.followUps); 
-                }
+            onSuccess: () => {
                 setMessage("Follow-up successfully saved!");
                 setFormData((prev) => ({
                     ...prev,
@@ -467,7 +468,7 @@ export default function UpdateEquipment({ equipment, eqLocation, followUps }) {
 
                                                 <div className="flex justify-end">
                                                     <button
-                                                        type="submit" 
+                                                        type="submit"
                                                         className="px-6 py-3 bg-green-600 text-white rounded-xl shadow-md hover:bg-green-700 transition-colors duration-300"
                                                     >
                                                         Save Follow-Up
@@ -522,25 +523,19 @@ export default function UpdateEquipment({ equipment, eqLocation, followUps }) {
                                                         </div>
                                                         {update.uploadBrEq && (
                                                             <div className="grid grid-cols-3 gap-2 mt-4">
-                                                                {JSON.parse(update.uploadBrEq).map((image, idx) => {
-                                                                    console.log("Image src:", `/storage/${image}`); 
-                                                                    return (
-                                                                        <div
-                                                                            key={idx}
-                                                                            className="relative group aspect-square"
-                                                                        >
-                                                                            <img
-                                                                                src={`/storage/${image}`} 
-                                                                                alt={`Upload ${idx + 1}`}
-                                                                                className="w-full h-full object-cover rounded-lg shadow-sm"
-                                                                                onError={(e) => {
-                                                                                    e.target.src = "/path-to-placeholder-image.jpg"; 
-                                                                                }}
-                                                                            />
-                                                                            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 rounded-lg" />
-                                                                        </div>
-                                                                    );
-                                                                })}
+                                                                {JSON.parse(update.uploadBrEq).map((image, idx) => (
+                                                                    <div key={idx} className="relative group aspect-square">
+                                                                        <img
+                                                                            src={`/storage/${image}`}
+                                                                            alt={`Upload ${idx + 1}`}
+                                                                            className="w-full h-full object-cover rounded-lg shadow-sm"
+                                                                            onError={(e) => {
+                                                                                console.error("Image failed to load:", `/storage/${image}`);
+                                                                                e.target.src = "/path-to-placeholder.jpg"; // Set placeholder for missing images
+                                                                            }}
+                                                                        />
+                                                                    </div>
+                                                                ))}
                                                             </div>
                                                         )}
                                                     </div>
