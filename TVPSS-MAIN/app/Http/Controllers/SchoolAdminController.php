@@ -95,37 +95,36 @@ class SchoolAdminController extends Controller
     public function equipmentStore(StoreEquipmentRequest $request)
     {
         try {
-            $data = $request->all();
             DB::beginTransaction();
-
             $school = SchoolInfo::where('user_id', $request->user()->id)->first();
             if (!$school) {
                 throw new \Exception('School information not found.');
             }
 
             $equipment = Equipment::create([
-                'equipName' => $data['equipName'],
-                'equipType' => $data['equipType'],
-                'location' => $data['location'],
-                'acquired_date' => $data['acquired_date'],
-                'status' => $data['status'],
+                'equipName' => $request->input('equipName'),
+                'equipType' => $request->input('equipType'),
+                'location' => $request->input('location'),
+                'acquired_date' => $request->input('acquired_date'),
+                'status' => $request->input('status'),
                 'school_info_id' => $school->id,
             ]);
 
-            if ($data['status'] === 'Tidak Berfungsi') {
+            if ($request->input('status') === 'Tidak Berfungsi') {
                 $uploadPaths = [];
+                $request->validate([
+                    'uploadBrEq.*' => 'file|mimes:jpeg,png,jpg|max:2048',
+                ]);
 
                 if ($request->hasFile('uploadBrEq')) {
                     foreach ($request->file('uploadBrEq') as $file) {
                         $schoolFolder = "followUpEq/school_{$school->id}";
-
                         $filePath = $file->storeAs(
                             $schoolFolder,
-                            $file->getClientOriginalName(),
+                            time() . '_' . $file->getClientOriginalName(),
                             'public'
                         );
-
-                        $uploadPaths[] = "{$schoolFolder}/{$file->getClientOriginalName()}"; // Store the relative path
+                        $uploadPaths[] = "{$schoolFolder}/" . time() . '_' . $file->getClientOriginalName();
                     }
                 }
 
@@ -133,8 +132,13 @@ class SchoolAdminController extends Controller
                     'equipment_id' => $equipment->id,
                     'user_id' => $request->user()->id,
                     'uploadBrEq' => !empty($uploadPaths) ? json_encode($uploadPaths) : null,
-                    'content' => $data['followUpUpdateSchool'] ?? null,
+                    'content' => $request->input('followUpUpdateSchool'),
                     'date' => now()->format('Y-m-d'),
+                ]);
+
+                Log::info('Follow-up saved for equipment', [
+                    'equipment_id' => $equipment->id,
+                    'file_paths' => $uploadPaths,
                 ]);
             }
 
@@ -143,11 +147,14 @@ class SchoolAdminController extends Controller
             return redirect()->route('equipment.equipmentIndex')->with('success', 'Equipment successfully added!');
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error storing equipment: ' . $e->getMessage());
-            return back()->with('error', 'An error occurred while storing equipment.');
+
+            Log::error('Error in equipmentStore:', [
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()->with('error', 'An error occurred while adding equipment.');
         }
     }
-
 
     public function equipmentShow(Equipment $equipment)
     {
@@ -236,7 +243,6 @@ class SchoolAdminController extends Controller
     {
         try {
             DB::beginTransaction();
-
             $request->validate([
                 'followUpUpdateSchool' => 'nullable|string|max:500',
                 'uploadBrEq.*' => 'file|mimes:jpeg,png,jpg|max:2048',
@@ -246,7 +252,7 @@ class SchoolAdminController extends Controller
 
             if ($equipment->status->value !== StatusEnum::Tidak_Berfungsi->value) {
                 throw new \Exception('Follow-ups can only be created for equipment with status "Tidak Berfungsi".');
-            }            
+            }
 
             $uploadPaths = [];
             if ($request->hasFile('uploadBrEq')) {
@@ -257,11 +263,11 @@ class SchoolAdminController extends Controller
                         time() . '_' . $file->getClientOriginalName(),
                         'public'
                     );
-                    $uploadPaths[] = "{$schoolFolder}/{$file->getClientOriginalName()}"; 
+                    $uploadPaths[] = "{$schoolFolder}/" . time() . '_' . $file->getClientOriginalName();
                 }
             }
 
-            $followUp = EqFollowUp::create([
+            EqFollowUp::create([
                 'equipment_id' => $equipment->id,
                 'user_id' => $request->user()->id,
                 'uploadBrEq' => !empty($uploadPaths) ? json_encode($uploadPaths) : null,
@@ -269,31 +275,20 @@ class SchoolAdminController extends Controller
                 'date' => now()->format('Y-m-d'),
             ]);
 
-            // Commit the transaction
             DB::commit();
 
-            // Log the creation of the follow-up
-            Log::info('Follow-up successfully saved.', [
-                'equipment_id' => $equipment->id,
-                'follow_up_id' => $followUp->id,
-            ]);
-
-            // Redirect back with success
             return redirect()->route('equipment.edit', ['equipment' => $equipmentId])
                 ->with('success', 'Follow-up successfully saved!');
         } catch (\Exception $e) {
-            // Rollback the transaction
             DB::rollBack();
 
-            // Log the error
             Log::error('Error saving follow-up:', [
                 'message' => $e->getMessage(),
                 'equipment_id' => $equipmentId,
                 'user_id' => $request->user()->id,
-                'status' => $equipment->status ?? 'Unknown', // Log the current status
+                'status' => $equipment->status ?? 'Unknown',
             ]);
 
-            // Redirect back with error
             return back()->with('error', 'An error occurred while saving the follow-up.');
         }
     }
@@ -310,15 +305,41 @@ class SchoolAdminController extends Controller
 
     public function equipmentDestroy(Equipment $equipment)
     {
-        $user = request()->user();
+        try {
+            DB::beginTransaction();
+            $user = request()->user();
+            if ($equipment->school_info_id !== SchoolInfo::where('user_id', $user->id)->value('id')) {
+                abort(403, 'Unauthorized access.');
+            }
+            $followUps = EqFollowUp::where('equipment_id', $equipment->id)->get();
 
-        if ($equipment->school_info_id !== SchoolInfo::where('user_id', $user->id)->value('id')) {
-            abort(403, 'Unauthorized access.');
+            foreach ($followUps as $followUp) {
+                if (!empty($followUp->uploadBrEq)) {
+                    $uploadPaths = json_decode($followUp->uploadBrEq, true);
+
+                    foreach ($uploadPaths as $path) {
+                        $fullPath = storage_path("app/public/{$path}");
+                        if (file_exists($fullPath)) {
+                            unlink($fullPath); 
+                        }
+                    }
+                }
+
+                $followUp->delete();
+            }
+
+            $equipment->delete();
+            DB::commit();
+
+            return redirect()->route('equipment.equipmentIndex')->with('success', 'Equipment and related data successfully deleted!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error deleting equipment:', [
+                'message' => $e->getMessage(),
+                'equipment_id' => $equipment->id,
+            ]);
+            return back()->with('error', 'An error occurred while deleting the equipment.');
         }
-
-        $equipment->delete();
-
-        return redirect()->route('equipment.equipmentIndex')->with('success', 'Equipment successfully deleted!');
     }
 
     public function deleteSelected(Request $request)
