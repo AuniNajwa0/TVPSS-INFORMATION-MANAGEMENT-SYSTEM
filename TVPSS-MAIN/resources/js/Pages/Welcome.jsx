@@ -76,7 +76,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                 className="h-12 w-auto"
                             />
                             <img
-                                src="/assets/tvpsslogo.svg"
+                                src="/assets/TVPSSLogo2.jpg"
                                 alt="TVPSS Logo"
                                 className="h-12 w-auto"
                             />
@@ -205,6 +205,26 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                         </div>
                     </div>
                 </section>
+
+                <section className="py-16 bg-gradient-to-b from-white to-indigo-50">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 className="text-3xl font-bold text-center text-blue-900 mb-12">
+            Sumbangan
+        </h2>
+        <p className="text-lg text-gray-600 text-center mb-7">
+            Untuk menyokong TVPSS sekolah pilihan anda, klik sahaja butang "Sumbang Sekarang"! Sumbangan anda akan disalurkan terus kepada sekolah untuk memperkasakan usaha mereka, 
+            termasuk melaksanakan program-program menarik, menambah peralatan seperti kamera, lampu studio, dan pelbagai lagi. Bersama, kita bantu menjadikan TVPSS lebih hebat dan berinspirasi!
+        </p>
+        <div className="flex justify-center">
+            <Link
+                href={route('donationHP')}
+                className="px-6 py-3 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition duration-300"
+            >
+                Sumbang Sekarang
+            </Link>
+        </div>
+    </div>
+</section>
 
                 {/* Footer */}
                 <footer className="bg-blue-900 text-white py-8">
