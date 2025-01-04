@@ -18,10 +18,10 @@ export default function ListSchool() {
     { id: '2', name: 'SJK (C) Pu Sze', code: 'JEA7890', principal: 'Mdm. Lee Mei Ling', achievement: 'Memuaskan', applicationType: 'Seorang', status: 'Dijana' },
     { id: '3', name: 'SK Air Tawar', code: 'JEA3042', principal: 'Cik Zurina binti Hanapi', achievement: 'Cemerlang', applicationType: 'Ramai', status: 'Dijana' },
     { id: '4', name: 'SK Skudai', code: 'JEA3456', principal: 'Cik Noraini binti Mohd Nor', achievement: 'Baik', applicationType: 'Seorang', status: 'Dijana' },
-    { id: '5', name: 'SK Skudai Baru', code: 'JEA1234', principal: 'Encik Ahmad bin Hassan', achievement: 'Baik', applicationType: 'Seorangf', status: 'Dijana' },
+    { id: '5', name: 'SK Skudai Baru', code: 'JEA1234', principal: 'Encik Ahmad bin Hassan', achievement: 'Baik', applicationType: 'Seorang', status: 'Dijana' },
     { id: '6', name: 'SK Taman Sri Pulai', code: 'JEA6789', principal: 'Puan Jamaliah binti Ahmad', achievement: 'Memuaskan', applicationType: 'Ramai', status: 'Dijana' },
-    { id: '7', name: 'SK Taman Universiti', code: 'JEA5678', principal: 'Puan Siti Aminah binti Abdullah', achievement: 'Kurang Memuaskan', applicationType: 'Seorangf', status: 'Diproses' },
-    { id: '8', name: 'SK Taman Universiti 2', code: 'JEA3210', principal: 'Encik Abdullah bin Osman', achievement: 'Memuaskan', applicationType: 'Seorangf', status: 'Diproses' },
+    { id: '7', name: 'SK Taman Universiti', code: 'JEA5678', principal: 'Puan Siti Aminah binti Abdullah', achievement: 'Kurang Memuaskan', applicationType: 'Seorang', status: 'Diproses' },
+    { id: '8', name: 'SK Taman Universiti 2', code: 'JEA3210', principal: 'Encik Abdullah bin Osman', achievement: 'Memuaskan', applicationType: 'Seorang', status: 'Diproses' },
   ];
 
   const filteredSchools = schoolData.filter((school) => {
@@ -67,6 +67,11 @@ export default function ListSchool() {
           <StateAdminSideBar />
         </div>
         <div className="w-full md:ml-[120px] p-6">
+        <div className="flex items-center justify-between ">
+            <h2 className="text-4xl font-bold text-gray-900 bg-clip-text mb-4">
+              Jana Sijil Pengguna
+            </h2>
+          </div>
           <div className="flex items-center justify-between mb-6">
             <nav className="mb-8">
                         <ol className="flex items-center space-x-2 text-gray-600">
