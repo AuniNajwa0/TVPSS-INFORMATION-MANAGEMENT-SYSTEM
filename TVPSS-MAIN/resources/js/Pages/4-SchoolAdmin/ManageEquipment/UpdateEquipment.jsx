@@ -70,22 +70,27 @@ export default function UpdateEquipment({ equipment, eqLocation, followUps }) {
 
     const handleFollowUpSubmit = (e) => {
         e.preventDefault();
-
+    
         const formDataToSubmit = new FormData();
         formDataToSubmit.append(
             "followUpUpdateSchool",
             formData.followUpUpdateSchool || ""
         );
-
+    
         if (formData.uploadBrEq?.length > 0) {
             formData.uploadBrEq.forEach((file) => {
                 formDataToSubmit.append("uploadBrEq[]", file);
             });
         }
-
+    
+        console.log("Submitting Follow-Up:", [...formDataToSubmit.entries()]);
+    
         Inertia.post(`/equipment/${equipment.id}/follow-up`, formDataToSubmit, {
             preserveScroll: true,
-            onSuccess: () => {
+            onSuccess: (page) => {
+                if (page.props.followUps) {
+                    setFollowUps(page.props.followUps); 
+                }
                 setMessage("Follow-up successfully saved!");
                 setFormData((prev) => ({
                     ...prev,
@@ -99,7 +104,7 @@ export default function UpdateEquipment({ equipment, eqLocation, followUps }) {
                 setErrors(errors);
             },
         });
-    };
+    };    
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -517,31 +522,25 @@ export default function UpdateEquipment({ equipment, eqLocation, followUps }) {
                                                         </div>
                                                         {update.uploadBrEq && (
                                                             <div className="grid grid-cols-3 gap-2 mt-4">
-                                                                {JSON.parse(
-                                                                    update.uploadBrEq
-                                                                ).map(
-                                                                    (
-                                                                        image,
-                                                                        idx
-                                                                    ) => (
+                                                                {JSON.parse(update.uploadBrEq).map((image, idx) => {
+                                                                    console.log("Image src:", `/storage/${image}`); 
+                                                                    return (
                                                                         <div
-                                                                            key={
-                                                                                idx
-                                                                            }
+                                                                            key={idx}
                                                                             className="relative group aspect-square"
                                                                         >
                                                                             <img
-                                                                                src={`/storage/${image}`}
-                                                                                alt={`Upload ${
-                                                                                    idx +
-                                                                                    1
-                                                                                }`}
+                                                                                src={`/storage/${image}`} 
+                                                                                alt={`Upload ${idx + 1}`}
                                                                                 className="w-full h-full object-cover rounded-lg shadow-sm"
+                                                                                onError={(e) => {
+                                                                                    e.target.src = "/path-to-placeholder-image.jpg"; 
+                                                                                }}
                                                                             />
                                                                             <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 rounded-lg" />
                                                                         </div>
-                                                                    )
-                                                                )}
+                                                                    );
+                                                                })}
                                                             </div>
                                                         )}
                                                     </div>
