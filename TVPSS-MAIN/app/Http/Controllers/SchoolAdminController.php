@@ -110,8 +110,9 @@ class SchoolAdminController extends Controller
                 'school_info_id' => $school->id,
             ]);
 
-            if ($request->input('status') === 'Tidak Berfungsi') {
+            if (in_array($request->input('status'), ['Tidak Berfungsi', 'Penyelenggaraan'])) {
                 $uploadPaths = [];
+
                 $request->validate([
                     'uploadBrEq.*' => 'file|mimes:jpeg,png,jpg|max:2048',
                 ]);
@@ -249,9 +250,17 @@ class SchoolAdminController extends Controller
             ]);
 
             $equipment = Equipment::findOrFail($equipmentId);
+            $equipmentStatus = $equipment->status instanceof StatusEnum 
+                ? $equipment->status->value 
+                : $equipment->status;
 
-            if ($equipment->status->value !== StatusEnum::Tidak_Berfungsi->value) {
-                throw new \Exception('Follow-ups can only be created for equipment with status "Tidak Berfungsi".');
+            $allowedStatuses = [
+                StatusEnum::Tidak_Berfungsi->value,
+                StatusEnum::Penyelenggaraan->value,
+            ];
+
+            if (!in_array($equipmentStatus, $allowedStatuses)) {
+                throw new \Exception('Follow-ups can only be created for specific statuses.');
             }
 
             $uploadPaths = [];
