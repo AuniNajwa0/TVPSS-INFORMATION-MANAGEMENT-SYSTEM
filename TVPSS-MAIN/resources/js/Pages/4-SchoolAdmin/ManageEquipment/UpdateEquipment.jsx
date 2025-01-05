@@ -34,6 +34,11 @@ export default function UpdateEquipment({ equipment, eqLocation, followUps }) {
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState({});
     const [message, setMessage] = useState("");
+    /*const [showFollowUpSection, setShowFollowUpSection] = useState(
+        formData.status === "Tidak Berfungsi"
+    );*/
+    const [wasTidakBerfungsi, setWasTidakBerfungsi] = useState(formData.status === "Tidak Berfungsi");
+    
 
     useEffect(() => {
         const fetchStatusOptions = async () => {
@@ -45,9 +50,44 @@ export default function UpdateEquipment({ equipment, eqLocation, followUps }) {
                 console.error("Error fetching status options:", error);
             }
         };
-
+    
         fetchStatusOptions();
     }, []);
+
+    useEffect(() => {
+        if (formData.status === "Tidak Berfungsi") {
+            setWasTidakBerfungsi(true);
+        }
+    }, []);
+    
+    
+    /*const handleInputChange = (e) => {
+        const { name, value } = e.target;
+    
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: value,
+        }));
+    
+        if (name === "status" && value === "Tidak Berfungsi") {
+            setShowFollowUp(true);
+        } else if (name === "status" && value !== "Tidak Berfungsi") {
+            setShowFollowUp(false); 
+        }
+    };*/
+
+    /*const handleInputChange = (e) => {
+        const { name, value } = e.target;
+
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: value,
+        }));
+
+        if (name === "status") {
+            setShowFollowUpSection(value === "Tidak Berfungsi");
+        }
+    };*/
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -57,16 +97,15 @@ export default function UpdateEquipment({ equipment, eqLocation, followUps }) {
             [name]: value,
         }));
     
-        // Show follow-up fields dynamically when status changes to "Tidak Berfungsi"
-        if (name === "status" && value === "Tidak Berfungsi") {
-            setFormData((prevData) => ({
-                ...prevData,
-                followUpUpdateSchool: "",
-                uploadBrEq: [],
-            }));
+        if (name === "status") {
+            if (value === "Tidak Berfungsi") {
+                setWasTidakBerfungsi(true); 
+            }
+            if (wasTidakBerfungsi && value !== "Tidak Berfungsi") {
+                setWasTidakBerfungsi(true);
+            }
         }
-    };
-    
+    };    
 
     const handleFileChange = (e) => {
         const files = Array.from(e.target.files);
@@ -74,21 +113,26 @@ export default function UpdateEquipment({ equipment, eqLocation, followUps }) {
             ...prev,
             uploadBrEq: files,
         }));
-    
+
         const previews = files.map((file) => URL.createObjectURL(file));
         setFilePreviews(previews);
-    };    
+    };
 
     const handleFollowUpSubmit = (e) => {
         e.preventDefault();
-    
+
         const formDataToSubmit = new FormData();
-        formDataToSubmit.append("followUpUpdateSchool", formData.followUpUpdateSchool || "");
-    
+        formDataToSubmit.append(
+            "followUpUpdateSchool",
+            formData.followUpUpdateSchool || ""
+        );
+
         if (formData.uploadBrEq?.length > 0) {
-            formData.uploadBrEq.forEach((file) => formDataToSubmit.append("uploadBrEq[]", file));
+            formData.uploadBrEq.forEach((file) =>
+                formDataToSubmit.append("uploadBrEq[]", file)
+            );
         }
-    
+
         Inertia.post(`/equipment/${equipment.id}/follow-up`, formDataToSubmit, {
             preserveScroll: true,
             onSuccess: () => {
@@ -105,7 +149,7 @@ export default function UpdateEquipment({ equipment, eqLocation, followUps }) {
                 setErrors(errors);
             },
         });
-    };    
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -337,7 +381,7 @@ export default function UpdateEquipment({ equipment, eqLocation, followUps }) {
                     </div>
 
                     {/* Follow-ups Section */}
-                    {followUps.length > 0 && (
+                    {(formData.status === "Tidak Berfungsi" || wasTidakBerfungsi) && (
                         <div className="w-2/5">
                             <div className="bg-white rounded-3xl shadow-xl border border-gray-100 transition-all duration-300 hover:shadow-2xl sticky top-8">
                                 <div className="p-6">
@@ -346,140 +390,135 @@ export default function UpdateEquipment({ equipment, eqLocation, followUps }) {
                                     </h4>
 
                                     {/* Add New Follow-Up Section */}
-                                    {formData.status === "Tidak Berfungsi" && (
-                                        <form onSubmit={handleFollowUpSubmit}>
-                                            <div className="space-y-6 p-6 bg-gray-50 rounded-xl border border-gray-200">
-                                                <InputField
-                                                    icon={FiAlertCircle}
-                                                    label="Maklumat Kerosakan"
-                                                    type="text"
-                                                    name="followUpUpdateSchool"
-                                                    value={
-                                                        formData.followUpUpdateSchool ||
-                                                        ""
-                                                    }
-                                                    onChange={handleInputChange}
-                                                    placeholder="Maklumat Kerosakan Barang"
-                                                />
+                                    
+                                    <form onSubmit={handleFollowUpSubmit}>
+                                        <div className="space-y-6 p-6 bg-gray-50 rounded-xl border border-gray-200">
+                                            <InputField
+                                                icon={FiAlertCircle}
+                                                label="Maklumat Kerosakan"
+                                                type="text"
+                                                name="followUpUpdateSchool"
+                                                value={
+                                                    formData.followUpUpdateSchool ||
+                                                    ""
+                                                }
+                                                onChange={handleInputChange}
+                                                placeholder="Maklumat Kerosakan Barang"
+                                            />
 
-                                                <div className="space-y-4">
-                                                    <label className="block text-sm font-medium text-gray-700">
-                                                        Upload Images
+                                            <div className="space-y-4">
+                                                <label className="block text-sm font-medium text-gray-700">
+                                                    Upload Images
+                                                </label>
+                                                <div className="flex items-center justify-center w-full">
+                                                    <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-gray-300 border-dashed rounded-xl cursor-pointer hover:bg-gray-50 transition-colors duration-300">
+                                                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                                            <FiUpload className="w-12 h-12 mb-4 text-gray-400" />
+                                                            <p className="mb-2 text-sm text-gray-500">
+                                                                <span className="font-semibold">
+                                                                    Click to
+                                                                    upload
+                                                                </span>{" "}
+                                                                or drag and drop
+                                                            </p>
+                                                            <p className="text-xs text-gray-500">
+                                                                Maximum 2 images
+                                                            </p>
+                                                        </div>
+                                                        <input
+                                                            type="file"
+                                                            multiple
+                                                            accept="image/*"
+                                                            onChange={
+                                                                handleFileChange
+                                                            }
+                                                            className="hidden"
+                                                        />
                                                     </label>
-                                                    <div className="flex items-center justify-center w-full">
-                                                        <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-gray-300 border-dashed rounded-xl cursor-pointer hover:bg-gray-50 transition-colors duration-300">
-                                                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                                                <FiUpload className="w-12 h-12 mb-4 text-gray-400" />
-                                                                <p className="mb-2 text-sm text-gray-500">
-                                                                    <span className="font-semibold">
-                                                                        Click to
-                                                                        upload
-                                                                    </span>{" "}
-                                                                    or drag and
-                                                                    drop
-                                                                </p>
-                                                                <p className="text-xs text-gray-500">
-                                                                    Maximum 2
-                                                                    images
-                                                                </p>
-                                                            </div>
-                                                            <input
-                                                                type="file"
-                                                                multiple
-                                                                accept="image/*"
-                                                                onChange={
-                                                                    handleFileChange
-                                                                }
-                                                                className="hidden"
-                                                            />
-                                                        </label>
-                                                    </div>
-                                                    <div className="grid grid-cols-2 gap-4 mt-4">
-                                                        {filePreviews.map(
-                                                            (
-                                                                preview,
-                                                                index
-                                                            ) => (
-                                                                <div
-                                                                    key={index}
-                                                                    className="relative group"
-                                                                >
-                                                                    <img
-                                                                        src={
-                                                                            preview
-                                                                        }
-                                                                        alt={`Preview ${
-                                                                            index +
-                                                                            1
-                                                                        }`}
-                                                                        className="w-full h-32 object-cover rounded-xl shadow-md"
-                                                                    />
-                                                                    <div className="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl flex items-center justify-center">
-                                                                        <button
-                                                                            type="button"
-                                                                            onClick={() => {
-                                                                                const newPreviews =
-                                                                                    filePreviews.filter(
-                                                                                        (
-                                                                                            _,
-                                                                                            i
-                                                                                        ) =>
-                                                                                            i !==
-                                                                                            index
-                                                                                    );
-                                                                                setFilePreviews(
-                                                                                    newPreviews
-                                                                                );
-                                                                                const newFiles =
-                                                                                    Array.from(
-                                                                                        formData.uploadBrEq
-                                                                                    ).filter(
-                                                                                        (
-                                                                                            _,
-                                                                                            i
-                                                                                        ) =>
-                                                                                            i !==
-                                                                                            index
-                                                                                    );
-                                                                                setFormData(
-                                                                                    (
-                                                                                        prev
-                                                                                    ) => ({
-                                                                                        ...prev,
-                                                                                        uploadBrEq:
-                                                                                            newFiles,
-                                                                                    })
-                                                                                );
-                                                                            }}
-                                                                            className="p-2 bg-white rounded-full text-red-500 hover:bg-red-50 transition-colors duration-300"
-                                                                        >
-                                                                            <FiX
-                                                                                size={
-                                                                                    20
-                                                                                }
-                                                                            />
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-                                                            )
-                                                        )}
-                                                    </div>
                                                 </div>
-
-                                                <div className="flex justify-end">
-                                                    <button
-                                                        type="submit"
-                                                        className="px-6 py-3 bg-green-600 text-white rounded-xl shadow-md hover:bg-green-700 transition-colors duration-300"
-                                                    >
-                                                        Save Follow-Up
-                                                    </button>
+                                                <div className="grid grid-cols-2 gap-4 mt-4">
+                                                    {filePreviews.map(
+                                                        (preview, index) => (
+                                                            <div
+                                                                key={index}
+                                                                className="relative group"
+                                                            >
+                                                                <img
+                                                                    src={
+                                                                        preview
+                                                                    }
+                                                                    alt={`Preview ${
+                                                                        index +
+                                                                        1
+                                                                    }`}
+                                                                    className="w-full h-32 object-cover rounded-xl shadow-md"
+                                                                />
+                                                                <div className="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl flex items-center justify-center">
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => {
+                                                                            const newPreviews =
+                                                                                filePreviews.filter(
+                                                                                    (
+                                                                                        _,
+                                                                                        i
+                                                                                    ) =>
+                                                                                        i !==
+                                                                                        index
+                                                                                );
+                                                                            setFilePreviews(
+                                                                                newPreviews
+                                                                            );
+                                                                            const newFiles =
+                                                                                Array.from(
+                                                                                    formData.uploadBrEq
+                                                                                ).filter(
+                                                                                    (
+                                                                                        _,
+                                                                                        i
+                                                                                    ) =>
+                                                                                        i !==
+                                                                                        index
+                                                                                );
+                                                                            setFormData(
+                                                                                (
+                                                                                    prev
+                                                                                ) => ({
+                                                                                    ...prev,
+                                                                                    uploadBrEq:
+                                                                                        newFiles,
+                                                                                })
+                                                                            );
+                                                                        }}
+                                                                        className="p-2 bg-white rounded-full text-red-500 hover:bg-red-50 transition-colors duration-300"
+                                                                    >
+                                                                        <FiX
+                                                                            size={
+                                                                                20
+                                                                            }
+                                                                        />
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        )
+                                                    )}
                                                 </div>
                                             </div>
-                                        </form>
-                                    )}
 
-                                    <br></br>
-                                    <hr></hr>
+                                            <div className="flex justify-end">
+                                                <button
+                                                    type="submit"
+                                                    className="px-6 py-3 bg-green-600 text-white rounded-xl shadow-md hover:bg-green-700 transition-colors duration-300"
+                                                >
+                                                    Save Follow-Up
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+
+                                    <br />
+                                    <hr />
+                                    <br />
 
                                     {/* Existing Follow-Ups */}
                                     <div className="space-y-4">
@@ -523,19 +562,40 @@ export default function UpdateEquipment({ equipment, eqLocation, followUps }) {
                                                         </div>
                                                         {update.uploadBrEq && (
                                                             <div className="grid grid-cols-3 gap-2 mt-4">
-                                                                {JSON.parse(update.uploadBrEq).map((image, idx) => (
-                                                                    <div key={idx} className="relative group aspect-square">
-                                                                        <img
-                                                                            src={`/storage/${image}`}
-                                                                            alt={`Upload ${idx + 1}`}
-                                                                            className="w-full h-full object-cover rounded-lg shadow-sm"
-                                                                            onError={(e) => {
-                                                                                console.error("Image failed to load:", `/storage/${image}`);
-                                                                                e.target.src = "/path-to-placeholder.jpg"; // Set placeholder for missing images
-                                                                            }}
-                                                                        />
-                                                                    </div>
-                                                                ))}
+                                                                {JSON.parse(
+                                                                    update.uploadBrEq
+                                                                ).map(
+                                                                    (
+                                                                        image,
+                                                                        idx
+                                                                    ) => (
+                                                                        <div
+                                                                            key={
+                                                                                idx
+                                                                            }
+                                                                            className="relative group aspect-square"
+                                                                        >
+                                                                            <img
+                                                                                src={`/storage/${image}`}
+                                                                                alt={`Upload ${
+                                                                                    idx +
+                                                                                    1
+                                                                                }`}
+                                                                                className="w-full h-full object-cover rounded-lg shadow-sm"
+                                                                                onError={(
+                                                                                    e
+                                                                                ) => {
+                                                                                    console.error(
+                                                                                        "Image failed to load:",
+                                                                                        `/storage/${image}`
+                                                                                    );
+                                                                                    e.target.src =
+                                                                                        "/path-to-placeholder.jpg";
+                                                                                }}
+                                                                            />
+                                                                        </div>
+                                                                    )
+                                                                )}
                                                             </div>
                                                         )}
                                                     </div>
