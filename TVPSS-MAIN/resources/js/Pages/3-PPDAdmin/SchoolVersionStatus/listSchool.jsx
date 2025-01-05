@@ -168,7 +168,7 @@ export default function ListPPDSchool({ schools = [] }) {
                                                 <div className="flex justify-center items-center space-x-4">
                                                     <button
                                                         onClick={() =>
-                                                            router.visit(`/tvpssInfoState/${school.schoolCode}/edit`)
+                                                            router.visit(`/tvpssInfoPPD/${school.schoolCode}/edit`)
                                                         }
                                                         className="text-gray-400 hover:text-gray-600"
                                                     >
