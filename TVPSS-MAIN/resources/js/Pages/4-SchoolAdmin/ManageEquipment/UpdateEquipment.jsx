@@ -37,9 +37,10 @@ export default function UpdateEquipment({ equipment, eqLocation, followUps }) {
     /*const [showFollowUpSection, setShowFollowUpSection] = useState(
         formData.status === "Tidak Berfungsi"
     );*/
-    const [wasTidakBerfungsi, setWasTidakBerfungsi] = useState(formData.status === "Tidak Berfungsi");
+    const [wasTidakBerfungsi, setWasTidakBerfungsi] = useState(
+        ["Tidak Berfungsi", "Penyelenggaraan"].includes(formData.status)
+    );
     
-
     useEffect(() => {
         const fetchStatusOptions = async () => {
             try {
@@ -55,10 +56,10 @@ export default function UpdateEquipment({ equipment, eqLocation, followUps }) {
     }, []);
 
     useEffect(() => {
-        if (formData.status === "Tidak Berfungsi") {
+        if (["Tidak Berfungsi", "Penyelenggaraan"].includes(formData.status)) {
             setWasTidakBerfungsi(true);
         }
-    }, []);
+    }, [formData.status]);
     
     
     /*const handleInputChange = (e) => {
@@ -96,16 +97,14 @@ export default function UpdateEquipment({ equipment, eqLocation, followUps }) {
             ...prevData,
             [name]: value,
         }));
-    
-        if (name === "status") {
-            if (value === "Tidak Berfungsi") {
-                setWasTidakBerfungsi(true); 
-            }
-            if (wasTidakBerfungsi && value !== "Tidak Berfungsi") {
-                setWasTidakBerfungsi(true);
-            }
+
+        if (
+            name === "status" &&
+            ["Tidak Berfungsi", "Penyelenggaraan"].includes(value)
+        ) {
+            setWasTidakBerfungsi(true);
         }
-    };    
+    };
 
     const handleFileChange = (e) => {
         const files = Array.from(e.target.files);
@@ -381,7 +380,8 @@ export default function UpdateEquipment({ equipment, eqLocation, followUps }) {
                     </div>
 
                     {/* Follow-ups Section */}
-                    {(formData.status === "Tidak Berfungsi" || wasTidakBerfungsi) && (
+                    {/*{(formData.status === "Tidak Berfungsi" || wasTidakBerfungsi) && (*/}
+                    {["Tidak Berfungsi", "Penyelenggaraan"].includes(formData.status) || wasTidakBerfungsi ? (
                         <div className="w-2/5">
                             <div className="bg-white rounded-3xl shadow-xl border border-gray-100 transition-all duration-300 hover:shadow-2xl sticky top-8">
                                 <div className="p-6">
@@ -606,7 +606,7 @@ export default function UpdateEquipment({ equipment, eqLocation, followUps }) {
                                 </div>
                             </div>
                         </div>
-                    )}
+                    ) : null}
                 </div>
             </div>
         </AuthenticatedLayout>
