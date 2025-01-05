@@ -10,7 +10,7 @@ Route::middleware([StudentSessionCheck::class])->group(function () {
     Route::get('/studentPage', [StudentController::class, 'index'])->name('student.dashboard');
     Route::get('/applyCrew', [StudentController::class, 'applyCrew'])->name('student.applyCrew');
     Route::post('/applyCrew', [StudentController::class, 'applyCrewSubmit'])->name('student.applyCrewSubmit');
-    Route::get('/resultApply', [StudentController::class, 'resultApply'])->name('student.resultApply');
+    Route::get('/resultApply/{icNum}', [StudentController::class, 'resultApply'])->name('student.resultApply');
 });
 
 // Toksah mung nak guna route hok ni, aku hok milih jaley aku

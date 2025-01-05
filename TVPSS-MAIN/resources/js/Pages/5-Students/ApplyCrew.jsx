@@ -154,6 +154,7 @@ function ApplyCrew({ student }) { // Accept student as a prop
                             style={styles.input}
                             value={data.ic_num} // Use student data
                             readOnly // Make it read-only
+                            autoComplete="off"
                         />
                     </div>
                     <div style={styles.formGroup}>
@@ -167,6 +168,7 @@ function ApplyCrew({ student }) { // Accept student as a prop
                             style={styles.input}
                             value={data.name} // Use student data
                             readOnly // Make it read-only
+                            autoComplete="off"
                         />
                     </div>
                     <div style={styles.formGroup}>
@@ -180,6 +182,7 @@ function ApplyCrew({ student }) { // Accept student as a prop
                             style={styles.input}
                             value={data.email} // Use student data
                             readOnly // Make it read-only
+                            autoComplete="email" 
                         />
                     </div>
 
@@ -195,6 +198,7 @@ function ApplyCrew({ student }) { // Accept student as a prop
                             style={styles.input}
                             value={data.state} // Use student data
                             readOnly // Make it read-only
+                            autoComplete="off"
                         />
                     </div>
                     <div style={styles.formGroup}>
@@ -208,6 +212,7 @@ function ApplyCrew({ student }) { // Accept student as a prop
                             style={styles.input}
                             value={data.district} // Use student data
                             readOnly // Make it read-only
+                            autoComplete="off"
                         />
                     </div>
                     <div style={styles.formGroup}>
@@ -221,6 +226,7 @@ function ApplyCrew({ student }) { // Accept student as a prop
                             style={styles.input}
                             value={data.schoolName} // Use student data
                             readOnly // Make it read-only
+                            autoComplete="off"
                         />
                     </div>
 
@@ -230,10 +236,12 @@ function ApplyCrew({ student }) { // Accept student as a prop
                             <Briefcase size={18} />
                         </div>
                         <select
+                            id="jawatan" // Added
                             name="jawatan"
                             style={styles.input}
                             value={data.jawatan}
                             onChange={handleInputChange}
+                            autocomplete="off" // Use "off" for dropdowns unless there's a specific autocomplete value
                         >
                             <option value="">Pilih Jawatan Krew</option>
                             <option value="Jurukamera">Jurukamera</option>
