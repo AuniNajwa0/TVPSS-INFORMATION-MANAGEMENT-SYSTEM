@@ -72,7 +72,7 @@ Route::middleware('auth')->group(function () {
 
 // Authentication routes
 require __DIR__ . '/auth.php';
-
+require __DIR__ . '/donationRoutes.php';
 require __DIR__ . '/studentRoutes.php';
 
 
