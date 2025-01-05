@@ -3,7 +3,8 @@ import { Eye, Search } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import StudentNavBar from './StudentNavBar';
 
-function ResultApply({ applications = [] }) {
+function ResultApply({ applications = [], students }) {
+
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredApplications, setFilteredApplications] = useState(applications);
 
@@ -129,7 +130,7 @@ function ResultApply({ applications = [] }) {
                         <thead>
                             <tr>
                                 <th style={thStyle}>Application ID</th>
-                                <th style={thStyle}>Student Name</th>
+                                <th style={thStyle}>Jawatan</th>
                                 <th style={thStyle}>Status</th>
                                 <th style={thStyle}>Date Submitted</th>
                                 <th style={thStyle}>Actions</th>
@@ -139,7 +140,7 @@ function ResultApply({ applications = [] }) {
                             {filteredApplications.map((app, index) => (
                                 <tr key={app.id}>
                                     <td style={tdStyle(index)}>{app.id}</td>
-                                    <td style={tdStyle(index)}>{app.studentName}</td>
+                                    <td style={tdStyle(index)}>{app.jawatan}</td>
                                     <td style={tdStyle(index)}>{app.status}</td>
                                     <td style={tdStyle(index)}>{new Date(app.dateSubmitted).toLocaleDateString()}</td>
                                     <td style={tdStyle(index)}>

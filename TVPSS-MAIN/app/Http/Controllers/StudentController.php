@@ -11,11 +11,6 @@ use App\Http\Middleware\StudentSessionCheck;
 
 class StudentController extends Controller
 {
-    // public function __construct()
-    // {
-    //     $this->middleware(StudentSessionCheck::class)->only(['index', 'applyCrew']);
-    // }
-
     public function showLogin()
     {
         return Inertia::render('5-Students/Auth/LoginStudent');
@@ -73,7 +68,6 @@ class StudentController extends Controller
 
         // Retrieve the student based on IC number
         $student = Student::where('ic_num', $validated['ic_num'])->first();
-
         if (!$student) {
             return redirect()->route('student.applyCrew')->with('error', 'Pelajar tidak dijumpai.');
         }
@@ -85,35 +79,37 @@ class StudentController extends Controller
             'status' => 'Permohonan Belum Diproses',
         ]);
 
-        return Inertia::render('5-Students/ResultApply', [
-            'student' => $student, // Pass the student data to the view
-        ]);
+        return redirect()->route('student.resultApply', ['icNum' => $student->ic_num]);
+
     }
 
-    public function resultApply()
+    public function resultApply(Request $request, $icNum)
     {
-        // Retrieve the IC number from the session
-        $ic_num = session('ic_num');
-
-        // Retrieve the student record using the IC number
-        $student = Student::where('ic_num', $ic_num)->first();
-
+        //$ic_num = session('ic_num');
+        
+        $student = Student::where('ic_num', $icNum)->with('studcrews')->first();
+        
         if (!$student) {
-            return redirect()->route('student.applyCrew')->with('error', 'Student not found.');
+            return Inertia::render('5-Students/ResultApply', [
+                'applications' => [],
+                'message' => 'No student found with the provided IC number.',
+            ]);
         }
-
-        // Retrieve all applications associated with the student
-        $applications = Studcrew::where('student_id', $student->id)
-            ->with('student:id,name') // Eager load student data
-            ->get();
-
-        if ($applications->isEmpty()) {
-            return redirect()->route('student.applyCrew')->with('error', 'No applications found.');
-        }
-
-        // Pass the applications to the view
+    
+        // Map the student's `Studcrew` data
+        $applications = $student->studcrews->map(function ($studcrew) {
+            return [
+                'id' => $studcrew->id,
+                'jawatan' => $studcrew->jawatan, // Position
+                'status' => $studcrew->status, // Application status
+                'dateSubmitted'=> $studcrew->created_at,
+            ];
+        });
+        
+        // Pass data to Inertia
         return Inertia::render('5-Students/ResultApply', [
             'applications' => $applications,
+            'student' => $student,
         ]);
     }
 
