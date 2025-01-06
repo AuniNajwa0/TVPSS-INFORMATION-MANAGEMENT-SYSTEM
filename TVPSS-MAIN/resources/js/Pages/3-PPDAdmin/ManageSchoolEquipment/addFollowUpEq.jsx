@@ -108,7 +108,7 @@ export default function UpdateEquipmentPPD({
             );
         }
 
-        console.log([...formDataToSubmit.entries()]); // Debugging
+        console.log([...formDataToSubmit.entries()]);
 
         Inertia.post(
             `/equipmentPPD/${equipment.id}/follow-up`,
