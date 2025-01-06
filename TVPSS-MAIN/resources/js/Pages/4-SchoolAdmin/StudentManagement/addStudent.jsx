@@ -86,7 +86,7 @@ export default function AddStudent({ schoolInfo }) {
 
     return (
         <AuthenticatedLayout>
-            <Head title="Add Student" />
+            <Head title="TVPPSS | Tambah Pelajar" />
 
             <div className="flex min-h-screen bg-white">
                 <div className="w-64 bg-white shadow-lg">
