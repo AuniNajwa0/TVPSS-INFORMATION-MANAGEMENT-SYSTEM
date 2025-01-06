@@ -16,4 +16,4 @@ Route::post('/tvpssInfoPPD/{schoolCode}/reject', [PPDAdminController::class, 're
 
 // Equipment Management PPD
 Route::get('/eqManagementListPPDSchool', [PPDAdminController::class, 'equipmentManagementPPDSchool'])->name('equipmentManagementPPDSchool');
-Route::get('/eqManagementPPD/list', [PPDAdminController::class, 'equipmentManagementPPDList'])->name('equipmentManagementPPD.list');
+Route::get('/eqManagementPPD/list/{schoolId}', [PPDAdminController::class, 'equipmentManagementPPDList'])->name('equipmentManagementPPD.list');
