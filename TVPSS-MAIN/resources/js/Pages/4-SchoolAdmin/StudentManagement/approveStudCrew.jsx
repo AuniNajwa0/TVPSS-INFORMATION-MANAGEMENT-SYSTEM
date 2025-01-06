@@ -7,13 +7,14 @@ import { Inertia } from '@inertiajs/inertia';
 
 const ApproveStudCrew = () => {
     const { crew, errors } = usePage().props;
-
+    
     const handleBack = () => {
-        Inertia.get('/studCrewList');
-    };
+        Inertia.get(route('studcrew.list'));
+    };    
 
     const handleApproval = (status) => {
-        Inertia.post(`/studcrew/${crew.id}/updateStatus`, { status });
+        const url = status === 'Approved' ? `/studcrew/${crew.id}/approve` : `/studcrew/${crew.id}/reject`;
+        Inertia.post(url);
     };
 
     if (!crew) {
@@ -92,7 +93,39 @@ const ApproveStudCrew = () => {
                                         className="mt-1 block w-full py-2.5 px-3.5 border border-gray-300 rounded-md shadow-sm focus:outline-none sm:text-sm"
                                     />
                                 </div>
-                                {/* Other fields */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">
+                                        E-mel
+                                    </label>
+                                    <input
+                                        type="email"
+                                        value={crew.student.email}
+                                        readOnly
+                                        className="mt-1 block w-full py-2.5 px-3.5 border border-gray-300 rounded-md shadow-sm focus:outline-none sm:text-sm"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">
+                                        Tarikh Permohonan
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={new Date(crew.created_at).toLocaleDateString()} // Format the date to show only the date part
+                                        readOnly
+                                        className="mt-1 block w-full py-2.5 px-3.5 border border-gray-300 rounded-md shadow-sm focus:outline-none sm:text-sm"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">
+                                        Jawatan
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={crew.jawatan}
+                                        readOnly
+                                        className="mt-1 block w-full py-2.5 px-3.5 border border-gray-300 rounded-md shadow-sm focus:outline-none sm:text-sm"
+                                    />
+                                </div>
                             </div>
                         </div>
 
@@ -107,7 +140,7 @@ const ApproveStudCrew = () => {
                                 onClick={() => handleApproval('Rejected')}
                                 className="ml-4 px-7 py-4 bg-red-500 text-white rounded-2xl hover:bg-red-600 transition-all"
                             >
-                                Tolak
+ Tolak
                             </button>
                         </div>
                     </div>

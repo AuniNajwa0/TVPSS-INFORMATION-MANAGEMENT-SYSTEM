@@ -55,6 +55,8 @@ Route::delete('/students/{id}', [SchoolAdminController::class, 'deleteStudent'])
 // StudCrew Data
 Route::get('/studCrewList', [SchoolAdminController::class, 'studCrewList'])->name('studcrew.list');
 Route::get('/studcrew/approve/{id}', [SchoolAdminController::class, 'editStudcrew'])->name('studcrew.edit');
+Route::post('/studcrew/{id}/approve', [SchoolAdminController::class, 'approveStudcrew'])->name('studcrew.approve');
+Route::post('/studcrew/{id}/reject', [SchoolAdminController::class, 'rejectStudcrew'])->name('studcrew.reject');
 
 //Student Achievement
 Route::get('/listAchievement', [SchoolAdminController::class, 'achievementList'])->name('achievement.achievementList');
