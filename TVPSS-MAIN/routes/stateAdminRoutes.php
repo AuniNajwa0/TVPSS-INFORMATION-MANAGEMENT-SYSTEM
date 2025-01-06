@@ -31,3 +31,8 @@ Route::get('/tvpssInfoState/{schoolCode}/edit', [StateAdminController::class, 't
 Route::post('/tvpssInfoState/{schoolCode}/approve', [StateAdminController::class, 'approveTVPSS'])->name('schoolInfo.approveTVPSS');
 Route::post('/tvpssInfoState/{schoolCode}/reject', [StateAdminController::class, 'rejectTVPSS'])->name('schoolInfo.rejectTVPSS');
 
+//Settings
+Route::get('/profileStateAdmin', function () {
+    return Inertia::render('2-StateAdmin/Profile/Edit');
+})->name('stateadmin.profile');
+
