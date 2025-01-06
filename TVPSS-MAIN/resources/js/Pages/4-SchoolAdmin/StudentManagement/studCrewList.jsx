@@ -154,8 +154,9 @@ const StudCrewList = ({ studcrews, school }) => {
                                                 <div className="flex justify-center items-center space-x-4">
                                                     {/* Edit and Delete Icons */}
                                                     <button
-                                                        //onClick={() => Inertia.get(`/studcrew/approve`)}
-                                                        onClick={() => Inertia.get(`/studcrew/approve`)}
+                                                        onClick={() => {
+                                                            window.location.href = "/studCrew/approve";
+                                                        }}
                                                         className="text-gray-400 hover:text-gray-600"
                                                     >
                                                         <FaEdit size={18} />

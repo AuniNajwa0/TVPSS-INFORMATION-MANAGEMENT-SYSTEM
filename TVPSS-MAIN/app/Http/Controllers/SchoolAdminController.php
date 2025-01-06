@@ -935,7 +935,7 @@ class SchoolAdminController extends Controller
             return redirect()->back()->with('error', 'Failed to fetch Studcrew details. Please try again.');
         }*/
 
-        return inertia('4-SchoolAdmin/StudentManagement/approveStudCrew');
+        return Inertia::render('4-SchoolAdmin/StudentManagement/approveStudCrew');
     }
 
 
