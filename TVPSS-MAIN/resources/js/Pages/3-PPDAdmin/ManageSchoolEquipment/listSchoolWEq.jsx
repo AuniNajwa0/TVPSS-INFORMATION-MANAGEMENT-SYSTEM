@@ -143,7 +143,7 @@ export default function ListEquipmentPPD({ equipment, school }) {
                                                 <div className="flex justify-center space-x-3">
                                                     {/* Edit Button */}
                                                     <button
-                                                        onClick={() => Inertia.get(`/equipment/edit/${item.id}`)}
+                                                        onClick={() => Inertia.get(`/eqManagementPPD/edit/${item.id}`)}
                                                         className="p-2 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
                                                         title="Edit"
                                                     >
