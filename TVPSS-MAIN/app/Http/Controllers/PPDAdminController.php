@@ -6,9 +6,12 @@ use Illuminate\Http\Request;
 use App\Models\SchoolInfo;
 use App\Models\TVPSSVersion;
 use App\Models\Equipment;
+use App\Models\EqFollowUp;
 use App\Enums\ApprovalStatusEnum;
+use App\Enums\StatusEnum;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class PPDAdminController extends Controller
 {
@@ -153,6 +156,139 @@ class PPDAdminController extends Controller
             'equipment' => $equipment,
             'school' => $school,
         ]);
+    }
+
+    public function editEquipment($equipmentId)
+    {
+        $equipment = Equipment::findOrFail($equipmentId);
+        $schoolId = $equipment->school_info_id;
+        $followUps = EqFollowUp::where('equipment_id', $equipmentId)
+            ->with('user')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return Inertia::render('3-PPDAdmin/ManageSchoolEquipment/addFollowUpEq', [
+            'equipment' => $equipment,
+            'followUps' => $followUps,
+            'schoolId' => $schoolId,
+        ]);
+    }
+
+    public function updateEquipment(Request $request, $equipmentId)
+    {
+        try {
+            DB::beginTransaction();
+            $equipment = Equipment::findOrFail($equipmentId);
+
+            $request->validate([
+                'status' => ['required', 'string', 'in:' . implode(',', StatusEnum::getValues())],
+            ]);
+
+            $equipment->update([
+                'status' => $request->input('status'),
+            ]);
+
+            DB::commit();
+
+            return redirect()->route('equipmentManagementPPD.edit', ['equipmentId' => $equipmentId])
+                ->with('success', 'Equipment status updated successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Error updating equipment status:', [
+                'message' => $e->getMessage(),
+                'equipment_id' => $equipmentId,
+            ]);
+
+            return back()->with('error', 'An error occurred while updating the equipment status.');
+        }
+    }
+
+    public function saveFollowUp(Request $request, $equipmentId)
+    {
+        try {
+            DB::beginTransaction();
+
+            Log::info('Incoming Request:', $request->all());
+
+            $request->validate([
+                'followUpUpdatePPD' => 'nullable|string|max:500',
+                'uploadBrEq.*' => 'file|mimes:jpeg,png,jpg|max:2048',
+            ]);
+
+            $equipment = Equipment::findOrFail($equipmentId);
+            $equipmentStatus = $equipment->status instanceof StatusEnum 
+                ? $equipment->status->value 
+                : $equipment->status;
+
+            Log::info('Resolved Equipment Status:', ['status' => $equipmentStatus]);
+
+            $allowedStatuses = [
+                StatusEnum::Tidak_Berfungsi->value,
+                StatusEnum::Penyelenggaraan->value,
+            ];
+
+            if (!in_array($equipmentStatus, $allowedStatuses)) {
+                Log::error('Invalid Status for Follow-Up:', ['status' => $equipmentStatus]);
+                throw new \Exception('Follow-ups can only be created for specific statuses.');
+            }
+
+            $uploadPaths = [];
+            if ($request->hasFile('uploadBrEq')) {
+                foreach ($request->file('uploadBrEq') as $file) {
+                    $schoolFolder = "followUpEq/school_{$equipment->school_info_id}";
+                    $filePath = $file->storeAs(
+                        $schoolFolder,
+                        time() . '_' . $file->getClientOriginalName(),
+                        'public'
+                    );
+                    $uploadPaths[] = "{$schoolFolder}/" . time() . '_' . $file->getClientOriginalName();
+                }
+            }
+
+            EqFollowUp::create([
+                'equipment_id' => $equipment->id,
+                'user_id' => $request->user()->id,
+                'uploadBrEq' => !empty($uploadPaths) ? json_encode($uploadPaths) : null,
+                'content' => $request->input('followUpUpdatePPD'),
+                'date' => now()->format('Y-m-d'),
+            ]);
+
+            DB::commit();
+
+            Log::info('Follow-Up Created Successfully');
+
+            return redirect()->route('equipmentManagementPPD.edit', ['equipmentId' => $equipmentId])
+                ->with('success', 'Follow-up successfully saved!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Error saving follow-up:', [
+                'message' => $e->getMessage(),
+                'equipment_id' => $equipmentId,
+                'user_id' => $request->user()->id,
+                'status' => $equipment->status ?? 'Unknown',
+            ]);
+
+            return back()->with('error', 'An error occurred while saving the follow-up.');
+        }
+    }
+
+    public function deleteEquipment($equipmentId)
+    {
+        try {
+            $equipment = Equipment::findOrFail($equipmentId);
+            $equipment->delete();
+
+            return redirect()->back()->with('success', 'Equipment deleted successfully.');
+        } catch (\Exception $e) {
+            Log::error('Error deleting equipment:', [
+                'message' => $e->getMessage(),
+                'equipment_id' => $equipmentId,
+            ]);
+
+            return back()->with('error', 'An error occurred while deleting the equipment.');
+        }
     }
 
 }
