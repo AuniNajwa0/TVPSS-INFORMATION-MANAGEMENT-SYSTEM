@@ -6,7 +6,7 @@ import PPDAdminSideBar from "../PPDAdminSideBar";
 
 export default function ListSchoolEquipment({ schools: initialSchools }) {
     const [searchQuery, setSearchQuery] = useState("");
-    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
     const [filteredData, setFilteredData] = useState(initialSchools);
 
