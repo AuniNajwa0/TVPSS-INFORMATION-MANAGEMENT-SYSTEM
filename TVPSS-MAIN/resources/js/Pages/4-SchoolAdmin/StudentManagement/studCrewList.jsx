@@ -24,7 +24,7 @@ const StudCrewList = ({ studcrews, school }) => {
     // Function to determine the status color
     const getStatusColor = (status) => {
         switch (status) {
-            case 'Pending':
+            case 'Permohonan Belum Diproses':
                 return 'bg-yellow-200 text-yellow-700';
             case 'Approved':
                 return 'bg-green-200 text-green-700';
