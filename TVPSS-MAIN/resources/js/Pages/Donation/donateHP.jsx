@@ -133,21 +133,21 @@ export default function DonationForm() {
         ],
     };
 
-    const schools = {
-        "Johor Bahru": ["Sekolah A", "Sekolah B", "Sekolah C"],
-        Muar: ["Sekolah D", "Sekolah E"],
-    };
+    const [schools, setSchools] = useState([]);
 
     const [selectedState, setSelectedState] = useState("");
     const [selectedDistrict, setSelectedDistrict] = useState("");
+    const [availableDistricts, setAvailableDistricts] = useState([]);
+    const [availableSchools, setAvailableSchools] = useState([]);
+
     const [formData, setFormData] = useState({
-        nama: "",
-        kadPengenalan: "",
+        name: "",
+        ic_num: "",
         email: "",
-        noTelefon: "",
+        phone: "",
         negeri: "",
         daerah: "",
-        sekolah: "",
+        schoolName: "",
         amaun: "",
         paymentMethod: "Online Banking",
     });
@@ -155,13 +155,25 @@ export default function DonationForm() {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
     
-        // Reset district when state changes
-        if (name === "state") {
+        // Reset district and school when state changes
+        if (name === "negeri") {
+            setSelectedState(value);
+            setAvailableDistricts(districts[value] || []);
             setFormData((prevData) => ({
                 ...prevData,
-                [name]: value,
-                district: "", // Reset district selection when state changes
+                negeri: value,
+                daerah: "", // Reset district selection when state changes
+                schoolName: "", // Reset school selection when state changes
             }));
+        } else if (name === "daerah") {
+            setSelectedDistrict(value);
+            setFormData((prevData) => ({
+                ...prevData,
+                daerah: value,
+                schoolName: "", // Reset school selection when district changes
+            }));
+            // Fetch schools based on selected negeri and daerah
+            fetchSchools(value);
         } else {
             setFormData((prevData) => ({
                 ...prevData,
@@ -170,15 +182,32 @@ export default function DonationForm() {
         }
     };
 
-    const handleDistrictChange = (e) => {
-        const { value } = e.target;
-        setSelectedDistrict(value);
-        setFormData(prev => ({
-            ...prev,
-            daerah: value, // Update daerah in formData
-        }));
+    const handleStateChange = (e) => {
+        const state = e.target.value;
+        setSelectedState(state);
+        setAvailableDistricts(districts[state] || []);
+        setSelectedDistrict(""); // Reset district selection
+        setAvailableSchools([]); // Reset school selection
     };
 
+    const handleDistrictChange = (e) => {
+        const district = e.target.value;
+        setSelectedDistrict(district);
+        fetchSchools(selectedState, district); // Fetch schools based on selected state and district
+    };
+
+    const fetchSchools = (state, district) => {
+        if (state && district) { // Ensure both state and district are selected
+            axios.get(`/schools?state=${state}&district=${district}`)
+                .then(response => {
+                    console.log(response.data); // Log the response data
+                    setAvailableSchools(response.data); // Update the available schools
+                })
+                .catch(err => {
+                    console.error(err);
+                });
+        }
+    };
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log("Form data submitted:", formData);
@@ -245,7 +274,7 @@ export default function DonationForm() {
                                             <div className="relative">
                                                 <input
                                                     type="text"
-                                                    name="nama"
+                                                    name="name"
                                                     placeholder="Masukkan nama penuh"
                                                     className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
                                                     required
@@ -258,7 +287,7 @@ export default function DonationForm() {
                                             <div className="relative">
                                                 <input
                                                     type="text"
-                                                    name="kadPengenalan"
+                                                    name="ic_num"
                                                     placeholder="000000-00-0000"
                                                     className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
                                                     required
@@ -284,7 +313,7 @@ export default function DonationForm() {
                                             <div className="relative">
                                                 <input
                                                     type="tel"
-                                                    name="noTelefon"
+                                                    name="phone"
                                                     placeholder="0123456789"
                                                     className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
                                                     required
@@ -306,7 +335,7 @@ export default function DonationForm() {
                                             <label className="text-sm font-medium text-gray-700">Negeri</label>
                                             <div className="relative">
                                                 <select
-                                                    name="negeri"
+                                                    name="negeri" onChange={handleStateChange}
                                                     className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white transition-all duration-300"
                                                     required
                                                 >
@@ -327,9 +356,9 @@ export default function DonationForm() {
                                                     required
                                                 >
                                                     <option value="">Pilih Daerah</option>
-                                                    {districts[selectedState]?.map(district => (
-                                                        <option key={district} value={district}>{district}</option>
-                                                    ))}
+                                                        {availableDistricts.map(district => (
+                                                            <option key={district} value={district}>{district}</option>
+                                                        ))}
                                                 </select>
                                                 <MapPin className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
                                             </div>
@@ -337,16 +366,16 @@ export default function DonationForm() {
                                         <div className="space-y-2 md:col-span-2">
                                             <label className="text-sm font-medium text-gray-700">Sekolah</label>
                                             <div className="relative">
-                                                <select
-                                                    name="sekolah"
-                                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white transition-all duration-300"
-                                                    required
-                                                >
-                                                    <option value="">Pilih Sekolah</option>
-                                                    {schools[selectedDistrict]?.map(school => (
-                                                        <option key={school} value={school}>{school}</option>
-                                                    ))}
-                                                </select>
+                                            <select
+                                                name="schoolName"
+                                                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white transition-all duration-300"
+                                                required
+                                            >
+                                                <option value="">Pilih Sekolah</option>
+                                                {availableSchools.map(school => (
+                    <option key={school} value={school}>{school}</option>
+                ))}
+                                            </select>
                                                 <School2 className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
                                             </div>
                                         </div>
@@ -389,7 +418,6 @@ export default function DonationForm() {
             </div>
         </div>
     </div>
-
                                 {/* Submit Button */}
                                 <button
                                     type="submit"
