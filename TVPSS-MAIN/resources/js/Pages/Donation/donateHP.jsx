@@ -187,6 +187,7 @@ export default function DonationForm() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-white flex flex-col">
+            <Head title="TVPSS | Sumbangan" />
             {/* Enhanced Header */}
             <header className="bg-bg-gradient-to-b from-blue-50 to-white">
                 <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">

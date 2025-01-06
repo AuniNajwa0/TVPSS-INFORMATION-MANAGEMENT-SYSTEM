@@ -1,5 +1,5 @@
 import { ArrowLeft } from 'lucide-react';
-import { Link } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 
 export default function PaymentReceipt({ paymentData }) {
     // Format date for receipt
@@ -14,6 +14,7 @@ export default function PaymentReceipt({ paymentData }) {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-white flex flex-col">
+            <Head title="TVPSS | Resit Sumbangan" />
             {/* Header */}
             <header className="bg-bg-gradient-to-b from-blue-50 to-white">
                 <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
