@@ -3,8 +3,20 @@ import { Head } from "@inertiajs/react";
 import { useState, useEffect } from "react";
 import { FaUsers, FaStar, FaUserFriends, FaSortNumericUp } from "react-icons/fa";
 import { Bar, Doughnut } from "react-chartjs-2";
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, ArcElement, Tooltip, Legend } from "chart.js";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  ArcElement,
+  Tooltip,
+  Legend,
+} from "chart.js";
 import SchoolAdminSideBar from "./SchoolAdminSideBar";
+import { ToggleButtonGroup, ToggleButton, Box } from "@mui/material";
+import { Download, Calendar } from "lucide-react";
+import "react-datepicker/dist/react-datepicker.css";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, ArcElement, Tooltip, Legend);
 
@@ -62,6 +74,12 @@ export default function Dashboard() {
     ],
   };
 
+  const handleTimeRangeChange = (event, newValue) => {
+    if (newValue !== null) {
+      setTimeRange(newValue);
+    }
+  };
+
   return (
     <AuthenticatedLayout>
       <Head title="TVPSS | Dashboard" />
@@ -73,29 +91,54 @@ export default function Dashboard() {
         <div className="w-full md:ml-[120px] p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-4xl font-bold text-gray-900 bg-clip-text">Dashboard</h2>
+          </div>
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-lg text-gray-700 mt-2">
+              Selamat Datang ke Dashboard School Admin!
+            </p>
 
             <div className="flex items-center space-x-4">
-              {/* Custom Styled Toggle Button Group */}
-              <div className="flex items-center space-x-4">
-                <button
-                  className={`px-6 py-2 rounded-lg font-medium text-sm ${timeRange === 'Harian' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800'} transition-all duration-300 hover:bg-blue-600 hover:text-white focus:outline-none`}
-                  onClick={() => setTimeRange('Harian')}
+              {/* Toggle Button Group for Time Range */}
+              <Box
+                component="form"
+                className="flex items-center space-x-4"
+              >
+                <ToggleButtonGroup
+                  value={timeRange}
+                  exclusive
+                  onChange={handleTimeRangeChange}
+                  aria-label="Time Range"
+                  sx={{
+                    backgroundColor: "#f2f5f7",
+                    border: "1px solid #ddd",
+                    borderRadius: "10px",
+                    overflow: "hidden",
+                    "& .MuiToggleButtonGroup-grouped": {
+                      textTransform: "none",
+                      fontWeight: "500",
+                      fontSize: "14px",
+                      padding: "10px 20px",
+                      border: "none",
+                      color: "#374151",
+                      "&.Mui-selected": {
+                        backgroundColor: "#ffffff",
+                        border: "1px solid #ddd",
+                        padding: "10px 20px",
+                        borderRadius: "10px",
+                        color: "#000",
+                        fontWeight: "600",
+                      },
+                      "&:hover": {
+                        backgroundColor: "#f2f5f7",
+                      },
+                    },
+                  }}
                 >
-                  Harian
-                </button>
-                <button
-                  className={`px-6 py-2 rounded-lg font-medium text-sm ${timeRange === 'Mingguan' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800'} transition-all duration-300 hover:bg-blue-600 hover:text-white focus:outline-none`}
-                  onClick={() => setTimeRange('Mingguan')}
-                >
-                  Mingguan
-                </button>
-                <button
-                  className={`px-6 py-2 rounded-lg font-medium text-sm ${timeRange === 'Bulanan' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800'} transition-all duration-300 hover:bg-blue-600 hover:text-white focus:outline-none`}
-                  onClick={() => setTimeRange('Bulanan')}
-                >
-                  Bulanan
-                </button>
-              </div>
+                  <ToggleButton value="Harian">Harian</ToggleButton>
+                  <ToggleButton value="Mingguan">Mingguan</ToggleButton>
+                  <ToggleButton value="Bulanan">Bulanan</ToggleButton>
+                </ToggleButtonGroup>
+              </Box>
 
               <input
                 type="date"
