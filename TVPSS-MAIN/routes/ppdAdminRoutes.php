@@ -15,4 +15,9 @@ Route::post('/tvpssInfoPPD/{schoolCode}/approve', [PPDAdminController::class, 'a
 Route::post('/tvpssInfoPPD/{schoolCode}/reject', [PPDAdminController::class, 'rejectTVPSS'])->name('schoolInfo.rejectTVPSS');
 
 // Equipment Management PPD
-Route::get('/eqManagementListPPD', [PPDAdminController::class, 'equipmentManagementPPD'])->name('equipmentManagementPPD');
+Route::get('/eqManagementListPPDSchool', [PPDAdminController::class, 'equipmentManagementPPDSchool'])->name('equipmentManagementPPDSchool');
+Route::get('/eqManagementPPD/list/{schoolId}', [PPDAdminController::class, 'equipmentManagementPPDList'])->name('equipmentManagementPPD.list');
+Route::get('/eqManagementPPD/edit/{equipmentId}', [PPDAdminController::class, 'editEquipment'])->name('equipmentManagementPPD.edit');
+Route::post('/equipmentPPD/{equipmentId}/update', [PPDAdminController::class, 'updateEquipment'])->name('equipmentManagementPPD.update');
+Route::post('/equipmentPPD/{equipmentId}/follow-up', [PPDAdminController::class, 'saveFollowUp'])->name('equipmentManagementPPD.followUp');
+Route::delete('/eqManagementPPD/{equipmentId}/delete', [PPDAdminController::class, 'deleteEquipment'])->name('equipmentManagementPPD.delete');

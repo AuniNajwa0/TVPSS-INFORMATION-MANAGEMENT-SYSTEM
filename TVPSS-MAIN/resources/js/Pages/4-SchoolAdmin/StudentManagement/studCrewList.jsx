@@ -154,8 +154,12 @@ const StudCrewList = ({ studcrews, school }) => {
                                                 <div className="flex justify-center items-center space-x-4">
                                                     {/* Edit and Delete Icons */}
                                                     <button
-                                                        onClick={() => Inertia.get(route('studcrew.edit', { id: crew.id }))}
-
+                                                        onClick={() => {
+                                                            console.log(crew.id);
+                                                            // Inertia.get(route('studcrew.edit', { id: crew.id }));
+                                                            router.get(route('studcrew.edit', { id: crew.id }));
+                                                        }}
+                                                        
                                                         className="text-gray-400 hover:text-gray-600"
                                                     >
                                                         <FaEdit size={18} />
@@ -163,7 +167,7 @@ const StudCrewList = ({ studcrews, school }) => {
                                                     <button
                                                         onClick={() => {
                                                             if (window.confirm("Are you sure you want to delete this StudCrew?")) {
-                                                                Inertia.delete(`/studcrew/${crew.id}`);
+                                                                Inertia.delete(route('studcrew.destroy', { id: crew.id }));
                                                             }
                                                         }}
                                                         className="text-gray-400 hover:text-gray-600"

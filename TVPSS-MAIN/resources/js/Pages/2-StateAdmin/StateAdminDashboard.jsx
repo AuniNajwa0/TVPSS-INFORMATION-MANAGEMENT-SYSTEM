@@ -14,7 +14,7 @@ import {
 } from "chart.js";
 import StateAdminSideBar from "./StateAdminSideBar";
 import { ToggleButtonGroup, ToggleButton, Button, Box } from "@mui/material";
-import { Download, Calendar, ChevronDown, FileBadge, Award, MapPinHouse } from "lucide-react";
+import { Download, Calendar, ChevronDown, FileBadge, Award, MapPinHouse, UserPlus, FileText, Settings, Mail, Upload, CheckCircle, AlertCircle } from "lucide-react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -28,6 +28,90 @@ export default function Dashboard() {
     ppdAdmin: 0,
     schoolAdmin: 0,
   });
+
+  const getActivityIcon = (type) => {
+    const iconProps = { size: 20, className: "flex-shrink-0" };
+    switch (type) {
+      case 'user': return <UserPlus {...iconProps} className="text-green-600" />;
+      case 'document': return <FileText {...iconProps} className="text-blue-600" />;
+      case 'settings': return <Settings {...iconProps} className="text-purple-600" />;
+      case 'email': return <Mail {...iconProps} className="text-yellow-600" />;
+      case 'upload': return <Upload {...iconProps} className="text-orange-600" />;
+      case 'download': return <Download {...iconProps} className="text-cyan-600" />;
+      case 'success': return <CheckCircle {...iconProps} className="text-emerald-600" />;
+      case 'warning': return <AlertCircle {...iconProps} className="text-red-600" />;
+      default: return <FileText {...iconProps} className="text-gray-600" />;
+    }
+  };
+
+  const dummyActivities = [
+    {
+      id: 1,
+      type: 'user',
+      description: 'Admin PPD baharu ditambah untuk PPD Petaling Perdana',
+      user: 'Ahmad Zaidi',
+      timestamp: '2 minit yang lalu',
+      status: 'success'
+    },
+    {
+      id: 2,
+      type: 'document',
+      description: 'Laporan prestasi sekolah-sekolah PPD Klang dimuat naik',
+      user: 'Sarah Abdullah',
+      timestamp: '45 minit yang lalu',
+      status: 'pending'
+    },
+    {
+      id: 3,
+      type: 'settings',
+      description: 'Tetapan sistem dikemaskini untuk PPD Hulu Langat',
+      user: 'System',
+      timestamp: '1 jam yang lalu',
+      status: 'success'
+    },
+    {
+      id: 4,
+      type: 'email',
+      description: 'Notifikasi pengguna baharu dihantar kepada semua admin sekolah',
+      user: 'System',
+      timestamp: '2 jam yang lalu',
+      status: 'success'
+    },
+    {
+      id: 5,
+      type: 'upload',
+      description: 'Data pelajar baharu SMK Bandar Tun Hussein Onn dimuat naik',
+      user: 'Noor Hafizah',
+      timestamp: '3 jam yang lalu',
+      status: 'success'
+    },
+    {
+      id: 6,
+      type: 'warning',
+      description: 'Cubaan log masuk yang gagal dikesan dari IP tidak dikenali',
+      user: 'Security System',
+      timestamp: '4 jam yang lalu',
+      status: 'warning'
+    },
+    {
+      id: 7,
+      type: 'success',
+      description: 'Backup sistem berjaya dilaksanakan',
+      user: 'System',
+      timestamp: '5 jam yang lalu',
+      status: 'success'
+    },
+    {
+      id: 8,
+      type: 'document',
+      description: 'Dokumen panduan pengguna dikemaskini ke versi 2.1',
+      user: 'Admin System',
+      timestamp: '6 jam yang lalu',
+      status: 'success'
+    }
+  ];
+
+
   const [selectedRegion, setSelectedRegion] = useState("Semua Negeri");
 
   const handleTimeRangeChange = (event, newTimeRange) => {
@@ -236,7 +320,7 @@ export default function Dashboard() {
             <div className="bg-white p-5 rounded-2xl border-2 border-gray-200 flex flex-col items-center">
               <h3 className="text-xl font-bold text-gray-800 mb-6">Jumlah Peratusan Mengikut Versi</h3>
               <select
-  className="w-full mb-4 p-3 border-2 border-gray-300 rounded-lg shadow-sm bg-white text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-400 transition duration-300 ease-in-out"
+  className="w-1/2 mb-4 p-3 border-2 border-gray-300 rounded-lg shadow-sm bg-white text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-400 transition duration-300 ease-in-out"
   value={selectedRegion}
   onChange={(e) => setSelectedRegion(e.target.value)}
 >
@@ -259,8 +343,34 @@ export default function Dashboard() {
               />
             </div>
           </div>
+          <div className="bg-white p-5 rounded-2xl border-2 border-gray-200 mb-6">
+  <h3 className="text-xl font-bold text-gray-800 mb-4">Aktiviti Terkini</h3>
+  <div className="overflow-auto max-h-96">
+    {dummyActivities.map((activity) => (
+      <div
+        key={activity.id}
+        className="flex items-start justify-between mb-4 p-3 bg-gray-50 rounded-lg"
+      >
+        <div className="flex items-center">
+          {getActivityIcon(activity.type)}
+          <div className="ml-3">
+            <p className="text-gray-700 text-sm font-semibold">{activity.description}</p>
+            <p className="text-gray-500 text-xs">{activity.timestamp}</p>
+          </div>
+        </div>
+        <div className="flex items-center">
+          <p className={`text-sm ${activity.status === 'success' ? 'text-green-600' : 'text-red-600'}`}>
+            {activity.status}
+          </p>
         </div>
       </div>
+    ))}
+  </div>
+</div>
+        </div>
+      </div>
+      
+
       <footer className="text-center py-4 border-t bg-white text-gray-600">
         © 2024 Kementerian Pendidikan Malaysia (KPM)
       </footer>

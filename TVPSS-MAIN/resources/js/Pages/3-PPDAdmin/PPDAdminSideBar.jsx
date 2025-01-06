@@ -67,10 +67,10 @@ function PPDAdminSideBar() {
                             active={url.startsWith("/dashboardPPD")}
                         />
                         <SidebarLink
-                            href="/eqManagementListPPD"
+                            href="/eqManagementListPPDSchool"
                             icon={<PrinterCheck size={20} />}
                             label="Pengurusan Peralatan Sekolah"
-                            active={url.startsWith("/eqManagementListPPD")}
+                            active={url.startsWith("/eqManagementListPPDSchool")}
                         />
                         <SidebarLink
                             href="/tvpssInfoPPDList"

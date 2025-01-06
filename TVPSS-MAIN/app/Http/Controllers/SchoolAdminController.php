@@ -903,7 +903,7 @@ class SchoolAdminController extends Controller
     
         if ($request->has('search')) {
             $query->where('jawatan', 'like', '%' . $request->input('search') . '%')
-                  ->orWhere('status', 'like', '%' . $request->input('search') . '%');
+            ->orWhere('status', 'like', '%' . $request->input('search') . '%');
         }
     
         $studcrews = $query->paginate(10);
@@ -916,9 +916,40 @@ class SchoolAdminController extends Controller
 
     public function editStudcrew($id)
     {
-        $crew = StudCrew::findOrFail($id);
+        $crew = StudCrew::with('student')->findOrFail($id); // Eager load the student
         return Inertia::render('4-SchoolAdmin/StudentManagement/approveStudCrew', ['crew' => $crew]);
+    }
 
+    public function approveStudcrew($id)
+    {
+        $crew = StudCrew::findOrFail($id);
+        $crew->status = 'Approved'; // Update the status to Approved
+        $crew->save(); // Save the changes
+
+        //return redirect()->route('studcrew.list')->with('message', 'Application approved successfully.');
+        return Inertia::render('4-SchoolAdmin/StudentManagement/studCrewList');
+    }
+
+    public function rejectStudcrew($id)
+    {
+        $crew = StudCrew::findOrFail($id);
+        $crew->status = 'Rejected'; // Update the status to Rejected
+        $crew->save(); // Save the changes
+
+        //return redirect()->route('studcrew.list')->with('message', 'Application rejected successfully.');
+        return Inertia::render('4-SchoolAdmin/StudentManagement/studCrewList');
+    }
+
+    public function destroy($id)
+    {
+        // Find the StudCrew by ID or fail if not found
+        $crew = StudCrew::findOrFail($id);
+
+        // Delete the StudCrew
+        $crew->delete();
+
+        // Redirect back with a success message
+        return redirect()->route('studcrew.list')->with('success', 'StudCrew deleted successfully.');
     }
 
 

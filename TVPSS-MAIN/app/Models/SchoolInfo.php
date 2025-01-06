@@ -48,6 +48,11 @@ class SchoolInfo extends Model
         return $this->hasMany(Student::class);
     }
 
+    public function equipment()
+    {
+        return $this->hasMany(Equipment::class, 'school_info_id');
+    }
+
     public function updateLogo($file)
     {
         if ($file) {
