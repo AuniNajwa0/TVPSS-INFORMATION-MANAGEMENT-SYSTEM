@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\SchoolInfo;
 use App\Models\TVPSSVersion;
+use App\Models\Equipment;
 use App\Enums\ApprovalStatusEnum;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
@@ -121,13 +122,30 @@ class PPDAdminController extends Controller
             ->with('error', 'TVPSS Version has been rejected.');
     }
 
-    public function destroy(string $id)
+    public function equipmentManagementPPDSchool()
     {
-        //
+        $user = request()->user();
+        $schools = SchoolInfo::where('district', $user->district)->get();
+
+        $schoolsWithEquipmentCount = $schools->map(function ($school) {
+            $equipmentCount = Equipment::where('school_info_id', $school->id)->count();
+            return [
+                'id' => $school->id,
+                'schoolName' => $school->schoolName,
+                'schoolCode' => $school->schoolCode,
+                'schoolOfficer' => $school->schoolOfficer,
+                'district' => $school->district,
+                'equipment_count' => $equipmentCount,
+            ];
+        });
+
+        return Inertia::render('3-PPDAdmin/ManageSchoolEquipment/listSchoolEq', [
+            'schools' => $schoolsWithEquipmentCount,
+        ]);
     }
 
-    public function equipmentManagementPPD()
+    public function equipmentManagementPPDList()
     {
-        return Inertia::render('3-PPDAdmin/ManageSchoolEquipment/listSchoolEq');
+        return Inertia::render('3-PPDAdmin/ManageSchoolEquipment/listSchoolWEq');
     }
 }
