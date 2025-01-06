@@ -144,8 +144,15 @@ class PPDAdminController extends Controller
         ]);
     }
 
-    public function equipmentManagementPPDList()
+    public function equipmentManagementPPDList($schoolId)
     {
-        return Inertia::render('3-PPDAdmin/ManageSchoolEquipment/listSchoolWEq');
+        $equipment = Equipment::where('school_info_id', $schoolId)->paginate(10);
+        $school = SchoolInfo::findOrFail($schoolId);
+
+        return Inertia::render('3-PPDAdmin/ManageSchoolEquipment/listSchoolWEq', [
+            'equipment' => $equipment,
+            'school' => $school,
+        ]);
     }
+
 }
