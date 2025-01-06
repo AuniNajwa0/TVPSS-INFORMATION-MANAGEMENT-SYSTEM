@@ -1,5 +1,18 @@
 import React, { useState } from "react";
-import { FaBars, FaTimes, FaTh, FaUserGraduate, FaPencilAlt, FaCheckCircle, FaInfoCircle, FaSortNumericDown, FaPaperPlane, FaCog, FaSignOutAlt } from "react-icons/fa";
+import {
+  FaBars,
+  FaTimes,
+  FaTh,
+  FaUserGraduate,
+  FaPencilAlt,
+  FaCheckCircle,
+  FaInfoCircle,
+  FaSortNumericDown,
+  FaPaperPlane,
+  FaHandHoldingHeart,
+  FaCog,
+  FaSignOutAlt,
+} from "react-icons/fa";
 import { Link, usePage } from "@inertiajs/react";
 
 function SchoolAdminSideBar() {
@@ -84,6 +97,13 @@ function SchoolAdminSideBar() {
               label="Submit Versi TVPSS"
               active={url === "/updateSchoolTVPSSVersion"}
             />
+            {/* New Sumbangan Button */}
+            <SidebarLink
+              href="/sumbangan"
+              icon={<FaHandHoldingHeart size={20} />}
+              label="Sumbangan"
+              active={url === "/sumbangan"}
+            />
           </nav>
         </div>
 
@@ -95,10 +115,10 @@ function SchoolAdminSideBar() {
           </h3>
           <nav className="space-y-4">
             <SidebarLink
-              href="/settingsSchoolAdmin"
+              href="/profileSchoolAdmin"
               icon={<FaCog size={20} />}
               label="Tetapan"
-              active={url === "/settingsSchoolAdmin"}
+              active={url === "/profileSchoolAdmin"}
             />
             {/* Log Out */}
             <Link
