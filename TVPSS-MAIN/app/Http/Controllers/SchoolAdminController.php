@@ -923,22 +923,21 @@ class SchoolAdminController extends Controller
     public function approveStudcrew($id)
     {
         $crew = StudCrew::findOrFail($id);
-        $crew->status = 'Approved'; // Update the status to Approved
-        $crew->save(); // Save the changes
+        $crew->status = 'Approved';
+        $crew->save();
 
-        //return redirect()->route('studcrew.list')->with('message', 'Application approved successfully.');
-        return Inertia::render('4-SchoolAdmin/StudentManagement/studCrewList');
+        return redirect()->route('studcrew.list')->with('message', 'Application approved successfully.');
     }
 
     public function rejectStudcrew($id)
     {
         $crew = StudCrew::findOrFail($id);
-        $crew->status = 'Rejected'; // Update the status to Rejected
-        $crew->save(); // Save the changes
+        $crew->status = 'Rejected';
+        $crew->save();
 
-        //return redirect()->route('studcrew.list')->with('message', 'Application rejected successfully.');
-        return Inertia::render('4-SchoolAdmin/StudentManagement/studCrewList');
+        return redirect()->route('studcrew.list')->with('message', 'Application rejected successfully.');
     }
+
 
     public function destroy($id)
     {
