@@ -7,14 +7,21 @@ import { Inertia } from '@inertiajs/inertia';
 
 const ApproveStudCrew = () => {
     const { crew, errors } = usePage().props;
-    
+
     const handleBack = () => {
         Inertia.get(route('studcrew.list'));
-    };    
+    };
 
     const handleApproval = (status) => {
-        const url = status === 'Approved' ? `/studcrew/${crew.id}/approve` : `/studcrew/${crew.id}/reject`;
-        Inertia.post(url);
+        const url = status === 'Approved' 
+            ? route('studcrew.approve', { id: crew.id }) 
+            : route('studcrew.reject', { id: crew.id });
+
+        Inertia.post(url, {}, {
+            onSuccess: () => {
+                Inertia.get(route('studcrew.list'));
+            }
+        });
     };
 
     if (!crew) {
@@ -110,7 +117,7 @@ const ApproveStudCrew = () => {
                                     </label>
                                     <input
                                         type="text"
-                                        value={new Date(crew.created_at).toLocaleDateString()} // Format the date to show only the date part
+                                        value={new Date(crew.created_at).toLocaleDateString()}
                                         readOnly
                                         className="mt-1 block w-full py-2.5 px-3.5 border border-gray-300 rounded-md shadow-sm focus:outline-none sm:text-sm"
                                     />
@@ -132,15 +139,15 @@ const ApproveStudCrew = () => {
                         <div className="flex justify-end mt-7">
                             <button
                                 onClick={() => handleApproval('Approved')}
-                                className="px-7 py-4 bg-green-500 text-white rounded-2xl hover:bg-green-600 transition-all"
+                                className="px-7 py-4 bg-[#445184] text-white rounded-2xl hover:bg-[#3c4f88] transition-all"
                             >
                                 Terima
                             </button>
                             <button
                                 onClick={() => handleApproval('Rejected')}
-                                className="ml-4 px-7 py-4 bg-red-500 text-white rounded-2xl hover:bg-red-600 transition-all"
+                                className="ml-4 px-7 py-4 bg-[#F44336] text-white rounded-2xl hover:bg-[#E53935] transition-all"
                             >
- Tolak
+                                Tolak
                             </button>
                         </div>
                     </div>
