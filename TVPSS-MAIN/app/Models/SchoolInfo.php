@@ -62,4 +62,9 @@ class SchoolInfo extends Model
         }
     }
 
+    public function donation()
+    {
+        return $this->hasMany(Donation::class, 'school_id');
+    }
+
 }
