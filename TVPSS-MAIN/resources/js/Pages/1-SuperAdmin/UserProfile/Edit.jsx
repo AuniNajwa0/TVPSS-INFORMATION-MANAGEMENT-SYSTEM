@@ -16,14 +16,11 @@ export default function Edit({ mustVerifyEmail, status }) {
 
         <div className="w-full md:ml-[120px] p-6">
         <div className="flex items-center justify-between ">
-            <h2 className="text-4xl font-bold text-gray-900 bg-clip-text mb-4">
-              Tetapan
-            </h2>
           </div>
         <nav className="mb-8">
                         <ol className="flex items-center space-x-2 text-gray-600">
                             <li>
-                                <a href="/listUsers" className="text-[#4158A6] hover:text-blue-800 font-medium">
+                                <a href="/profileSuperAdmin" className="text-[#4158A6] hover:text-blue-800 font-medium">
                                     Tetapan
                                 </a>
                             </li>
