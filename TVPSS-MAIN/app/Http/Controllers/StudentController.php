@@ -103,6 +103,9 @@ class StudentController extends Controller
                 'jawatan' => $studcrew->jawatan, // Position
                 'status' => $studcrew->status, // Application status
                 'dateSubmitted'=> $studcrew->created_at,
+                'name' => $studcrew->student->name,
+                'email' => $studcrew->student->email,
+                'ic_num' => $studcrew->student->ic_num,
             ];
         });
         

@@ -125,4 +125,9 @@ class PPDAdminController extends Controller
     {
         //
     }
+
+    public function equipmentManagementPPD()
+    {
+        return Inertia::render('3-PPDAdmin/ManageSchoolEquipment/listSchoolEq');
+    }
 }

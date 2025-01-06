@@ -110,8 +110,9 @@ class SchoolAdminController extends Controller
                 'school_info_id' => $school->id,
             ]);
 
-            if ($request->input('status') === 'Tidak Berfungsi') {
+            if (in_array($request->input('status'), ['Tidak Berfungsi', 'Penyelenggaraan'])) {
                 $uploadPaths = [];
+
                 $request->validate([
                     'uploadBrEq.*' => 'file|mimes:jpeg,png,jpg|max:2048',
                 ]);
@@ -249,9 +250,17 @@ class SchoolAdminController extends Controller
             ]);
 
             $equipment = Equipment::findOrFail($equipmentId);
+            $equipmentStatus = $equipment->status instanceof StatusEnum 
+                ? $equipment->status->value 
+                : $equipment->status;
 
-            if ($equipment->status->value !== StatusEnum::Tidak_Berfungsi->value) {
-                throw new \Exception('Follow-ups can only be created for equipment with status "Tidak Berfungsi".');
+            $allowedStatuses = [
+                StatusEnum::Tidak_Berfungsi->value,
+                StatusEnum::Penyelenggaraan->value,
+            ];
+
+            if (!in_array($equipmentStatus, $allowedStatuses)) {
+                throw new \Exception('Follow-ups can only be created for specific statuses.');
             }
 
             $uploadPaths = [];
@@ -905,28 +914,11 @@ class SchoolAdminController extends Controller
         ]);
     }
 
-    public function editStudcrew()
+    public function editStudcrew($id)
     {
-        /*try {
-            $user = auth()->user();
+        $crew = StudCrew::findOrFail($id);
+        return Inertia::render('4-SchoolAdmin/StudentManagement/approveStudCrew', ['crew' => $crew]);
 
-            $school = SchoolInfo::where('user_id', $user->id)->firstOrFail();
-
-            $studcrew = Studcrew::whereHas('student', function ($query) use ($school) {
-                $query->where('school_info_id', $school->id);
-            })
-            ->with('student')
-            ->firstOrFail(); 
-
-            return inertia('4-SchoolAdmin/StudentManagement/approveStudCrew', [
-                'studcrew' => $studcrew,
-            ]);
-        } catch (\Exception $e) {
-            \Log::error('Failed to fetch Studcrew details', ['error' => $e->getMessage()]);
-            return redirect()->back()->with('error', 'Failed to fetch Studcrew details. Please try again.');
-        }*/
-
-        return inertia('4-SchoolAdmin/StudentManagement/approveStudCrew');
     }
 
 

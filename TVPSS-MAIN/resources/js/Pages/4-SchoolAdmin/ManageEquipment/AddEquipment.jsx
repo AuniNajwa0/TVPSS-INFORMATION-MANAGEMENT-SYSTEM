@@ -234,7 +234,7 @@ export default function AddEquipment() {
                                 </div>
 
                                 {/* Additional Fields for "Tidak Berfungsi" */}
-                                {formData.status === 'Tidak Berfungsi' && (
+                                {['Tidak Berfungsi', 'Penyelenggaraan'].includes(formData.status) && (
                                     <div className="space-y-4">
                                         <div className="relative">
                                             <AlertCircle className="absolute top-3 left-3 text-gray-400" size={20} />
