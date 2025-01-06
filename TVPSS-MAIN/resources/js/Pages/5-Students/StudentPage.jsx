@@ -144,6 +144,39 @@ const LandingPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Donation Section */}
+      <div className="bg-gradient-to-b from-blue-50 to-white py-16 rounded-t-3xl">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-800 mb-4">Sumbangan</h2>
+            <p className="text-lg text-gray-600">
+            Anda berpeluang untuk memberikan sumbangan bagi menyokong pelbagai program menarik dan bermanfaat yang bakal dianjurkan oleh TVPSS. 
+            Setiap sumbangan yang anda hulurkan akan digunakan untuk memastikan kelancaran aktiviti, memperkasa usaha kreatif, serta memberikan impak 
+            positif kepada para pelajar dan komuniti.
+            </p>
+          </div>
+
+          <div className="text-center mt-12">
+            <button
+              onClick={() => (window.location.href = '/donationHP')}
+              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-full text-lg font-semibold 
+                        hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 
+                        shadow-lg hover:shadow-xl"
+            >
+              Sumbang Sekarang
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <footer className="bg-blue-900 text-white py-6">
+                <div className="max-w-7xl mx-auto px-6 text-center">
+                    <p className="text-sm text-blue-200">
+                        © 2024 TV Pusat Sumber Sekolah. Hak Cipta Terpelihara.
+                    </p>
+                </div>
+            </footer>
     </div>
   );
 };
