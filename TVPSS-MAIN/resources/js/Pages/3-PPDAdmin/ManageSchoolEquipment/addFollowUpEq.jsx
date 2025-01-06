@@ -196,13 +196,7 @@ export default function UpdateEquipmentPPD({
     );
 
     return (
-        <AuthenticatedLayout
-            header={
-                <h2 className="text-4xl font-bold leading-tight text-gray-800">
-                    Status Barang
-                </h2>
-            }
-        >
+        <AuthenticatedLayout>
             <Head title="TVPSS | Status Barang" />
             <div className="flex min-h-screen bg-gray-50">
                 <div className="w-1/6 p-8 text-white">
