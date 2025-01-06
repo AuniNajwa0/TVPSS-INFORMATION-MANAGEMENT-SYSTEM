@@ -167,7 +167,7 @@ const StudCrewList = ({ studcrews, school }) => {
                                                     <button
                                                         onClick={() => {
                                                             if (window.confirm("Are you sure you want to delete this StudCrew?")) {
-                                                                Inertia.delete(`/studcrew/${crew.id}`);
+                                                                Inertia.delete(route('studcrew.destroy', { id: crew.id }));
                                                             }
                                                         }}
                                                         className="text-gray-400 hover:text-gray-600"

@@ -940,6 +940,18 @@ class SchoolAdminController extends Controller
         return Inertia::render('4-SchoolAdmin/StudentManagement/studCrewList');
     }
 
+    public function destroy($id)
+    {
+        // Find the StudCrew by ID or fail if not found
+        $crew = StudCrew::findOrFail($id);
+
+        // Delete the StudCrew
+        $crew->delete();
+
+        // Redirect back with a success message
+        return redirect()->route('studcrew.list')->with('success', 'StudCrew deleted successfully.');
+    }
+
 
     public function achievementList(Request $request)
     {
