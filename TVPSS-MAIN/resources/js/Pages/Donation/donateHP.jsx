@@ -188,15 +188,15 @@ export default function DonationForm() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-white flex flex-col">
             {/* Enhanced Header */}
-            <header className="bg-white border-b">
+            <header className="bg-bg-gradient-to-b from-blue-50 to-white">
                 <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
                     <div className="flex items-center space-x-8">
                         <img src="/assets/KPM_Logo.png" alt="KPM Logo" className="h-16 w-auto" />
                         <div className="h-8 w-px bg-gray-200" />
-                        <img src="/assets/TVPSSLogo2.jpg" alt="TVPSS Logo" className="h-16 w-auto" />
+                        <img src="/assets/TVPSSLogo3.jpg" alt="TVPSS Logo" className="h-16 w-auto" />
                     </div>
                     <Link 
-                        href="/" 
+                        href="/studentsPage" 
                         className="group flex items-center px-4 py-2 text-sm font-medium text-gray-600 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all duration-300"
                     >
                         <ArrowLeft className="w-4 h-4 mr-2 transform group-hover:-translate-x-1 transition-transform duration-300" />
@@ -392,7 +392,7 @@ export default function DonationForm() {
                                 {/* Submit Button */}
                                 <button
                                     type="submit"
-                                    className="w-full bg-blue-600 text-white py-4 px-6 rounded-lg hover:bg-blue-700 transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center space-x-2"
+                                    className="w-full bg-blue-900 text-white py-4 px-6 rounded-lg hover:bg-blue-700 transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center space-x-2"
                                 >
                                     <span className="font-medium">Teruskan Pembayaran</span>
                                     <ArrowLeft className="w-5 h-5 rotate-180" />
