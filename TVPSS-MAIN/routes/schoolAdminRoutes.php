@@ -67,6 +67,10 @@ Route::get('/achievements/{id}', [SchoolAdminController::class, 'achievementEdit
 Route::put('/achievements/{id}', [SchoolAdminController::class, 'updateAchievement'])->name('achievement.update');
 Route::delete('/achievements/{id}', [SchoolAdminController::class, 'deleteAchievement'])->name('achievement.delete');
 
+//Donation
+Route::get('/donationList', [SchoolAdminController::class, 'donationList'])->name('schooladmin.donation.list');
+
+
 //Settings
 Route::get('/profileSchoolAdmin', function () {
     return Inertia::render('4-SchoolAdmin/Profile/Edit');

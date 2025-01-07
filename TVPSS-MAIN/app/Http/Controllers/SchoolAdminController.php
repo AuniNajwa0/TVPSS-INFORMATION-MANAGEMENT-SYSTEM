@@ -1086,4 +1086,9 @@ class SchoolAdminController extends Controller
         }
     }
 
+    public function donationList()
+    {
+        return Inertia::render('4-SchoolAdmin/Donation/donationList');
+    }
+
 }
