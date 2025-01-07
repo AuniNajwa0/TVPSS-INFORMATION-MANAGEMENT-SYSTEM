@@ -1,7 +1,7 @@
 import { ArrowLeft } from 'lucide-react';
 import { Head, Link } from '@inertiajs/react';
 
-export default function PaymentReceipt({ paymentData }) {
+export default function PaymentReceipt({ paymentData, schools }) {
     // Format date for receipt
     const currentDate = new Date().toLocaleDateString('ms-MY', {
         year: 'numeric',
@@ -24,7 +24,7 @@ export default function PaymentReceipt({ paymentData }) {
                         <img src="/assets/TVPSSLogo3.jpg" alt="TVPSS Logo" className="h-16 w-auto" />
                     </div>
                     <Link 
-                        href="/studentsPage" 
+                        href="/" 
                         className="group flex items-center px-4 py-2 text-sm font-medium text-gray-600 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all duration-300"
                     >
                         <ArrowLeft className="w-4 h-4 mr-2 transform group-hover:-translate-x-1 transition-transform duration-300" />
@@ -65,11 +65,11 @@ export default function PaymentReceipt({ paymentData }) {
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-1">
                                         <p className="text-sm text-gray-600">Nama</p>
-                                        <p className="font-medium">{paymentData.nama}</p>
+                                        <p className="font-medium">{paymentData.name}</p>
                                     </div>
                                     <div className="space-y-1">
                                         <p className="text-sm text-gray-600">No. Kad Pengenalan</p>
-                                        <p className="font-medium">{paymentData.kadPengenalan}</p>
+                                        <p className="font-medium">{paymentData.ic_num}</p>
                                     </div>
                                     <div className="space-y-1">
                                         <p className="text-sm text-gray-600">Email</p>
@@ -77,7 +77,7 @@ export default function PaymentReceipt({ paymentData }) {
                                     </div>
                                     <div className="space-y-1">
                                         <p className="text-sm text-gray-600">No. Telefon</p>
-                                        <p className="font-medium">{paymentData.noTelefon}</p>
+                                        <p className="font-medium">{paymentData.phone}</p>
                                     </div>
                                 </div>
                             </div>
