@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Inertia\Inertia;
-
+use App\Models\Donations;
+use App\Models\SchoolInfo;
 use Illuminate\Http\Request;
 
 class DonationController extends Controller
@@ -52,15 +53,11 @@ class DonationController extends Controller
 
     public function getSchools(Request $request)
     {
-        $state = $request->input('state');
-        $district = $request->input('district');
-
-        \Log::info("State: $state, District: $district"); // Log the parameters
-
-        $schools = SchoolInfo::where('state', $state)
-                            ->where('district', $district)
-                            ->pluck('schoolName');
-
-        return response()->json($schools);
+        $state = $request->query('state');
+        $district = $request->query('district');
+        
+        return SchoolInfo::where('state', $state)
+            ->where('district', $district)
+            ->get();
     }
 }

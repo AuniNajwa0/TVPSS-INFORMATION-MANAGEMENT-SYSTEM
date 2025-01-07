@@ -193,21 +193,30 @@ export default function DonationForm() {
     const handleDistrictChange = (e) => {
         const district = e.target.value;
         setSelectedDistrict(district);
-        fetchSchools(selectedState, district); // Fetch schools based on selected state and district
+        fetchSchools(formData.negeri, district); // Use formData to get the latest values
     };
+    
 
-    const fetchSchools = (state, district) => {
-        if (state && district) { // Ensure both state and district are selected
-            axios.get(`/schools?state=${state}&district=${district}`)
-                .then(response => {
-                    console.log(response.data); // Log the response data
-                    setAvailableSchools(response.data); // Update the available schools
-                })
-                .catch(err => {
-                    console.error(err);
-                });
+    const fetchSchools = async () => {
+        if (!state || !district) {
+            setError("Please select both state and district.");
+            return;
+        }
+    
+        setLoading(true);
+        setError(null);
+    
+        try {
+            const response = await axios.get(`/receiptDonate?negeri=${encodeURIComponent(state)}&daerah=${encodeURIComponent(district)}`);
+            setAvailableSchools(response.data); // Expecting an array of school names
+        } catch (err) {
+            setError("Error fetching schools: " + (err.response?.data?.error || err.message));
+        } finally {
+            setLoading(false);
         }
     };
+    
+
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log("Form data submitted:", formData);
@@ -372,10 +381,11 @@ export default function DonationForm() {
                                                 required
                                             >
                                                 <option value="">Pilih Sekolah</option>
-                                                {availableSchools.map(school => (
-                    <option key={school} value={school}>{school}</option>
+    {availableSchools.map(school => ( // Use availableSchools here
+        <option key={school} value={school}>{school}</option>
                 ))}
                                             </select>
+                                            
                                                 <School2 className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
                                             </div>
                                         </div>
