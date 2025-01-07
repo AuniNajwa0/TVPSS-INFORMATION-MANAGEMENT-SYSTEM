@@ -99,10 +99,10 @@ function SchoolAdminSideBar() {
             />
             {/* New Sumbangan Button */}
             <SidebarLink
-              href="/sumbangan"
+              href="/donationList"
               icon={<FaHandHoldingHeart size={20} />}
               label="Sumbangan"
-              active={url === "/sumbangan"}
+              active={url === "/donationList"}
             />
           </nav>
         </div>
