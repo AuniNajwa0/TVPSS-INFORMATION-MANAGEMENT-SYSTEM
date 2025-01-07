@@ -145,8 +145,8 @@ export default function DonationForm() {
         ic_num: "",
         email: "",
         phone: "",
-        negeri: "",
-        daerah: "",
+        state: "",
+        district: "",
         schoolName: "",
         amaun: "",
         paymentMethod: "Online Banking",
@@ -156,20 +156,20 @@ export default function DonationForm() {
         const { name, value } = e.target;
     
         // Reset district and school when state changes
-        if (name === "negeri") {
+        if (name === "state") {
             setSelectedState(value);
             setAvailableDistricts(districts[value] || []);
             setFormData((prevData) => ({
                 ...prevData,
-                negeri: value,
-                daerah: "", // Reset district selection when state changes
+                state: value,
+                district: "", // Reset district selection when state changes
                 schoolName: "", // Reset school selection when state changes
             }));
-        } else if (name === "daerah") {
+        } else if (name === "district") {
             setSelectedDistrict(value);
             setFormData((prevData) => ({
                 ...prevData,
-                daerah: value,
+                district: value,
                 schoolName: "", // Reset school selection when district changes
             }));
             // Fetch schools based on selected negeri and daerah
@@ -191,13 +191,13 @@ export default function DonationForm() {
     };
 
     const handleDistrictChange = (e) => {
-        const district = e.target.value;
-        setSelectedDistrict(district);
-        fetchSchools(formData.negeri, district); // Use formData to get the latest values
-    };
+    const district = e.target.value;
+    setSelectedDistrict(district);
+    fetchSchools(formData.state, district); // Pass both state and district
+};
     
 
-    const fetchSchools = async () => {
+    const fetchSchools = async (state, district) => {
         if (!state || !district) {
             setError("Please select both state and district.");
             return;
@@ -207,7 +207,7 @@ export default function DonationForm() {
         setError(null);
     
         try {
-            const response = await axios.get(`/receiptDonate?negeri=${encodeURIComponent(state)}&daerah=${encodeURIComponent(district)}`);
+            const response = await axios.get(`/schools?state=${encodeURIComponent(state)}&district=${encodeURIComponent(district)}`);
             setAvailableSchools(response.data); // Expecting an array of school names
         } catch (err) {
             setError("Error fetching schools: " + (err.response?.data?.error || err.message));
@@ -344,7 +344,7 @@ export default function DonationForm() {
                                             <label className="text-sm font-medium text-gray-700">Negeri</label>
                                             <div className="relative">
                                                 <select
-                                                    name="negeri" onChange={handleStateChange}
+                                                    name="state" onChange={handleStateChange}
                                                     className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white transition-all duration-300"
                                                     required
                                                 >
@@ -360,7 +360,7 @@ export default function DonationForm() {
                                             <label className="text-sm font-medium text-gray-700">Daerah</label>
                                             <div className="relative">
                                                 <select
-                                                    name="daerah"
+                                                    name="district"
                                                     className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white transition-all duration-300"
                                                     required
                                                 >

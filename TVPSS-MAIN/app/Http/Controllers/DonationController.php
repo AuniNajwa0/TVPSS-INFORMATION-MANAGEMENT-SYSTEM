@@ -25,8 +25,8 @@ class DonationController extends Controller
             'phone' => 'required|string',
             'ic_num' => 'required|string|max:12',
             'amaun' => 'required|numeric',
-            'negeri' => 'required|string',
-            'daerah' => 'required|string',
+            'state' => 'required|string',
+            'district' => 'required|string',
             'schoolName' => 'required|string',
         ]);
 
@@ -37,12 +37,12 @@ class DonationController extends Controller
             'phone' => $validated['phone'],
             'ic_num' => $validated['ic_num'],
             'amaun' => $validated['amaun'],
-            'school_id' => $this->getSchoolId($validated['negeri'], $validated['daerah'], $validated['schoolName']),
+            'school_id' => $this->getSchoolId($validated['state'], $validated['district'], $validated['schoolName']),
         ]);
 
         // Retrieve school names based on selected negeri and daerah
-        $schools = SchoolInfo::where('state', $validated['negeri'])
-            ->where('district', $validated['daerah'])
+        $schools = SchoolInfo::where('state', $validated['state'])
+            ->where('district', $validated['district'])
             ->pluck('schoolName');
 
         return Inertia::render('Donation/receiptPage', [
@@ -54,10 +54,12 @@ class DonationController extends Controller
     public function getSchools(Request $request)
     {
         $state = $request->query('state');
-        $district = $request->query('district');
+        $district = $request->query('district'); // Ensure this matches the input
         
+        \Log::info('Fetching schools for state: ' . $state . ' and district: ' . $district);
+
         return SchoolInfo::where('state', $state)
-            ->where('district', $district)
+            ->where('district', $district) // Ensure this matches the input
             ->get();
     }
 }
