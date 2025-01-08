@@ -87,18 +87,30 @@ export default function Donation() {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Form data submitted:", formData);
         
-        router.post('/donate/donation', formData, {
-            onSuccess: () => {
-                console.log("Form submitted successfully");
-            },
-            onError: (errors) => {
-                console.error("Form submission errors:", errors);
-            }
-        });
+        try {
+            // Send data and get payment URL
+            const response = await router.post('/redirect-to-payment', formData, {
+                onSuccess: (response) => {
+                    // Check if the response contains a payment URL
+                    if (response.props.paymentUrl) {
+                        // Redirect to ToyyibPay
+                        window.location.href = response.props.paymentUrl; // This should be the correct payment URL
+                    } else {
+                        alert('Payment URL not found. Please try again.');
+                    }
+                },
+                onError: (errors) => {
+                    console.error('Error:', errors);
+                    alert('There was an error processing your request. Please try again.');
+                }
+            });
+        } catch (error) {
+            console.error('Error:', error);
+            alert('There was an error processing your request. Please try again.');
+        }
     };
 
     return (
