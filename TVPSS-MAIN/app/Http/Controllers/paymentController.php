@@ -16,68 +16,91 @@ class paymentController extends Controller
     private $categoryCode = '53g5l8x0';
 
     public function redirectToPayment(Request $request)
-{
-    // Validate the incoming request
-    $request->validate([
-        'amaun' => 'required|numeric',
-        'name' => 'required|string',
-        'email' => 'required|email',
-        'phone' => 'required|string',
-        'ic_num' => 'required|string',
-        'state' => 'required|string',
-        'district' => 'required|string',
-        'schoolName' => 'required|string',
-    ]);
-
-    // Prepare the payload for creating the bill
-    $payload = [
-        'userSecretKey' => trim($this->userSecretKey),
-        'categoryCode' => trim($this->categoryCode),
-        'billName' => 'School Donation',
-        'billDescription' => 'School Donation',
-        'billPriceSetting' => 1,
-        'billPayorInfo' => 1,
-        'billAmount' => $request->amaun * 100, // Convert to the correct amount
-        'billReturnUrl' => route('payment.callback.success'),
-        'billCallbackUrl' => route('payment.callback'),
-        'billExternalReferenceNo' => 'DONATION_' . time(),
-        'billTo' => $request->name,
-        'billEmail' => $request->email,
-        'billPhone' => $request->phone,
-        'billSplitPayment' => 0,
-        'billSplitPaymentArgs' => '',
-        'billPaymentChannel' => '0',
-        'billContentEmail' => 'Thank you for your donation!',
-        'billChargeToCustomer' => 1
-    ];
-
-    try {
-        // Send the request to ToyyibPay API
-        $response = Http::asForm()->post('https://dev.toyyibpay.com/index.php/api/createBill', $payload);
-
-        if ($response->successful()) {
-            $responseData = $response->json();
-
-            if (!empty($responseData) && isset($responseData[0]['BillCode'])) {
-                $billCode = $responseData[0]['BillCode'];
-                $paymentUrl = "https://dev.toyyibpay.com/{$billCode}";
-
-                // Return an Inertia response to redirect to the payment URL
-                return Inertia::location($paymentUrl);
-            }
-        }
-
-        // Handle errors
-        return back()->with('error', 'Failed to create payment bill. Please try again.');
-
-    } catch (\Exception $e) {
-        Log::error('ToyyibPay API exception:', [
-            'message' => $e->getMessage(),
-            'trace' => $e->getTraceAsString()
+    {
+        // Validate the incoming request
+        $request->validate([
+            'amaun' => 'required|numeric',
+            'name' => 'required|string',
+            'email' => 'required|email',
+            'phone' => 'required|string',
+            'ic_num' => 'required|string',
+            'state' => 'required|string',
+            'district' => 'required|string',
+            'schoolName' => 'required|string',
         ]);
-        return back()->with('error', 'An error occurred while processing your payment');
+
+        // Prepare the payload for creating the bill
+        $payload = [
+            'userSecretKey' => trim($this->userSecretKey),
+            'categoryCode' => trim($this->categoryCode),
+            'billName' => 'School Donation',
+            'billDescription' => 'School Donation',
+            'billPriceSetting' => 1,
+            'billPayorInfo' => 1,
+            'billAmount' => $request->amaun * 100, // Convert to the correct amount
+            'billReturnUrl' => route('payment.callback.success'),
+            'billCallbackUrl' => route('payment.callback'),
+            'billExternalReferenceNo' => 'DONATION_' . time(),
+            'billTo' => $request->name,
+            'billEmail' => $request->email,
+            'billPhone' => $request->phone,
+            'billSplitPayment' => 0,
+            'billSplitPaymentArgs' => '',
+            'billPaymentChannel' => '0',
+            'billContentEmail' => 'Thank you for your donation!',
+            'billChargeToCustomer' => 1
+        ];
+
+        try {
+            // Send the request to ToyyibPay API
+            $response = Http::asForm()->post('https://dev.toyyibpay.com/index.php/api/createBill', $payload);
+
+            if ($response->successful()) {
+                $responseData = $response->json();
+
+                if (!empty($responseData) && isset($responseData[0]['BillCode'])) {
+                    $billCode = $responseData[0]['BillCode'];
+                    $paymentUrl = "https://dev.toyyibpay.com/{$billCode}";
+
+                    // Save donation data to the database
+                    $donation = Donations::create([
+                        'name' => $request->name,
+                        'email' => $request->email,
+                        'phone' => $request->phone,
+                        'ic_num' => $request->ic_num,
+                        'amaun' => $request->amaun,
+                        'school_id' => $this->getSchoolId($request->state, $request->district, $request->schoolName)
+                    ]);
+
+                    // Save to session
+                    session(['donation_data' => [
+                        'name' => $request->name,
+                        'email' => $request->email,
+                        'phone' => $request->phone,
+                        'ic_num' => $request->ic_num,
+                        'amaun' => $request->amaun,
+                        'negeri' => $request->state,
+                        'daerah' => $request->district,
+                        'sekolah' => $request->schoolName,
+                        'paymentMethod' => 'Online Banking'
+                    ]]);
+
+                    // Redirect to the payment URL
+                    return Inertia::location($paymentUrl);
+                }
+            }
+
+            // Handle errors
+            return back()->with('error', 'Failed to create payment bill. Please try again.');
+
+        } catch (\Exception $e) {
+            Log::error('ToyyibPay API exception:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return back()->with('error', 'An error occurred while processing your payment');
+        }
     }
-}
 
     public function paymentCallback(Request $request)
     {
@@ -92,8 +115,8 @@ class paymentController extends Controller
             // Update donation record with payment status
             $donation = Donations::where('id', $orderId)->first();
             if ($donation) {
-                $donation->payment_status = 'completed';
-                $donation->transaction_id = $billCode;
+                $donation->payment_status = 'completed'; // Set payment status to completed
+                $donation->transaction_id = $billCode; // Store the transaction ID
                 $donation->save();
             }
             
@@ -115,7 +138,7 @@ class paymentController extends Controller
         // Clear the session data
         session()->forget('donation_data');
 
-        return Inertia::render('Donation/ReceiptPage', [
+        return Inertia::render('Donation/receiptPage', [
             'paymentData' => $paymentData
         ]);
     }
@@ -123,9 +146,9 @@ class paymentController extends Controller
     private function getSchoolId($state, $district, $schoolName)
     {
         $school = SchoolInfo::where('state', $state)
-                           ->where('district', $district)
-                           ->where('schoolName', $schoolName)
-                           ->first();
+            ->where('district', $district)
+            ->where('schoolName', $schoolName)
+            ->first();
         
         return $school ? $school->id : null;
     }
