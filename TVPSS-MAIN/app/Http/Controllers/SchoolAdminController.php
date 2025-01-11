@@ -14,6 +14,7 @@ use App\Models\Student;
 use App\Models\StudentAchievement;
 use App\Models\Studcrew;
 use App\Models\EqFollowUp;
+use App\Models\Donations;
 use App\Enums\StatusEnum;
 use App\Enums\versionEnum;
 use App\Enums\ApprovalStatusEnum;
@@ -952,6 +953,7 @@ class SchoolAdminController extends Controller
     }
 
 
+
     public function achievementList(Request $request)
     {
         try {
@@ -1086,9 +1088,28 @@ class SchoolAdminController extends Controller
         }
     }
 
-    public function donationList()
+    public function donationList(Request $request)
     {
-        return Inertia::render('4-SchoolAdmin/Donation/donationList');
+        try {
+            $user = $request->user();
+            $school = SchoolInfo::where('user_id', $user->id)->firstOrFail();
+    
+            // Retrieve the donations associated with the school
+            $donations = Donations::where('school_id', $school->id)->get();
+    
+            // Return the donation list view with the donations data
+            return inertia('4-SchoolAdmin/Donation/donationList', [
+                'donations' => $donations,
+            ]);
+        } catch (\Exception $e) {
+            // Log any errors that occur
+            Log::error('Failed to retrieve donations', ['error' => $e->getMessage()]);
+    
+            // Redirect back with an error message
+            return redirect()->back()->with('error', 'Failed to retrieve donations. Please try again.');
+        }
     }
+    
+
 
 }

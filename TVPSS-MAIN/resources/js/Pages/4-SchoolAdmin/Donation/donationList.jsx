@@ -4,48 +4,21 @@ import SchoolAdminSideBar from "../SchoolAdminSideBar";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 
-const DonationList = () => {
-    // Dummy data for donations
-    const dummyDonations = [
-        {
-            id: 1,
-            name: "Ahmad Ali",
-            ic_num: "900101-01-1234",
-            email: "ahmad@example.com",
-            phone: "0123456789",
-            state: "Johor",
-            district: "Johor Bahru",
-            amount: 200,
-            payment_method: "Online Banking",
-        },
-        {
-            id: 2,
-            name: "Fatimah Siti",
-            ic_num: "920202-02-5678",
-            email: "fatimah@example.com",
-            phone: "0198765432",
-            state: "Selangor",
-            district: "Shah Alam",
-            amount: 150,
-            payment_method: "Credit Card",
-        },
-        // Add more dummy data as needed
-    ];
-
+const DonationList = ({ donations }) => {
     const [searchQuery, setSearchQuery] = useState("");
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
-    const [filteredDonations, setFilteredDonations] = useState(dummyDonations);
+    const [filteredDonations, setFilteredDonations] = useState(donations);
 
     useEffect(() => {
-        const results = dummyDonations.filter(
+        const results = donations.filter(
             (donation) =>
                 donation.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 donation.ic_num.includes(searchQuery)
         );
         setFilteredDonations(results);
         setCurrentPage(1);
-    }, [searchQuery]);
+    }, [searchQuery, donations]);
 
     const totalPages = Math.ceil(filteredDonations.length / rowsPerPage);
 
@@ -168,7 +141,7 @@ const DonationList = () => {
                                             <td className="border-b px-4 py-6">{donation.ic_num}</td>
                                             <td className="border-b px-4 py-6">{donation.email}</td>
                                             <td className="border-b px-4 py-6">{donation.phone}</td>
-                                            <td className="border-b px-4 py-6">RM{donation.amount}</td>
+                                            <td className="border-b px-4 py-6">RM{donation.amaun}</td>
                                             <td className="border-b px-4 py-6">{donation.payment_method}</td>
                                         </tr>
                                     ))
