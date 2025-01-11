@@ -1,18 +1,26 @@
 import React, { useState } from 'react';
 import { ChevronDown, LogOut, Home, Users, CheckCircle } from 'lucide-react';
+import { Inertia } from '@inertiajs/inertia'; // Import Inertia
 
 const StudentNavBar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const profileName = "John Doe";
+  // Local state for profileName and icNum
+  const [profileName, setProfileName] = useState("John Doe"); // Example dynamic value
+  const [icNum, setIcNum] = useState('020404010271'); // Example dynamic value
 
   const getInitials = (name) => {
     return name.split(" ").map((part) => part[0].toUpperCase()).join("");
   };
 
   const handleLogout = () => {
-    // Handle logout logic
-    console.log("User logged out");
+    // Send the POST request to log out using Inertia
+    Inertia.post(route('logout'), {}, {
+      onFinish: () => {
+        // After logout, navigate to the home page
+        window.location.href = '/'; // Redirect to main page
+      }
+    });
   };
 
   // Inline NavButton Component
@@ -41,9 +49,14 @@ const StudentNavBar = () => {
 
           {/* Navigation Links */}
           <div className="hidden sm:flex sm:space-x-8 items-center">
-            <NavButton href="/studentsPage" icon={<Home size={18} />} text="Utama" />
+            <NavButton href="/studentPage" icon={<Home size={18} />} text="Utama" />
             <NavButton href="/applyCrew" icon={<Users size={18} />} text="Permohonan Krew" />
-            <NavButton href="/resultApply" icon={<CheckCircle size={18} />} text="Keputusan Permohonan" />
+            {/* Dynamically inserting icNum into the URL */}
+            <NavButton 
+              href={`/resultApply/${icNum}`} 
+              icon={<CheckCircle size={18} />} 
+              text="Keputusan Permohonan" 
+            />
           </div>
 
           {/* Profile Dropdown */}
@@ -59,19 +72,13 @@ const StudentNavBar = () => {
                 <span className="font-medium">{profileName}</span>
                 <ChevronDown
                   size={16}
-                  className={`transform transition-transform duration-200 ${
-                    isDropdownOpen ? "rotate-180" : ""
-                  }`}
+                  className={`transform transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""}`}
                 />
               </button>
 
               {/* Dropdown Menu */}
               <div
-                className={`absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 transition-all duration-200 ease-in-out transform origin-top-right ${
-                  isDropdownOpen
-                    ? "opacity-100 scale-100 translate-y-0"
-                    : "opacity-0 scale-95 -translate-y-2 pointer-events-none"
-                }`}
+                className={`absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 transition-all duration-200 ease-in-out transform origin-top-right ${isDropdownOpen ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 -translate-y-2 pointer-events-none"}`}
               >
                 <button
                   onClick={handleLogout} // Call logout function
