@@ -3,12 +3,15 @@ import { FaSearch, FaEdit, FaTrash } from "react-icons/fa";
 import { router, Head } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import StateAdminSideBar from "../StateAdminSideBar";
+import { Dialog, DialogActions, DialogContent, DialogTitle, Button } from "@mui/material";
 
 export default function ListSchool({ schools = [] }) {
     const [searchQuery, setSearchQuery] = useState("");
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
     const [filteredData, setFilteredData] = useState(schools);
+    const [openDeleteModal, setOpenDeleteModal] = useState(false);
+    const [schoolToDelete, setSchoolToDelete] = useState(null);
 
     useEffect(() => {
         const searchResults = schools.filter((school) =>
@@ -58,6 +61,24 @@ export default function ListSchool({ schools = [] }) {
         (currentPage - 1) * rowsPerPage,
         currentPage * rowsPerPage
     );
+
+    const handleDelete = () => {
+        router.delete(`/tvpssInfoState/${schoolToDelete.schoolCode}`, {
+            onSuccess: () => {
+                setOpenDeleteModal(false);
+            },
+        });
+    };
+
+    const openDeleteDialog = (school) => {
+        setSchoolToDelete(school);
+        setOpenDeleteModal(true);
+    };
+
+    const closeDeleteDialog = () => {
+        setOpenDeleteModal(false);
+        setSchoolToDelete(null);
+    };
 
     return (
         <AuthenticatedLayout>
@@ -174,7 +195,10 @@ export default function ListSchool({ schools = [] }) {
                                                     >
                                                         <FaEdit size={18} />
                                                     </button>
-                                                    <button className="text-gray-400 hover:text-gray-600">
+                                                    <button
+                                                        onClick={() => openDeleteDialog(school)}
+                                                        className="text-gray-400 hover:text-gray-600"
+                                                    >
                                                         <FaTrash size={18} />
                                                     </button>
                                                 </div>
@@ -210,6 +234,31 @@ export default function ListSchool({ schools = [] }) {
                     </div>
                 </div>
             </div>
+
+            {/* Delete Confirmation Modal */}
+            {openDeleteModal && (
+            <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50">
+                <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                        Adakah anda pasti ingin memadamkan sekolah ini?
+                    </h3>
+                    <div className="flex justify-end space-x-4">
+                        <button
+                            onClick={closeDeleteDialog}
+                            className="px-4 py-2 bg-gray-300 rounded-lg text-gray-700 hover:bg-gray-400"
+                        >
+                            Batal
+                        </button>
+                        <button
+                            onClick={handleDelete}
+                            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                        >
+                            Padam
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )}
         </AuthenticatedLayout>
     );
 }
