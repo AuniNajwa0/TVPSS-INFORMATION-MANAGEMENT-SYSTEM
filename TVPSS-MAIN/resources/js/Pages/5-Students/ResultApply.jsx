@@ -125,8 +125,8 @@ function ResultApply({ applications = [], students }) {
         borderRadius: '20px',
         fontSize: '13px',
         fontWeight: '500',
-        backgroundColor: status === 'Diluluskan' ? '#dcfce7' : status === 'Dalam Proses' ? '#fef08a' : '#fee2e2',
-        color: status === 'Diluluskan' ? '#166534' : status === 'Dalam Proses' ? '#92400e' : '#991b1b',
+        backgroundColor: status === 'Approved' ? '#dcfce7' : status === 'Permohonan Belum Diproses' ? '#fef08a' : '#fee2e2',
+        color: status === 'Approved' ? '#166534' : status === 'Permohonan Belum Diproses' ? '#92400e' : '#991b1b',
         display: 'inline-block',
     });
 
