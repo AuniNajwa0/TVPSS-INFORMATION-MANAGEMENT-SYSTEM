@@ -9,10 +9,17 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import { Typography } from '@mui/material';
+
+
 
 export default function UpdateSchoolVersionInfo2({ schoolInfo, schoolVersion }) {
     const { data, setData, post, errors } = useForm({
-        version: schoolVersion?.version || 0, 
+        version: schoolVersion?.version || 0,
         agency1_name: schoolVersion?.agency1_name || '',
         agency1Manager_name: schoolVersion?.agencyManager1_name || '',
         agency2_name: schoolVersion?.agency2_name || '',
@@ -26,6 +33,7 @@ export default function UpdateSchoolVersionInfo2({ schoolInfo, schoolVersion }) 
     });
 
     const [tvpssLogoPreview, setTVPSSLogoPreview] = useState(null);
+    const [openConfirmation, setOpenConfirmation] = useState(false); // State to control the modal
 
     useEffect(() => {
         if (schoolVersion?.tvpssLogo) {
@@ -54,6 +62,11 @@ export default function UpdateSchoolVersionInfo2({ schoolInfo, schoolVersion }) 
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setOpenConfirmation(true); // Open confirmation modal on form submit
+    };
+
+    const handleConfirmSubmit = () => {
+        setOpenConfirmation(false);
         post(route('tvpss2Edit'), {
             onSuccess: () => {
                 console.log('School TVPSS Version updated successfully!');
@@ -64,16 +77,18 @@ export default function UpdateSchoolVersionInfo2({ schoolInfo, schoolVersion }) 
         });
     };
 
-    return (
-        <AuthenticatedLayout
+    const handleCloseConfirmation = () => {
+        setOpenConfirmation(false); // Close the confirmation modal
+    };
 
-        >
+    return (
+        <AuthenticatedLayout>
             <Head title="TVPSS | Kemaskini Versi TVPSS" />
             <div className="flex min-h-screen bg-white">
                 <SchoolAdminSideBar />
                 <div className="flex-1 p-8 ml-[350px]">
                     {/* Breadcrumb Section*/}
-                <div className="mb-4">
+                    <div className="mb-4">
                         <nav className="text-sm font-medium text-gray-500">
                             <ol className="list-reset flex">
                                 <li>
@@ -98,7 +113,6 @@ export default function UpdateSchoolVersionInfo2({ schoolInfo, schoolVersion }) 
                                 />
                                 <div
                                     className="relative w-48 h-48 mx-auto bg-gray-100
-                                    
                                     border-4 border-solid border-blue-500 rounded-lg shadow-lg overflow-hidden cursor-pointer hover:shadow-xl transition-shadow"
                                     onClick={() => document.getElementById('tvpssLogoUpload').click()}
                                 >
@@ -161,7 +175,7 @@ export default function UpdateSchoolVersionInfo2({ schoolInfo, schoolVersion }) 
 
                             {/* Additional Details */}
                             <Box className="grid grid-cols-2 gap-6 mb-6">
-                                {[
+                                {[ 
                                     { label: 'Peralatan Rakaman', name: 'recordEquipment' },
                                     { label: 'Studio TVPSS', name: 'tvpssStudio' },
                                     { label: 'Rakaman Dalam Sekolah', name: 'recInSchool' },
@@ -185,38 +199,84 @@ export default function UpdateSchoolVersionInfo2({ schoolInfo, schoolVersion }) 
 
                             {/* Buttons */}
                             <div className="flex justify-end space-x-4">
-                            <Button
-    variant="contained"
-    style={{
-        backgroundColor: '#adb5bd',
-        color: 'white',
-        '&:hover': {
-            backgroundColor: '8898aa',
-        },
-    }}
-    href={route('tvpss1')}
->
-    Kembali
-</Button>
-<Button
-    variant="contained"
-    style={{
-        backgroundColor: '#455185',
-        color: 'white',
-        '&:hover': {
-            backgroundColor: '#3d4674',
-        },
-    }}
-    type="submit"
-    disabled={errors.processing}
->
-    Hantar Informasi TVPSS
-</Button>
+                                <Button
+                                    variant="contained"
+                                    style={{
+                                        backgroundColor: '#adb5bd',
+                                        color: 'white',
+                                        '&:hover': {
+                                            backgroundColor: '8898aa',
+                                        },
+                                    }}
+                                    href={route('tvpss1')}
+                                >
+                                    Kembali
+                                </Button>
+                                <Button
+                                    variant="contained"
+                                    style={{
+                                        backgroundColor: '#455185',
+                                        color: 'white',
+                                        '&:hover': {
+                                            backgroundColor: '#3d4674',
+                                        },
+                                    }}
+                                    type="submit"
+                                    disabled={errors.processing}
+                                >
+                                    Hantar Informasi TVPSS
+                                </Button>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
+
+            {/* Confirmation Modal */}
+            <Dialog open={openConfirmation} onClose={handleCloseConfirmation}>
+                <DialogTitle>Pengesahan Pelulusan</DialogTitle>
+                <DialogContent>
+                    <Typography>
+                        Adakah anda pasti mahu menghantar informasi versi TVPSS ini?
+                    </Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        onClick={handleCloseConfirmation}
+                        sx={{
+                            borderRadius: "8px",
+                            padding: "10px 20px",
+                            textTransform: "capitalize",
+                            fontWeight: "bold",
+                            backgroundColor: "#E0E0E0",
+                            color: "#000",
+                            "&:hover": {
+                                backgroundColor: "#BDBDBD",
+                                color: "#FFF",
+                            },
+                        }}
+                    >
+                        Batal
+                    </Button>
+                    <Button
+                        onClick={handleConfirmSubmit}
+                        sx={{
+                            borderRadius: "8px",
+                            padding: "10px 20px",
+                            textTransform: "capitalize",
+                            fontWeight: "bold",
+                            backgroundColor: "#445184",
+                            color: "#FFF",
+                            "&:hover": {
+                                backgroundColor: "#3c4f88",
+                                color: "#FFF",
+                            },
+                        }}
+                    >
+                        Ya, Hantar
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </AuthenticatedLayout>
     );
 }
