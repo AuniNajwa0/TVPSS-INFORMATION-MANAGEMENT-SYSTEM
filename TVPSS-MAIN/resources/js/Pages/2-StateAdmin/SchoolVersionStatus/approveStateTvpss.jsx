@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
     Box,
     Typography,
@@ -6,6 +6,11 @@ import {
     CardContent,
     Button,
     Chip,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
 } from "@mui/material";
 import {
     Done,
@@ -25,6 +30,9 @@ const ApproveStateTvpss = () => {
         info = {},
         schoolCode = "",
     } = tvpssData;
+
+    const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
+    const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
 
     const normalizeValue = (value) => (value || "").trim().toUpperCase();
 
@@ -163,10 +171,10 @@ const ApproveStateTvpss = () => {
                             mb: 4,
                             boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
                             borderRadius: "16px",
-                            transition: "transform 0.3s ease, box-shadow 0.3s ease", // Smooth transitions
+                            transition: "transform 0.3s ease, box-shadow 0.3s ease",
                             "&:hover": {
-                                transform: "scale(1.02)", // Slightly enlarge the card
-                                boxShadow: "0 4px 8px rgba(0,0,0,0.2)", // Enhanced shadow on hover
+                                transform: "scale(1.02)",
+                                boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
                             },
                         }}
                     >
@@ -284,7 +292,7 @@ const ApproveStateTvpss = () => {
                                     variant="contained"
                                     startIcon={<Done />}
                                     fullWidth
-                                    onClick={handleApprove}
+                                    onClick={() => setIsApproveModalOpen(true)}
                                     sx={{
                                         bgcolor: "#445184",
                                         "&:hover": {
@@ -302,7 +310,7 @@ const ApproveStateTvpss = () => {
                                     variant="contained"
                                     startIcon={<Clear />}
                                     fullWidth
-                                    onClick={handleReject}
+                                    onClick={() => setIsRejectModalOpen(true)}
                                     sx={{
                                         bgcolor: "#F44336",
                                         "&:hover": {
@@ -321,6 +329,104 @@ const ApproveStateTvpss = () => {
                     </Card>
                 </Box>
             </Box>
+
+            {/* Approve Modal */}
+            <Dialog
+                open={isApproveModalOpen}
+                onClose={() => setIsApproveModalOpen(false)}
+            >
+                <DialogTitle>Pengesahan Pelulusan</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Adakah anda pasti untuk meluluskan maklumat ini?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        onClick={() => setIsApproveModalOpen(false)}
+                        sx={{
+                            borderRadius: "8px",
+                            padding: "10px 20px",
+                            textTransform: "capitalize",
+                            fontWeight: "bold",
+                            backgroundColor: "#E0E0E0",
+                            color: "#000",
+                            "&:hover": {
+                                backgroundColor: "#BDBDBD",
+                                color: "#FFF",
+                            },
+                        }}
+                    >
+                        Batal
+                    </Button>
+                    <Button
+                        onClick={handleApprove}
+                        sx={{
+                            borderRadius: "8px",
+                            padding: "10px 20px",
+                            textTransform: "capitalize",
+                            fontWeight: "bold",
+                            backgroundColor: "#445184",
+                            color: "#FFF",
+                            "&:hover": {
+                                backgroundColor: "#3c4f88",
+                                color: "#FFF",
+                            },
+                        }}
+                    >
+                        Ya, Terima
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* Reject Modal */}
+            <Dialog
+                open={isRejectModalOpen}
+                onClose={() => setIsRejectModalOpen(false)}
+            >
+                <DialogTitle>Pengesahan Pembatalan</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Adakah anda pasti untuk menolak maklumat ini?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        onClick={() => setIsRejectModalOpen(false)}
+                        sx={{
+                            borderRadius: "8px",
+                            padding: "10px 20px",
+                            textTransform: "capitalize",
+                            fontWeight: "bold",
+                            backgroundColor: "#E0E0E0",
+                            color: "#000",
+                            "&:hover": {
+                                backgroundColor: "#BDBDBD",
+                                color: "#FFF",
+                            },
+                        }}
+                    >
+                        Batal
+                    </Button>
+                    <Button
+                        onClick={handleReject}
+                        sx={{
+                            borderRadius: "8px",
+                            padding: "10px 20px",
+                            textTransform: "capitalize",
+                            fontWeight: "bold",
+                            backgroundColor: "#F44336",
+                            color: "#FFF",
+                            "&:hover": {
+                                backgroundColor: "#D32F2F",
+                                color: "#FFF",
+                            },
+                        }}
+                    >
+                        Ya, Tolak
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </AuthenticatedLayout>
     );
 };

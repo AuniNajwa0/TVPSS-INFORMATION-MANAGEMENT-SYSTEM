@@ -8,14 +8,12 @@ import {
     Checkbox,
     Chip,
     FormControlLabel,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle
 } from "@mui/material";
-import {
-    CheckCircle,
-    Close,
-    ArrowForward,
-    Done,
-    Clear,
-} from "@mui/icons-material";
+import { ArrowForward, Done, Clear } from "@mui/icons-material";
 import { Head, usePage } from "@inertiajs/react";
 import { Inertia } from "@inertiajs/inertia";
 import PPDAdminSideBar from "../PPDAdminSideBar";
@@ -59,11 +57,18 @@ const ApprovePPDTvpss = () => {
         }),
         {}
     );
+    
+    const [openApproveModal, setOpenApproveModal] = useState(false);
+    const [openRejectModal, setOpenRejectModal] = useState(false);
+
+    const openApproveDialog = () => setOpenApproveModal(true);
+    const closeApproveDialog = () => setOpenApproveModal(false);
 
     const handleApprove = () => {
         Inertia.post(`/tvpssInfoPPD/${schoolCode}/approve`, {}, {
             onSuccess: () => {
                 alert("TVPSS has been approved!");
+                closeApproveDialog(); 
             },
             onError: (error) => {
                 console.error("Approval error:", error);
@@ -72,10 +77,14 @@ const ApprovePPDTvpss = () => {
         });
     };
 
+    const openRejectDialog = () => setOpenRejectModal(true);
+    const closeRejectDialog = () => setOpenRejectModal(false);
+
     const handleReject = () => {
         Inertia.post(`/tvpssInfoPPD/${schoolCode}/reject`, {}, {
             onSuccess: () => {
                 alert("TVPSS has been rejected!");
+                closeRejectDialog(); // Close the modal on success
             },
             onError: (error) => {
                 console.error("Rejection error:", error);
@@ -370,7 +379,7 @@ const ApprovePPDTvpss = () => {
                                         variant="contained"
                                         startIcon={<Done />}
                                         fullWidth
-                                        onClick={handleApprove}
+                                        onClick={openApproveDialog}
                                         sx={{
                                             bgcolor: "#445184",  // Updated blue color
                                             "&:hover": {
@@ -388,7 +397,7 @@ const ApprovePPDTvpss = () => {
                                         variant="contained"
                                         startIcon={<Clear />}
                                         fullWidth
-                                        onClick={handleReject}
+                                        onClick={openRejectDialog}
                                         sx={{
                                             bgcolor: "#F44336",  // Red color
                                             "&:hover": {
@@ -406,6 +415,98 @@ const ApprovePPDTvpss = () => {
                             </CardContent>
                         </Card>
                     </Box>
+                    
+                     {/* Approve Modal */}
+                    <Dialog open={openApproveModal} onClose={closeApproveDialog}>
+                        <DialogTitle>Pengesahan Pelulusan</DialogTitle>
+                        <DialogContent>
+                            <Typography>
+                                Adakah anda pasti untuk meluluskan maklumat ini bagi {schoolName}?
+                            </Typography>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button
+                                onClick={closeApproveDialog}
+                                sx={{
+                                    borderRadius: "8px",
+                                    padding: "10px 20px",
+                                    textTransform: "capitalize",
+                                    fontWeight: "bold",
+                                    backgroundColor: "#E0E0E0",
+                                    color: "#000",
+                                    "&:hover": {
+                                        backgroundColor: "#BDBDBD",
+                                        color: "#FFF",
+                                    },
+                                }}
+                            >
+                                Batal
+                            </Button>
+                            <Button
+                                onClick={handleApprove}
+                                sx={{
+                                    borderRadius: "8px",
+                                    padding: "10px 20px",
+                                    textTransform: "capitalize",
+                                    fontWeight: "bold",
+                                    backgroundColor: "#445184",
+                                    color: "#FFF",
+                                    "&:hover": {
+                                        backgroundColor: "#3c4f88",
+                                        color: "#FFF",
+                                    },
+                                }}
+                            >
+                                Ya, Terima
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
+
+                    {/* Reject Modal */}
+                    <Dialog open={openRejectModal} onClose={closeRejectDialog}>
+                        <DialogTitle>Pengesahan Pembatalan</DialogTitle>
+                        <DialogContent>
+                            <Typography>
+                                Adakah anda pasti untuk menolak maklumat ini bagi {schoolName}?
+                            </Typography>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button
+                                onClick={closeRejectDialog}
+                                sx={{
+                                    borderRadius: "8px",
+                                    padding: "10px 20px",
+                                    textTransform: "capitalize",
+                                    fontWeight: "bold",
+                                    backgroundColor: "#E0E0E0",
+                                    color: "#000",
+                                    "&:hover": {
+                                        backgroundColor: "#BDBDBD",
+                                        color: "#FFF",
+                                    },
+                                }}
+                            >
+                                Batal
+                            </Button>
+                            <Button
+                                onClick={handleReject}
+                                sx={{
+                                    borderRadius: "8px",
+                                    padding: "10px 20px",
+                                    textTransform: "capitalize",
+                                    fontWeight: "bold",
+                                    backgroundColor: "#F44336",
+                                    color: "#FFF",
+                                    "&:hover": {
+                                        backgroundColor: "#D32F2F",
+                                        color: "#FFF",
+                                    },
+                                }}
+                            >
+                                Ya, Tolak
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
                 </Box>
             </Box>
         </AuthenticatedLayout>
