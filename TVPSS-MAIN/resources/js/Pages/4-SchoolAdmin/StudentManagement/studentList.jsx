@@ -10,6 +10,8 @@ const StudentList = () => {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
     const [filteredStudents, setFilteredStudents] = useState(students.data || []);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [deleteId, setDeleteId] = useState(null);
 
     useEffect(() => {
         const results = (students.data || []).filter(
@@ -44,6 +46,23 @@ const StudentList = () => {
 
     const handleTambahPelajar = () => {
         router.visit("/students/create");
+    };
+
+    const openDeleteModal = (id) => {
+        setDeleteId(id);
+        setIsDeleting(true);
+    };
+
+    const cancelDelete = () => {
+        setIsDeleting(false);
+        setDeleteId(null);
+    };
+
+    const confirmDelete = () => {
+        if (deleteId) {
+            router.delete(`/students/${deleteId}`);
+        }
+        cancelDelete();
     };
 
     const paginatedData = filteredStudents.slice(
@@ -162,11 +181,7 @@ const StudentList = () => {
                                                         <FaEdit size={18} />
                                                     </button>
                                                     <button
-                                                        onClick={() => {
-                                                            if (window.confirm("Are you sure you want to delete this student?")) {
-                                                                router.delete(`/students/${student.id}`);
-                                                            }
-                                                        }}
+                                                        onClick={() => openDeleteModal(student.id)}
                                                         className="text-gray-400 hover:text-gray-600"
                                                     >
                                                         <FaTrashAlt size={18} />
@@ -201,6 +216,31 @@ const StudentList = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Delete Confirmation Modal */}
+            {isDeleting && (
+                <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                            Adakah anda pasti ingin memadamkan pelajar ini?
+                        </h3>
+                        <div className="flex justify-end space-x-4">
+                            <button
+                                onClick={cancelDelete}
+                                className="px-4 py-2 bg-gray-300 rounded-lg text-gray-700 hover:bg-gray-400"
+                            >
+                                Batal
+                            </button>
+                            <button
+                                onClick={confirmDelete}
+                                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                            >
+                                Padam
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </AuthenticatedLayout>
     );
 };

@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { Head, router, usePage } from "@inertiajs/react";
-import { FaSearch, FaEdit, FaTrashAlt } from 'react-icons/fa'; // Import the necessary icons
-import SchoolAdminSideBar from "../SchoolAdminSideBar"; // Import the sidebar component
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout"; // Import the authenticated layout
+import { FaSearch, FaEdit, FaTrashAlt } from 'react-icons/fa';
+import SchoolAdminSideBar from "../SchoolAdminSideBar";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Inertia } from "@inertiajs/inertia";
 
 const StudCrewList = ({ studcrews, school }) => {
     const [search, setSearch] = useState('');
-    const [rowsPerPage, setRowsPerPage] = useState(5); // State for rows per page
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [isDeleting, setIsDeleting] = useState(false); // State to manage delete confirmation modal
+    const [deleteId, setDeleteId] = useState(null); // State to store ID of the item to delete
 
     // Function to handle search
     const handleSearch = (e) => {
@@ -35,22 +37,34 @@ const StudCrewList = ({ studcrews, school }) => {
         }
     };
 
-    // Function to handle export
-    const handleExport = () => {
-        console.log("Exporting data...");
-        // Add your export logic here (e.g., downloading a file, calling an API, etc.)
+    // Function to show delete confirmation modal
+    const showDeleteConfirmation = (id) => {
+        setDeleteId(id);
+        setIsDeleting(true);
+    };
+
+    // Function to cancel delete action
+    const cancelDelete = () => {
+        setIsDeleting(false);
+        setDeleteId(null);
+    };
+
+    // Function to confirm delete action
+    const confirmDelete = () => {
+        if (deleteId) {
+            Inertia.delete(route('studcrew.destroy', { id: deleteId }));
+            setIsDeleting(false);
+        }
     };
 
     return (
         <AuthenticatedLayout>
             <Head title="TVPSS | Permohonan Krew" />
             <div className="flex flex-col md:flex-row min-h-screen bg-white">
-                {/* Sidebar */}
                 <div className="w-1/6 bg-white shadow-lg">
                     <SchoolAdminSideBar />
                 </div>
 
-                {/* Main Content */}
                 <div className="w-full md:ml-[120px] p-6">
                     <div className="flex items-center justify-between mb-6">
                         <nav className="mb-8">
@@ -61,16 +75,14 @@ const StudCrewList = ({ studcrews, school }) => {
                                     </a>
                                 </li>
                                 <li className="text-gray-500">/</li>
-                                <li className="text-gray-900 font-medium">
-                                    Senarai Krew
-                                </li>
+                                <li className="text-gray-900 font-medium">Senarai Krew</li>
                             </ol>
                         </nav>
                     </div>
 
                     <div className="max-w-8xl mx-auto p-6 text-gray-900 bg-white border border-gray-200 shadow rounded-2xl">
-                        {/* Search Bar */}
-                        <div className="flex items-center mb-4 justify-between">
+                        <div className="flex items-center justify-between mb-4">
+                            {/* Search Bar */}
                             <div className="flex items-center w-full max-w-xs relative">
                                 <FaSearch className="absolute right-3 text-gray-400 text-xl" />
                                 <input
@@ -78,22 +90,20 @@ const StudCrewList = ({ studcrews, school }) => {
                                     placeholder="Cari Nama atau No. IC Pelajar..."
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
-                                    onKeyPress={(e) => e.key === 'Enter' && handleSearch(e)} // Trigger search on Enter
+                                    onKeyPress={(e) => e.key === 'Enter' && handleSearch(e)}
                                     className="w-full pl-4 pr-4 py-3 bg-white border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#455185] focus:border-[#455185] transition-all placeholder-gray-400"
                                 />
                             </div>
 
-                            {/* Export and Bilangan Data Dropdown */}
                             <div className="flex items-center space-x-4">
+
                                 <button
                                     style={{ marginTop: '1.45rem' }}
-                                    onClick={handleExport} // Call handleExport on button click
-                                    className="bg-[#455185] text-white rounded-2xl px-6 py-3 ml-4 hover:bg-[#3d4674] transition-all"
+                                    className="px-4 py-2 bg-[#455185] text-white rounded-lg shadow hover:bg-[#3b477a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all"
                                 >
                                     Eksport
                                 </button>
 
-                                {/* Bilangan Data Dropdown */}
                                 <div>
                                     <label
                                         htmlFor="rowsPerPage"
@@ -115,7 +125,6 @@ const StudCrewList = ({ studcrews, school }) => {
                             </div>
                         </div>
 
-                        {/* Table */}
                         <table className="w-full text-left rounded-lg border-collapse">
                             <thead>
                                 <tr className="bg-white">
@@ -144,32 +153,20 @@ const StudCrewList = ({ studcrews, school }) => {
                                             <td className="border-b px-4 py-6">{crew.student.ic_num}</td>
                                             <td className="border-b px-4 py-6">{crew.jawatan}</td>
                                             <td className="border-b px-4 py-6">
-                                                <span
-                                                    className={`px-2 py-1 rounded-full ${getStatusColor(crew.status)}`}
-                                                >
+                                                <span className={`px-2 py-1 rounded-full ${getStatusColor(crew.status)}`}>
                                                     {crew.status}
                                                 </span>
                                             </td>
                                             <td className="border-b px-6 py-4 text-center">
                                                 <div className="flex justify-center items-center space-x-4">
-                                                    {/* Edit and Delete Icons */}
                                                     <button
-                                                        onClick={() => {
-                                                            console.log(crew.id);
-                                                            // Inertia.get(route('studcrew.edit', { id: crew.id }));
-                                                            router.get(route('studcrew.edit', { id: crew.id }));
-                                                        }}
-                                                        
+                                                        onClick={() => router.get(route('studcrew.edit', { id: crew.id }))}
                                                         className="text-gray-400 hover:text-gray-600"
                                                     >
                                                         <FaEdit size={18} />
                                                     </button>
                                                     <button
-                                                        onClick={() => {
-                                                            if (window.confirm("Are you sure you want to delete this StudCrew?")) {
-                                                                Inertia.delete(route('studcrew.destroy', { id: crew.id }));
-                                                            }
-                                                        }}
+                                                        onClick={() => showDeleteConfirmation(crew.id)}
                                                         className="text-gray-400 hover:text-gray-600"
                                                     >
                                                         <FaTrashAlt size={18} />
@@ -182,29 +179,34 @@ const StudCrewList = ({ studcrews, school }) => {
                             </tbody>
                         </table>
 
-                        {/* Pagination */}
-                        <div className="flex justify-between items-center mt-6">
+                    </div>
+                </div>
+            </div>
+
+            {/* Delete Confirmation Modal */}
+            {isDeleting && (
+                <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                            Adakah anda pasti ingin memadamkan krew ini?
+                        </h3>
+                        <div className="flex justify-end space-x-4">
                             <button
-                                onClick={() => Inertia.get(studcrews.prev_page_url)}
-                                className={`px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 focus:ring-2 focus:ring-gray-400 focus:outline-none text-gray-600 font-medium disabled:opacity-50 ${!studcrews.prev_page_url && 'cursor-not-allowed'}`}
-                                disabled={!studcrews.prev_page_url}
+                                onClick={cancelDelete}
+                                className="px-4 py-2 bg-gray-300 rounded-lg text-gray-700 hover:bg-gray-400"
                             >
-                                Sebelum
+                                Batal
                             </button>
-                            <span className="inline-flex items-center px-4 py-2 rounded-lg bg-[#f1f5f9] text-[#455185] font-semibold shadow-sm text-sm">
-                                Halaman {studcrews.current_page} daripada {studcrews.last_page}
-                            </span>
                             <button
-                                onClick={() => Inertia.get(studcrews.next_page_url)}
-                                className={`px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 focus:ring-2 focus:ring-gray-400 focus:outline-none text-gray-600 font-medium disabled:opacity-50 ${!studcrews.next_page_url && 'cursor-not-allowed'}`}
-                                disabled={!studcrews.next_page_url}
+                                onClick={confirmDelete}
+                                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
                             >
-                                Seterusnya
+                                Padam
                             </button>
                         </div>
                     </div>
                 </div>
-            </div>
+            )}
         </AuthenticatedLayout>
     );
 };
