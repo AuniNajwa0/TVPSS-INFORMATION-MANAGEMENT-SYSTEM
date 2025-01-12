@@ -121,7 +121,6 @@ const DonationList = ({ donations }) => {
                                     <th className="border-b px-4 py-6">Emel</th>
                                     <th className="border-b px-4 py-6">Nombor Telefon</th>
                                     <th className="border-b px-4 py-6">Amaun (RM)</th>
-                                    <th className="border-b px-4 py-6">Kaedah Pembayaran</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -142,7 +141,6 @@ const DonationList = ({ donations }) => {
                                             <td className="border-b px-4 py-6">{donation.email}</td>
                                             <td className="border-b px-4 py-6">{donation.phone}</td>
                                             <td className="border-b px-4 py-6">RM{donation.amaun}</td>
-                                            <td className="border-b px-4 py-6">{donation.payment_method}</td>
                                         </tr>
                                     ))
                                 )}
