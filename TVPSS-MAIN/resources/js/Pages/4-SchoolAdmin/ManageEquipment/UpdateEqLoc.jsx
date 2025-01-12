@@ -66,7 +66,32 @@ export default function UpdateEqLoc({ eqLocation }) {
 
     return (
         <AuthenticatedLayout
-            header={<h2 className="text-xl font-semibold leading-tight text-gray-800">Kemaskini Lokasi</h2>}
+        header={
+            <nav className="ml-12 text-gray-800" aria-label="Breadcrumb">
+                <ol className="inline-flex items-center space-x-1 md:space-x-3">
+                    <li className="inline-flex items-center">
+                        <a href="/listEquipment" className="text-md font-medium hover:text-gray-700">
+                            <span className="text-[#4158A6]">Pengurusan Peralatan</span>
+                        </a>
+                    </li>
+                    <li>
+                        <div className="flex items-center">
+                            <svg
+                                className="w-5 h-5 text-gray-400"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <text x="5" y="15" fontSize="14px" fill="currentColor">/</text>
+                            </svg>
+                            <span className="ml-1 text-md font-medium text-gray-800 md:ml-2">
+                                Kemaskini Lokasi
+                            </span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+        }
         >
             <Head title="TVPSS | Kemaskini Lokasi" />
             <div className="flex">
