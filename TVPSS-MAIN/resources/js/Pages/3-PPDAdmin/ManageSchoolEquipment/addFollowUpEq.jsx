@@ -15,6 +15,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import PPDAdminSideBar from "../PPDAdminSideBar";
 import { Inertia } from "@inertiajs/inertia";
 import { formatDistanceToNow } from "date-fns";
+import { router } from '@inertiajs/react'
 
 export default function UpdateEquipmentPPD({
     equipment,
@@ -110,7 +111,7 @@ export default function UpdateEquipmentPPD({
 
         console.log([...formDataToSubmit.entries()]);
 
-        Inertia.post(
+        router.post(
             `/equipmentPPD/${equipment.id}/follow-up`,
             formDataToSubmit,
             {
@@ -136,9 +137,10 @@ export default function UpdateEquipmentPPD({
         const formDataToSubmit = new FormData();
         formDataToSubmit.append("status", formData.status);
 
-        Inertia.post(`/equipmentPPD/${equipment.id}/update`, formDataToSubmit, {
+        router.post(`/equipmentPPD/${equipment.id}/update`, formDataToSubmit, {
             onSuccess: () => {
                 setMessage("Status updated successfully!");
+                router.get(`/eqManagementPPD/list/${schoolId}`);
             },
             onError: (errors) => {
                 console.error("Validation Errors:", errors);
@@ -301,7 +303,7 @@ export default function UpdateEquipmentPPD({
                                     <button
                                         type="button"
                                         onClick={() =>
-                                            Inertia.get(`/eqManagementPPD/list/${schoolId}`)
+                                            router.get(`/eqManagementPPD/list/${schoolId}`)
                                         }
                                         className="px-6 py-3 bg-gray-500 text-white rounded-xl shadow-md hover:bg-gray-600 transition-colors duration-300"
                                     >

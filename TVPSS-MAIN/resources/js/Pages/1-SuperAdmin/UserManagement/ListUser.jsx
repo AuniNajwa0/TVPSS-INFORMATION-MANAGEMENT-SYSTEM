@@ -5,6 +5,7 @@ import SuperAdminSideBar from '../SuperAdminSideBar';
 import { useState } from 'react';
 import { Inertia } from '@inertiajs/inertia';
 import { Button, FormControl, InputLabel, Select, MenuItem, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import { router } from '@inertiajs/react'
 
 export default function ListUser({ auth, users, pagination, selectedRole }) {
     const [rowsPerPage, setRowsPerPage] = useState(pagination.per_page);
@@ -56,15 +57,20 @@ export default function ListUser({ auth, users, pagination, selectedRole }) {
         setCurrentPage(1);
     };
 
+    const [isDeleting, setIsDeleting] = useState(false);
+
     const handleDelete = () => {
-        if (userToDelete) {
-            Inertia.delete(`/users/${userToDelete}`, {
+        if (userToDelete && !isDeleting) {
+            setIsDeleting(true);
+            router.delete(`/users/${userToDelete}`, {
                 onSuccess: () => {
-                    setOpenModal(false);
+                    handleCloseModal();
+                    setIsDeleting(false);
                     alert('Pengguna berjaya dipadam!');
                 },
                 onError: (errors) => {
-                    setOpenModal(false);
+                    handleCloseModal();
+                    setIsDeleting(false);
                     alert('Gagal memadam pengguna: ' + errors.message);
                 },
             });
@@ -242,7 +248,7 @@ export default function ListUser({ auth, users, pagination, selectedRole }) {
                                             <td className="border-b px-6 py-4 text-center">
                                                 <div className="flex justify-center items-center space-x-4">
                                                     <button
-                                                        onClick={() => Inertia.visit(`/users/${user.id}/edit`)}
+                                                        onClick={() => router.visit(`/users/${user.id}/edit`)}
                                                         className="text-gray-400 hover:text-gray-600"
                                                     >
                                                         <FaEdit size={18} />
@@ -305,13 +311,21 @@ export default function ListUser({ auth, users, pagination, selectedRole }) {
                     <p>Adakah anda pasti ingin memadam pengguna ini?</p>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleCloseModal} color="primary">
-                        Batal
-                    </Button>
-                    <Button onClick={handleDelete} color="primary">
-                        Ya, Padam
-                    </Button>
-                </DialogActions>
+                        <Button 
+                            onClick={handleCloseModal} 
+                            color="primary"
+                            disabled={isDeleting}
+                        >
+                            Batal
+                        </Button>
+                        <Button 
+                            onClick={handleDelete} 
+                            color="primary"
+                            disabled={isDeleting}
+                        >
+                            {isDeleting ? 'Memproses...' : 'Ya, Padam'}
+                        </Button>
+                    </DialogActions>
             </Dialog>
         </AuthenticatedLayout>
     );

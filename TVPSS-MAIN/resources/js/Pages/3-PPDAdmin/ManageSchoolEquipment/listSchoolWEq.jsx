@@ -4,6 +4,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 import PPDAdminSideBar from "../PPDAdminSideBar";
 import { Inertia } from "@inertiajs/inertia";
+import { router } from '@inertiajs/react'
 
 export default function ListEquipmentPPD({ equipment, school }) {
     const [selectedItems, setSelectedItems] = useState([]);
@@ -21,7 +22,7 @@ export default function ListEquipmentPPD({ equipment, school }) {
         const confirmed = window.confirm("Padam barang yang dipilih?");
         if (confirmed) {
             selectedItems.forEach((id) => {
-                Inertia.delete(`/equipment/delete/${id}`, {
+                router.delete(`/eqManagementPPD/${id}/delete`, { 
                     onSuccess: () => {
                         console.log(`Item ${id} deleted successfully.`);
                     },
@@ -143,7 +144,7 @@ export default function ListEquipmentPPD({ equipment, school }) {
                                                 <div className="flex justify-center space-x-3">
                                                     {/* Edit Button */}
                                                     <button
-                                                        onClick={() => Inertia.get(`/eqManagementPPD/edit/${item.id}`)}
+                                                        onClick={() => router.get(`/eqManagementPPD/edit/${item.id}`)}
                                                         className="p-2 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
                                                         title="Edit"
                                                     >
@@ -155,7 +156,7 @@ export default function ListEquipmentPPD({ equipment, school }) {
                                                         onClick={() => {
                                                             const confirmed = window.confirm(`Padam barang ${item.equipName}?`);
                                                             if (confirmed) {
-                                                                Inertia.delete(`/equipment/delete/${item.id}`, {
+                                                                router.delete(`/eqManagementPPD/${item.id}/delete`, {
                                                                     onSuccess: () => {
                                                                         console.log(`Item ${item.equipName} deleted successfully.`);
                                                                     },

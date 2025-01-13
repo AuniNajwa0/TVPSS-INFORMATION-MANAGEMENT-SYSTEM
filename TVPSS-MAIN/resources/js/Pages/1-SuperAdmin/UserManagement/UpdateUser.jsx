@@ -4,6 +4,7 @@ import SuperAdminSideBar from '../SuperAdminSideBar';
 import { useState, useEffect } from 'react';
 import { User, Mail, Lock, Shield, MapPin, Map, School, Landmark, Layers } from "lucide-react";
 import { Inertia } from '@inertiajs/inertia';
+import { router } from '@inertiajs/react';
 
 export default function UpdateUser({ user, roles }) {
     const [formData, setFormData] = useState({
@@ -178,8 +179,24 @@ export default function UpdateUser({ user, roles }) {
         setMessage('');
 
         try {
-            Inertia.put(`/users/${user.id}`, formData);
-            setMessage('Pengguna berjaya dikemaskini!');
+            await router.put(`/users/${user.id}`, formData, {
+                onSuccess: () => {
+                    setIsLoading(false);
+                    setMessage('Pengguna berjaya dikemaskini!');
+                    
+                    // Add delay before redirect
+                    setTimeout(() => {
+                        router.visit('/listUsers');
+                    }, 2000); // 2 seconds delay to show message
+                },
+                onError: (errors) => {
+                    setIsLoading(false);
+                    setErrors(errors);
+                    setMessage('Ralat berlaku, sila cuba lagi.');
+                },
+                preserveScroll: true,
+                preserveState: true,
+            });
         } catch (error) {
             setMessage('Ralat berlaku, sila cuba lagi.');
         } finally {
@@ -233,12 +250,17 @@ export default function UpdateUser({ user, roles }) {
                     <h2 className="text-2xl font-bold mb-6 text-gray-700">Kemaskini maklumat dibawah:</h2>
 
                     {message && (
-                        <div
-                            className={`text-white px-4 py-2 rounded mb-4 ${
-                                message.includes("berjaya") ? "bg-green-500" : "bg-red-500"
-                            }`}
+                        <div 
+                            className={`${
+                                message.includes('berjaya') 
+                                    ? 'bg-green-500' 
+                                    : 'bg-red-500'
+                            } text-white px-6 py-4 rounded-lg mb-6 transition-all duration-500 ease-in-out flex items-center justify-between`}
                         >
-                            {message}
+                            <span>{message}</span>
+                            {message.includes('berjaya') && (
+                                <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"/>
+                            )}
                         </div>
                     )}
 

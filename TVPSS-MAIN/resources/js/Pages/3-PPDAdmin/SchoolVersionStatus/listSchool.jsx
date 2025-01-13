@@ -68,7 +68,7 @@ export default function ListPPDSchool({ schools = [] }) {
 
     const confirmDelete = () => {
         // Use Inertia.js to send a deletion request
-        router.delete(`/tvpssInfoPPD/${schoolToDelete}`, {
+        router.delete(`/tvpssInfoPPD/${schoolToDelete}`, {  
             onSuccess: () => {
                 setIsDeleting(false);
                 setSchoolToDelete(null);

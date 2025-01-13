@@ -89,7 +89,7 @@ export default function CertificateTemplateForm(props) {
                                             </label>
                                             <p className="pl-1">atau seret dan lepas</p>
                                         </div>
-                                        <p className="text-xs text-gray-500">PDF, DOC sehingga 10MB</p>
+                                        <p className="text-xs text-gray-500">PNG, JPG sehingga 10MB</p>
                                     </div>
                                 </div>
                                 {errors.file && <p className="mt-1 text-sm text-red-600">{errors.file}</p>}
