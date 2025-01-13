@@ -137,7 +137,6 @@ export default function ListSchool({ schools }) {
                   <th className="border-b px-4 py-6">Nama Sekolah</th>
                   <th className="border-b px-4 py-6">Kod Sekolah</th>
                   <th className="border-b px-4 py-6">Nama Pengetua</th>
-                  <th className="border-b px-4 py-6 text-center">Status</th>
                   <th className="border-b px-4 py-6 text-center">Aksi</th>
                 </tr>
               </thead>
@@ -149,19 +148,13 @@ export default function ListSchool({ schools }) {
                       <td className="border-b px-4 py-6">{school.schoolName}</td>
                       <td className="border-b px-4 py-6">{school.schoolCode}</td>
                       <td className="border-b px-4 py-6">{school.schoolOfficer}</td>
-                      <td className="border-b px-4 py-6 text-center">
-                        <span
-                          className={`px-3 py-1 rounded-lg text-sm font-semibold border ${getStatusBadgeClass(school.status)}`}
-                        >
-                          {school.status}
-                        </span>
-                      </td>
+                      
                       <td className="border-b px-4 py-6 text-center">
                         <Link
                           href={`/generateCertificate/${school.schoolCode}`}  // Use dynamic schoolCode
                           className="text-blue-600 flex justify-center items-center"
                         >
-                          <FaEye className="text-xl" />
+                          <FaEye className="text-xl color-[blue]" />
                         </Link>
                       </td>
                     </tr>
