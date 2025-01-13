@@ -78,13 +78,31 @@ export default function Dashboard() {
     datasets: [
       {
         label: "Bilangan Peratusan Pengguna Mengikut Jenis",
-        data: [userCounts.stateAdmin, userCounts.ppdAdmin, userCounts.schoolAdmin],
+        data: [
+          (userCounts.stateAdmin / (userCounts.stateAdmin + userCounts.ppdAdmin + userCounts.schoolAdmin)) * 100,
+          (userCounts.ppdAdmin / (userCounts.stateAdmin + userCounts.ppdAdmin + userCounts.schoolAdmin)) * 100,
+          (userCounts.schoolAdmin / (userCounts.stateAdmin + userCounts.ppdAdmin + userCounts.schoolAdmin)) * 100
+        ],
         backgroundColor: ["#4158A6", "#179BAE", "#FF8343"],
         borderColor: ["#4158A6", "#179BAE", "#FF8343"],
         borderWidth: 2,
         hoverOffset: 4,
       },
     ],
+  };
+  
+  const options = {
+    responsive: true,
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: (tooltipItem) => {
+            // Format the tooltip to show percentage with 2 decimal places
+            return tooltipItem.raw.toFixed(2) + "%";
+          },
+        },
+      },
+    },
   };
 
   const handleTimeRangeChange = (event, newTimeRange) => {
