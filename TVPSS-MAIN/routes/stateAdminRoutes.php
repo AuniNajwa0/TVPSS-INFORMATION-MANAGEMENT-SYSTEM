@@ -21,6 +21,7 @@ Route::put('/certificate-templates/{id}', [StateAdminController::class, 'updateT
 Route::get('/certificate-templates/{id}/edit', [StateAdminController::class, 'editTemplate'])->name('certificate-templates.edit');
 Route::get('/listSchoolCertificate', [StateAdminController::class, 'certificateGenerateList'])->name('certificate.generateList');
 Route::get('/generateCertificate/{schoolCode}', [StateAdminController::class, 'generateCertificate'])->name('certificate.generate');
+Route::delete('/certificate-templates/{id}', [StateAdminController::class, 'destroy'])->name('certificate-templates.destroy');
 
 // TVPSS VERSION UPDATE
 Route::get('/tvpssInfo', [StateAdminController::class, 'tvpssInfoIndex'])->name('schoolInfo.tvpssInfoIndex');

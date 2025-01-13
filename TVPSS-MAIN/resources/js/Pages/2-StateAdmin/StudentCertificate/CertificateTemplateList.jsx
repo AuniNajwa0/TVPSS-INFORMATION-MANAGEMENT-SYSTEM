@@ -3,11 +3,22 @@ import { Head, Link } from '@inertiajs/react';
 import { PlusCircle, Pencil, Trash2, FileText, Search, Filter } from 'lucide-react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import StateAdminSideBar from '../StateAdminSideBar';
+import { Inertia } from '@inertiajs/inertia';
+import { router } from '@inertiajs/react'
 
 export default function CertificateTemplateList({ templates }) {
+    
     const handleDelete = (id) => {
         if (confirm("Adakah anda pasti untuk membuang templat ini?")) {
-            Inertia.delete(route('certificate-templates.destroy', id));
+            router.delete(route('certificate-templates.destroy', id), {
+                onSuccess: () => {
+                    router.get(route('/certList'));
+                },
+                onError: (errors) => {
+                    // Handle errors if needed
+                    console.error('Error deleting template:', errors);
+                }
+            });
         }
     };
 
