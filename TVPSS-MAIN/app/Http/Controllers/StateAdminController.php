@@ -10,6 +10,14 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use App\Models\SchoolInfo;
+use App\Models\Student;
+use App\Models\StudentAchievement;
+use App\Models\Studcrew;
+use App\Enums\StatusEnum;
+use App\Enums\versionEnum;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+
 
 class StateAdminController extends Controller
 {
@@ -111,6 +119,67 @@ class StateAdminController extends Controller
         ]);
     }
 
+    public function certificateGenerateList(Request $request)
+    {
+        $user = $request->user();
+    
+        if (!$user->state) {
+            return Inertia::render('2-StateAdmin/StudentCertificate/CertificateGenerateList', [
+                'schools' => [],
+                'message' => 'No schools found for your state.',
+            ]);
+        }
+    
+        $schools = SchoolInfo::where('state', $user->state)
+            ->with(['schoolVersion' => function ($query) {
+                $query->select('id', 'school_info_id', 'version', 'status');
+            }])
+            ->get()
+            ->map(function ($school) {
+                return [
+                    'schoolCode' => $school->schoolCode,
+                    'schoolName' => $school->schoolName,
+                    'schoolOfficer' => $school->schoolOfficer,
+                    'state' => $school->state,
+                    'schoolVersion' => $school->schoolVersion->version ?? '-',
+                    'status' => $school->schoolVersion->status ?? 'Null',
+                ];
+            });
+    
+        return Inertia::render('2-StateAdmin/StudentCertificate/CertificateGenerateList', [
+            'schools' => $schools,
+        ]);
+    }
+    
+    public function generateCertificate($schoolCode)
+    {
+        // Fetch the school by its code
+        $school = SchoolInfo::where('schoolCode', $schoolCode)->first();
+    
+        if (!$school) {
+            return redirect()->route('some.error.page')->with('error', 'School not found.');
+        }
+    
+        // Fetch students and their achievements belonging to the school
+        $students = Student::where('school_info_id', $school->id)->get();
+        
+        // Eager load achievements with student data
+        $achievements = StudentAchievement::where('school_info_id', $school->id)
+            ->with('student') // Eager load student relation
+            ->get();
+    
+        // Return the view or data needed for the certificate generation page
+        return inertia('2-StateAdmin/StudentCertificate/GenerateCertificate', [
+            'school' => $school,
+            'students' => $students,
+            'achievements' => $achievements, // Pass achievements
+        ]);
+    }
+    
+
+    
+    
+    
     public function tvpssInfoIndex(Request $request)
     {
         $user = $request->user();

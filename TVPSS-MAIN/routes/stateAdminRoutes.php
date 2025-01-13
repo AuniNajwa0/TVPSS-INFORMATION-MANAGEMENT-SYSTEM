@@ -19,9 +19,8 @@ Route::get('/certificate-templates', [StateAdminController::class, 'getTemplates
 Route::get('/certificate-templates/{id}', [StateAdminController::class, 'getTemplate']);
 Route::put('/certificate-templates/{id}', [StateAdminController::class, 'updateTemplate']);
 Route::get('/certificate-templates/{id}/edit', [StateAdminController::class, 'editTemplate'])->name('certificate-templates.edit');
-Route::get('/listRequestCertificate',  fn() => Inertia::render('2-StateAdmin/StudentCertificate/CertificateRequestList'))->name('dashboardST');
-Route::get('/listSchoolCertificate',  fn() => Inertia::render('2-StateAdmin/StudentCertificate/CertificateGenerateList'))->name('dashboardST');
-Route::get('/generateCertificate',  fn() => Inertia::render('2-StateAdmin/StudentCertificate/GenerateCertificate'))->name('dashboardST');
+Route::get('/listSchoolCertificate', [StateAdminController::class, 'certificateGenerateList'])->name('certificate.generateList');
+Route::get('/generateCertificate/{schoolCode}', [StateAdminController::class, 'generateCertificate'])->name('certificate.generate');
 
 // TVPSS VERSION UPDATE
 Route::get('/tvpssInfo', [StateAdminController::class, 'tvpssInfoIndex'])->name('schoolInfo.tvpssInfoIndex');
