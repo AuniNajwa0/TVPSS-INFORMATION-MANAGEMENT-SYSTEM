@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { ChevronDown, LogOut, Home, Users, CheckCircle } from 'lucide-react';
 import { Inertia } from '@inertiajs/inertia'; // Import Inertia
+import { CheckCircle, ChevronDown, Home, LogOut, Users } from 'lucide-react';
+import { useState } from 'react';
+import { router } from '@inertiajs/react'
 
 const StudentNavBar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -14,15 +15,16 @@ const StudentNavBar = () => {
   };
 
   const handleLogout = () => {
-    // Send the POST request to log out using Inertia
-    Inertia.post(route('logout'), {}, {
-      onFinish: () => {
-        // After logout, navigate to the home page
-        window.location.href = '/'; // Redirect to main page
-      }
+    router.post(route('student.logout'), {}, {
+      onSuccess: () => {
+        window.location.href = '/';  // Ensure redirection to the main page
+      },
+      onError: (error) => {
+        console.error('Logout failed', error);
+      },
     });
   };
-
+  
   // Inline NavButton Component
   const NavButton = ({ href, icon, text }) => (
     <a

@@ -118,6 +118,15 @@ class StudentController extends Controller
     ]);
 }
 
+public function logout(Request $request)
+{
+    //$request->session()->flush();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+    
+    return redirect('/');  // Direct redirect response
+}
+
     // Store method for creating a new student
     public function store(Request $request)
     {
