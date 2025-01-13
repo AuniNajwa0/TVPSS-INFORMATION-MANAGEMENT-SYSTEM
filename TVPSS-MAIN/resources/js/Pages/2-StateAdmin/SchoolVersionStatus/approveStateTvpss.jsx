@@ -20,6 +20,7 @@ import { Head, usePage } from "@inertiajs/react";
 import { Inertia } from "@inertiajs/inertia";
 import StateAdminSideBar from "../StateAdminSideBar";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { router } from '@inertiajs/react'
 
 const ApproveStateTvpss = () => {
     const { tvpssData = {} } = usePage().props;
@@ -51,7 +52,7 @@ const ApproveStateTvpss = () => {
             alert("School Code is missing. Unable to proceed.");
             return;
         }
-        Inertia.post(`/tvpssInfoState/${schoolCode}/approve`, {}, {
+        router.post(`/tvpssInfoState/${schoolCode}/approve`, {}, {
             onSuccess: () => {
                 alert("TVPSS Version successfully approved!");
             },
@@ -67,7 +68,7 @@ const ApproveStateTvpss = () => {
             alert("School Code is missing. Unable to proceed.");
             return;
         }
-        Inertia.post(`/tvpssInfoState/${schoolCode}/reject`, {}, {
+        router.post(`/tvpssInfoState/${schoolCode}/reject`, {}, {
             onSuccess: () => {
                 alert("TVPSS Version has been rejected!");
             },

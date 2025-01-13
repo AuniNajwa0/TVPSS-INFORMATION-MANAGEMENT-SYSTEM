@@ -49,10 +49,10 @@ function StateAdminSideBar() {
                             active={url.startsWith("/dashboardState")}
                         />
                         <SidebarLink
-                            href="/listSchoolCertificate"
+                            href="/certificate-Template-List"
                             icon={<PrinterCheck size={20} />}
                             label="Jana Sijil Pelajar"
-                            active={url.startsWith("/listSchoolCertificate")}
+                            active={url.startsWith("/certificate-Template-List")}
                         />
                         <SidebarLink
                             href="/tvpssInfo"

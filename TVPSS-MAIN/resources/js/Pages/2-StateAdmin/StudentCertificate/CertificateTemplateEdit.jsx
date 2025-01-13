@@ -371,11 +371,6 @@ export default function CertificateTemplateEdit({ template }) {
                                     </button>
                                 </div>
                                 <div className="mt-6">
-                                    <button type="button" onClick={handleGeneratePDF} className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-                                        Cetak Sijil
-                                    </button>
-                                </div>
-                                <div className="mt-6">
                                     <button type="button" onClick={handlePrintPreview} className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
                                         Print Preview
                                     </button>
