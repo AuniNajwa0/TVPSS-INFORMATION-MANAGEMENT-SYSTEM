@@ -17,40 +17,12 @@ export default function AuthenticatedLayout({ header, children, noMaxWidth }) {
         <div className="min-h-screen bg-gray-100">
             {/* Navigation Bar */}
             <nav className="border-b border-gray-200 bg-white">
-                <div className="mx-4">
-                    <div className="flex h-30 justify-end items-center px-2 py-2 space-x-4">
-                        {/* Search Box */}
-                        <div className="relative flex items-center">
-                            <input
-                                type="text"
-                                placeholder="Cari..."
-                                className="border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#455185] focus:border-[#455185] w-[200px]"
-                            />
-                            <button
-                                type="button"
-                                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-[#455185] focus:outline-none"
-                            >
-                                <svg
-                                    className="w-5 h-5"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M21 21l-4.35-4.35M16.5 10a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z"
-                                    />
-                                </svg>
-                            </button>
-                        </div>
-
+                <div className="mx-2">
+                    <div className="flex h-30 justify-end items-center px-2 py-2 space-x-2">
                         {/* Notification Button */}
                         <button
                             type="button"
-                            className="bg-gray-100 text-[#455185] hover:bg-gray-200 focus:outline-none rounded-xl p-2"
+                            className="bg-white text-[#4158A6] hover:bg-gray-200 focus:outline-none rounded-xl p-2"
                             aria-label="Notifications"
                         >
                             <svg
@@ -69,6 +41,9 @@ export default function AuthenticatedLayout({ header, children, noMaxWidth }) {
                             </svg>
                         </button>
 
+                        {/* Divider Line */}
+                        <div className="w-px h-10 bg-gray-300 transform translate-x-2"></div>
+
                         {/* Profile Dropdown */}
                         <div className="relative ms-3">
                             <Dropdown>
@@ -79,7 +54,7 @@ export default function AuthenticatedLayout({ header, children, noMaxWidth }) {
                                             className="flex items-center space-x-2 rounded-md border border-transparent bg-white px-5 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 focus:outline-none"
                                         >
                                             {/* Initials Square */}
-                                            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-[#455185] text-white font-bold">
+                                            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#4158A6] text-white font-bold">
                                                 {user.initials || user.name.charAt(0) + user.name.charAt(1)}
                                             </div>
 
@@ -137,6 +112,6 @@ export default function AuthenticatedLayout({ header, children, noMaxWidth }) {
             <main className="mx-auto">
                 {children}
             </main>
-        </div>
-    );
+        </div>
+    );
 }
