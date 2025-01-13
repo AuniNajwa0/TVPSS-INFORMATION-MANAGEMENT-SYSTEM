@@ -31,6 +31,10 @@ Route::get('/tvpssInfoState/{schoolCode}/edit', [StateAdminController::class, 't
 Route::post('/tvpssInfoState/{schoolCode}/approve', [StateAdminController::class, 'approveTVPSS'])->name('schoolInfo.approveTVPSS');
 Route::post('/tvpssInfoState/{schoolCode}/reject', [StateAdminController::class, 'rejectTVPSS'])->name('schoolInfo.rejectTVPSS');
 
+//Dashboard
+Route::get('/state-admin-stats', [StateAdminController::class, 'getStateAdminStats']);
+Route::get('/state-admin-version-counts', [StateAdminController::class, 'getVersionCounts']);
+
 //Settings
 Route::get('/profileStateAdmin', function () {
     return Inertia::render('2-StateAdmin/Profile/Edit');
