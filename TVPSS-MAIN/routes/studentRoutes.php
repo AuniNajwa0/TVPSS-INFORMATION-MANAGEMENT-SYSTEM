@@ -13,6 +13,8 @@ Route::middleware([StudentSessionCheck::class])->group(function () {
     Route::get('/resultApply/{icNum}', [StudentController::class, 'resultApply'])->name('student.resultApply');
 });
 
+Route::post('/student/logout', [StudentController::class, 'logout'])->name('student.logout');
+
 // Toksah mung nak guna route hok ni, aku hok milih jaley aku
 /*Route::get('/students/{id}', [StudentController::class, 'show']);
 Route::post('/students', [StudentController::class, 'store']);
