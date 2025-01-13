@@ -26,9 +26,13 @@ export default function Dashboard() {
   const [tvpssVersion, setTvpssVersion] = useState("Memuatkan...");
 
   // States for counts
-  const [studentsCount, setStudentsCount] = useState(null);
-  const [achievementsCount, setAchievementsCount] = useState(null);
-  const [studentCrewsCount, setStudentCrewsCount] = useState(null);
+  const [studentsCount, setStudentsCount] = useState("Memuatkan...");
+  const [achievementsCount, setAchievementsCount] = useState("Memuatkan...");
+  const [studentCrewsCount, setStudentCrewsCount] = useState("Memuatkan...");
+  const [gafferCount, setGafferCount] = useState("Memuatkan...");
+  const [jurukameraCount, setJurukameraCount] = useState("Memuatkan...");
+  const [penemudugaCount, setPenemudugaCount] = useState("Memuatkan...");
+  const totalCount = gafferCount + penemudugaCount + jurukameraCount;
 
   useEffect(() => {
     // Fetch TVPSS version
@@ -53,14 +57,26 @@ export default function Dashboard() {
       .catch((error) => {
         console.error("Error fetching school stats:", error);
       });
+
+      fetch("/studcrew-jawatan-count")
+      .then((response) => response.json())
+      .then((data) => {
+        setGafferCount(data.gaffer_count ?? 0);
+        setPenemudugaCount(data.penemuduga_count ?? 0);
+        setJurukameraCount(data.jurukamera_count ?? 0);
+      })
+      .catch((error) => {
+        console.error("Error fetching jawatan stats:", error);
+      });
+      
   }, []);
 
   const barData = {
-    labels: ["Januari", "Februari", "Mac", "April", "May", "Jun"],
+    labels: ["Bilangan Pelajar", "Bilangan Krew"],
     datasets: [
       {
-        label: "Bilangan Pengguna Mengikut Jenis",
-        data: [458, 800, 4000, 700, 543, 3000],
+        label: "Jumlah",
+        data: [studentsCount, studentCrewsCount],
         backgroundColor: ["#455185", "#008080", "#00BFFF"],
         borderColor: ["#455185", "#008080", "#00BFFF"],
         borderWidth: 1,
@@ -79,11 +95,15 @@ export default function Dashboard() {
   };
 
   const doughnutData = {
-    labels: ["Gaffer", "Jurukamera", "Penemuduga"],
+    labels: ["Gaffer", "Penemuduga", "Jurukamera"],
     datasets: [
       {
-        label: "Jumlah:",
-        data: [200, 300, 150], // Now there are 3 data points, matching the 3 labels
+        label: "Jumlah (%)",
+        data: [
+          (gafferCount / totalCount) * 100, // Percentage for Gaffer
+          (penemudugaCount / totalCount) * 100, // Percentage for Penemuduga
+          (jurukameraCount / totalCount) * 100, // Percentage for Jurukamera
+        ],
         backgroundColor: ["#455185", "#008080", "#f6ebcb"],
         borderColor: ["#455185", "#008080", "#f6ebcb"], // Border color for each section
         borderWidth: 2,
@@ -174,21 +194,21 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
             <SummaryCard
               title="Bilangan Pelajar Sekolah"
-              value={studentsCount ?? "Memuatkan..."}
+              value={studentsCount }
               icon={<FaUsers />}
               bgColor="#f6ebcb"
               iconColor="#9d8338"
             />
             <SummaryCard
               title="Bilangan Pencapaian"
-              value={achievementsCount ?? "Memuatkan..."}
+              value={achievementsCount }
               icon={<FaStar />}
               bgColor="#cbf6d1"
               iconColor="#287033"
             />
             <SummaryCard
               title="Bilangan Krew Pelajar"
-              value={studentCrewsCount ?? "Memuatkan..."}
+              value={studentCrewsCount }
               icon={<FaUserFriends />}
               bgColor="#bbd1ef"
               iconColor="#0f3365"
@@ -204,7 +224,7 @@ export default function Dashboard() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-white p-5 rounded-2xl border-2 border-gray-200">
-              <h3 className="text-xl font-semibold mb-4">Bilangan Krew Mengikut Bulanan</h3>
+              <h3 className="text-xl font-semibold mb-4">Bilangan Pelajar vs Bilangan Krew</h3>
               <Bar data={barData} options={barOptions} />
             </div>
 

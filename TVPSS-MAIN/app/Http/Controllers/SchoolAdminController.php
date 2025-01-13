@@ -1110,9 +1110,9 @@ class SchoolAdminController extends Controller
         }
     }
     
-    public function getSchoolAdminStats()
+    public function getSchoolAdminStats(Request $request)
 {
-    $user = auth()->user();
+    $user = $request->user();
 
     // Fetch the school information linked to the School Admin
     $schoolInfo = SchoolInfo::where('user_id', $user->id)->first();
@@ -1138,5 +1138,36 @@ class SchoolAdminController extends Controller
         'student_crews_count' => $studentCrewsCount,
     ]);
 }
+
+public function countStudCrewJawatan(Request $request)
+{
+    // Get the logged-in user
+    $user = $request->user();
+
+    // Fetch the school linked to the logged-in School Admin
+    $school = SchoolInfo::where('user_id', $user->id)->first();
+
+    if (!$school) {
+        return response()->json([
+            'message' => 'No school linked to this user',
+            'gaffer_count' => 0,
+            'penemuduga_count' => 0,
+            'jurukamera_count' => 0,
+        ], 404);
+    }
+
+    // Count the types of jawatan in the studcrew table
+    $gafferCount = Studcrew::where('jawatan', 'Gaffer')->count();
+    $penemudugaCount = Studcrew::where('jawatan', 'Penemuduga')->count();
+    $jurukameraCount = Studcrew::where('jawatan', 'Jurukamera')->count();
+
+    return response()->json([
+        'message' => 'Jawatan counts retrieved successfully',
+        'gaffer_count' => $gafferCount,
+        'penemuduga_count' => $penemudugaCount,
+        'jurukamera_count' => $jurukameraCount,
+    ]);
+}
+
 
 }
