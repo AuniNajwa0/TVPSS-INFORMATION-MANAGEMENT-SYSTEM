@@ -18,6 +18,7 @@ import { Head, usePage } from "@inertiajs/react";
 import { Inertia } from "@inertiajs/inertia";
 import PPDAdminSideBar from "../PPDAdminSideBar";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { router } from '@inertiajs/react';
 
 const ApprovePPDTvpss = () => {
     const { props } = usePage();
@@ -65,7 +66,7 @@ const ApprovePPDTvpss = () => {
     const closeApproveDialog = () => setOpenApproveModal(false);
 
     const handleApprove = () => {
-        Inertia.post(`/tvpssInfoPPD/${schoolCode}/approve`, {}, {
+        router.post(`/tvpssInfoPPD/${schoolCode}/approve`, {}, {
             onSuccess: () => {
                 alert("TVPSS has been approved!");
                 closeApproveDialog(); 
@@ -81,7 +82,7 @@ const ApprovePPDTvpss = () => {
     const closeRejectDialog = () => setOpenRejectModal(false);
 
     const handleReject = () => {
-        Inertia.post(`/tvpssInfoPPD/${schoolCode}/reject`, {}, {
+        router.post(`/tvpssInfoPPD/${schoolCode}/reject`, {}, {
             onSuccess: () => {
                 alert("TVPSS has been rejected!");
                 closeRejectDialog(); // Close the modal on success

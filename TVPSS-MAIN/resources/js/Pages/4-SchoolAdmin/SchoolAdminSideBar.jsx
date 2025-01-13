@@ -74,12 +74,6 @@ function SchoolAdminSideBar() {
               active={url === "/studCrewList"}
             />
             <SidebarLink
-              href="/listAchievement"
-              icon={<FaCheckCircle size={20} />}
-              label="Pencapaian Pelajar"
-              active={url === "/listAchievement"}
-            />
-            <SidebarLink
               href="/updateSchool"
               icon={<FaInfoCircle size={20} />}
               label="Informasi Sekolah"

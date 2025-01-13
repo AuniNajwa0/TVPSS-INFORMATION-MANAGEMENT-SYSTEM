@@ -14,18 +14,18 @@ const StudCrewList = ({ studcrews, school }) => {
     // Function to handle search
     const handleSearch = (e) => {
         e.preventDefault();
-        Inertia.get(route('studcrew.list'), { search });
+        router.get(route('studcrew.list'), { search });
     };
 
     // Function to handle rows per page change
     const handleRowsPerPageChange = (e) => {
         setRowsPerPage(e.target.value);
-        Inertia.get(route('studcrew.list'), { search, rowsPerPage: e.target.value });
+        router.get(route('studcrew.list'), { search, rowsPerPage: e.target.value });
     };
 
     // Function to handle pagination change
     const handlePageChange = (page) => {
-        Inertia.get(route('studcrew.list'), { search, page, rowsPerPage });
+        router.get(route('studcrew.list'), { search, page, rowsPerPage });
     };
 
     // Function to determine the status color
@@ -57,7 +57,7 @@ const StudCrewList = ({ studcrews, school }) => {
     // Function to confirm delete action
     const confirmDelete = () => {
         if (deleteId) {
-            Inertia.delete(route('studcrew.destroy', { id: deleteId }));
+            router.delete(route('studcrew.destroy', { id: deleteId }));
             setIsDeleting(false);
         }
     };

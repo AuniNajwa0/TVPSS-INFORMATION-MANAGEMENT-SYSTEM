@@ -195,12 +195,6 @@ export default function ListSchool({ schools = [] }) {
                                                     >
                                                         <FaEdit size={18} />
                                                     </button>
-                                                    <button
-                                                        onClick={() => openDeleteDialog(school)}
-                                                        className="text-gray-400 hover:text-gray-600"
-                                                    >
-                                                        <FaTrash size={18} />
-                                                    </button>
                                                 </div>
                                             </td>
                                         </tr>

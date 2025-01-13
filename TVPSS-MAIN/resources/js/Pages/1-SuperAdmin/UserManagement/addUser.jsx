@@ -4,6 +4,7 @@ import SuperAdminSideBar from "../SuperAdminSideBar";
 import { useState } from "react";
 import { Inertia } from "@inertiajs/inertia";
 import { User, Mail, Lock, Shield, MapPin, Map, School, Landmark, Layers } from "lucide-react";
+import { router } from '@inertiajs/react'
 
 export default function AddUser() {
     const [formData, setFormData] = useState({
@@ -197,17 +198,23 @@ export default function AddUser() {
                 ...formData,
                 role: formData.role,
             };
-            await Inertia.post("/users", transformedData);
-
-            setMessage("Pengguna berjaya ditambah!");
-            setFormData({
-                name: "",
-                email: "",
-                role: "",
-                state: "",
-                district: "",
-                password: "",
-                password_confirmation: "",
+            
+            await router.post("/users", transformedData, {
+                onSuccess: () => {
+                    setMessage("Pengguna berjaya ditambah!");
+                    setFormData({
+                        name: "",
+                        email: "",
+                        role: "",
+                        state: "",
+                        district: "",
+                        password: "",
+                        password_confirmation: "",
+                    });
+                    
+                    // Redirect back to list users page
+                    router.visit(route('users.index'));
+                },
             });
         } catch (error) {
             setMessage("Ralat berlaku, sila cuba lagi.");

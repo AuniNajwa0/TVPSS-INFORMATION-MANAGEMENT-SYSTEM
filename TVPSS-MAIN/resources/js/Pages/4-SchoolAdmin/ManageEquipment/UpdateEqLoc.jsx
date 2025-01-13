@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { FiClipboard, FiLayers, FiMapPin, FiCalendar, FiSettings } from 'react-icons/fi';
 import SchoolAdminSideBar from '../SchoolAdminSideBar';
 import { Inertia } from '@inertiajs/inertia';
+import { router } from '@inertiajs/react';
 
 export default function UpdateEqLoc({ eqLocation }) {
     // Initialize the form data with the eqLocation data
@@ -55,7 +56,7 @@ export default function UpdateEqLoc({ eqLocation }) {
                 formData.eqLocType = formData.otherType;
             }
 
-            await Inertia.put(`/eqLoc/${eqLocation.id}`, formData);  // Update the location with Inertia
+            await router.put(`/eqLoc/${eqLocation.id}`, formData);  // Update the location with Inertia
             setMessage('Lokasi berjaya dikemaskini!');
         } catch (error) {
             setMessage('Ralat berlaku, sila cuba lagi.');
@@ -170,14 +171,14 @@ export default function UpdateEqLoc({ eqLocation }) {
                                 <div className="flex justify-end space-x-4">
                                     <button
                                         type="button"
-                                        onClick={() => Inertia.get('/listEquipment')}
+                                        onClick={() => router.get('/listEquipment')}
                                         className="px-6 py-2 bg-gray-500 text-white font-semibold rounded-lg shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 transition duration-200"
                                     >
                                         Batal
                                     </button>
                                     <button
                                         type="submit"
-                                        onClick={() => Inertia.get('/listEquipment')}
+                                        onClick={() => router.get('/listEquipment')}
                                         className="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
                                     >
                                         {isLoading ? 'Mengemaskini...' : 'Kemaskini'}

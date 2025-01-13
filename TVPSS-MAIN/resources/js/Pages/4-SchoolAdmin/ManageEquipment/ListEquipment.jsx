@@ -4,6 +4,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 import SchoolAdminSideBar from "../SchoolAdminSideBar";
 import { Inertia } from "@inertiajs/inertia";
+import { router } from '@inertiajs/react';
 
 export default function ListEquipment({ equipment, eqLocation }) {
     const [selectedItems, setSelectedItems] = useState([]);
@@ -24,13 +25,13 @@ export default function ListEquipment({ equipment, eqLocation }) {
         const order = sortField === field && sortOrder === "asc" ? "desc" : "asc";
         setSortField(field);
         setSortOrder(order);
-        Inertia.get(`/equipment`, { sortField: field, sortOrder: order, search: searchEquipment });
+        router.get(`/equipment`, { sortField: field, sortOrder: order, search: searchEquipment });
     };
 
     const handleSearchEquipment = (e) => {
         const value = e.target.value;
         setSearchEquipment(value);
-        Inertia.get(`/equipment`, { search: value, sortField, sortOrder });
+        router.get(`/equipment`, { search: value, sortField, sortOrder });
     };
 
     const handleSearchLocation = (e) => {
@@ -40,7 +41,7 @@ export default function ListEquipment({ equipment, eqLocation }) {
     const handleDeleteSelected = () => {
         const confirmed = window.confirm("Padam barang yang dipilih?");
         if (confirmed) {
-            Inertia.delete(route("equipment.deleteSelected"), {
+            router.delete(route("equipment.deleteSelected"), {
                 ids: selectedItems,
             });
         }
@@ -195,7 +196,7 @@ export default function ListEquipment({ equipment, eqLocation }) {
                                         </td>
                                         <td className="border-b px-4 py-6 flex space-x-4 items-center">
                                             <button
-                                                onClick={() => Inertia.get(`/equipment/${item.id}/edit`)}
+                                                onClick={() => router.get(`/equipment/${item.id}/edit`)}
                                                 className="text-gray-400 hover:text-gray-600"
                                             >
                                                 <FaEdit />
@@ -204,7 +205,7 @@ export default function ListEquipment({ equipment, eqLocation }) {
                                                 onClick={() => {
                                                     const confirmed = window.confirm("Padam barang?");
                                                     if (confirmed) {
-                                                        Inertia.delete(`/equipment/${item.id}`);
+                                                        router.delete(`/equipment/${item.id}`);
                                                     }
                                                 }}
                                                 className="text-gray-400 hover:text-gray-600"
@@ -260,7 +261,7 @@ export default function ListEquipment({ equipment, eqLocation }) {
                                         <td className="border-b px-4 py-6">{location.eqLocType}</td>
                                         <td className="border-b px-4 py-6 flex space-x-4 items-center">
                                             <button
-                                                onClick={() => Inertia.get(`/eqLoc/${location.id}/edit`)}
+                                                onClick={() => router.get(`/eqLoc/${location.id}/edit`)}
                                                 className="text-gray-400 hover:text-gray-600"
                                             >
                                                 <FaEdit />
@@ -269,7 +270,7 @@ export default function ListEquipment({ equipment, eqLocation }) {
                                                 onClick={() => {
                                                     const confirmed = window.confirm("Padam lokasi?");
                                                     if (confirmed) {
-                                                        Inertia.delete(`/eqLoc/${location.id}`);
+                                                        router.delete(`/eqLoc/${location.id}`);
                                                     }
                                                 }}
                                                 className="text-gray-400 hover:text-gray-600"

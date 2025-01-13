@@ -15,7 +15,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import PPDAdminSideBar from "../PPDAdminSideBar";
 import { Inertia } from "@inertiajs/inertia";
 import { formatDistanceToNow } from "date-fns";
-import { router } from '@inertiajs/react'
+import { router } from '@inertiajs/react';
 
 export default function UpdateEquipmentPPD({
     equipment,
@@ -133,20 +133,23 @@ export default function UpdateEquipmentPPD({
         );
     };
 
-    const handleStatusUpdate = () => {
+    const handleStatusUpdate = async (e) => {
+        e.preventDefault(); // Prevent default form submission
+        setIsLoading(true); // Set loading state to true
+    
         const formDataToSubmit = new FormData();
         formDataToSubmit.append("status", formData.status);
-
-        router.post(`/equipmentPPD/${equipment.id}/update`, formDataToSubmit, {
-            onSuccess: () => {
-                setMessage("Status updated successfully!");
-                router.get(`/eqManagementPPD/list/${schoolId}`);
-            },
-            onError: (errors) => {
-                console.error("Validation Errors:", errors);
-                setErrors(errors);
-            },
-        });
+    
+        try {
+            await router.post(`/equipmentPPD/${equipment.id}/update`, formDataToSubmit);
+            // If successful, redirect or show a success message
+            router.get(`/eqManagementPPD/list/${schoolId}`);
+        } catch (errors) {
+            console.error("Validation Errors:", errors);
+            setErrors(errors); // Handle errors
+        } finally {
+            setIsLoading(false); // Reset loading state
+        }
     };
 
     const InputField = ({ icon: Icon, label, ...props }) => (
