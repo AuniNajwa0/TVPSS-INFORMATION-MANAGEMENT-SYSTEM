@@ -27,7 +27,20 @@ export default function Dashboard() {
   const [achievementsCount, setAchievementsCount] = useState(null);
   const [schoolsCount, setSchoolCount] = useState(null);
   const [selectedRegion, setSelectedRegion] = useState("Semua Negeri");
-  const [versionCounts, setVersionCounts] = useState([0, 0, 0, 0]);
+  const [version1Counts, setVersion1Counts] = useState("Memuatkan...");
+  const [version2Counts, setVersion2Counts] = useState("Memuatkan...");
+  const [version3Counts, setVersion3Counts] = useState("Memuatkan...");
+  const [version4Counts, setVersion4Counts] = useState("Memuatkan...");
+
+  const totalCounts =
+  version1Counts + version2Counts + version3Counts + version4Counts;
+
+  const percentages = [
+    ((version1Counts / totalCounts) * 100).toFixed(2),
+    ((version2Counts / totalCounts) * 100).toFixed(2),
+    ((version3Counts / totalCounts) * 100).toFixed(2),
+    ((version4Counts / totalCounts) * 100).toFixed(2),
+  ];
   
   
 
@@ -50,12 +63,10 @@ export default function Dashboard() {
       .then((response) => response.json())
       .then((data) => {
         console.log(data); // Add this line to inspect the response
-        setVersionCounts([
-          data.version1_count ?? 0,
-          data.version2_count ?? 0,
-          data.version3_count ?? 0,
-          data.version4_count ?? 0,
-        ]);
+        setVersion1Counts(data.version1_count);
+        setVersion2Counts(data.version2_count);
+        setVersion3Counts(data.version3_count);
+        setVersion4Counts(data.version4_count);
       })
       .catch((error) => {
         console.error("Error fetching version counts:", error);
@@ -72,9 +83,9 @@ export default function Dashboard() {
     datasets: [
       {
         label: "Jumlah",
-        data: [1, 1, 0, 2],
-        backgroundColor: ["#455185", "#179BAE", "#FF8343"],
-        borderColor: ["#455185", "#179BAE", "#FF8343"],
+        data: [version1Counts,version2Counts,version3Counts,version4Counts],
+        backgroundColor: ["#455185", "#179BAE", "#FF6F61", "#F5B7B1"],
+        borderColor: ["#455185", "#179BAE", "#FF6F61", "#F5B7B1"],
         borderWidth: 1,
         borderRadius: 20,
       },
@@ -88,21 +99,33 @@ export default function Dashboard() {
         display: false,
       },
     },
+    scales: {
+      y: {
+        ticks: {
+          callback: function (value) {
+            return Number.isInteger(value) ? value : null; // Only show whole numbers
+          },
+        },
+      },
+    },
   };
+  
 
-  const doughnutData30Minutes = {
-    labels: ["Perak", "Penang", "Johor"],
+  const doughnutData = {
+    labels: ["Versi 1", "Versi 2", "Versi 3", "Versi 4"],
     datasets: [
       {
-        label: "Pengguna dalam Tempoh 30 Minit Terakhir",
-        data: [20, 300, 800],
-        backgroundColor: ["#4158A6", "#179BAE", "#FF8343"],
-        borderColor: ["#455185", "#179BAE", "#FF8343"],
+        label: "Jumlah (%)",
+        data: percentages, // Use the calculated percentages
+        backgroundColor: ["#4158A6", "#179BAE", "#FF6F61", "#F5B7B1"], // Added extra color
+        borderColor: ["#455185", "#179BAE", "#FF6F61", "#F5B7B1"], // Added extra border color
         borderWidth: 2,
         hoverOffset: 4,
       },
     ],
   };
+  
+  console.log(doughnutData);
 
   return (
     <AuthenticatedLayout>
@@ -232,26 +255,7 @@ export default function Dashboard() {
 
             <div className="bg-white p-5 rounded-2xl border-2 border-gray-200 flex flex-col items-center">
               <h3 className="text-xl font-bold text-gray-800 mb-6">Jumlah Peratusan Mengikut Versi</h3>
-              <select
-                className="w-1/2 mb-4 p-3 border-2 border-gray-300 rounded-lg shadow-sm bg-white text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-400 transition duration-300 ease-in-out"
-                value={selectedRegion}
-                onChange={(e) => setSelectedRegion(e.target.value)}
-              >
-                <option value="Semua Negeri" className="text-gray-500">
-                  Pilih Versi
-                </option>
-                <option value="Versi 1" className="text-black">
-                  Versi 1
-                </option>
-                <option value="Versi 2" className="text-black">
-                  Versi 2
-                </option>
-                <option value="Versi 3" className="text-black">
-                  Versi 3
-                </option>
-              </select>
-
-              <Doughnut data={doughnutData30Minutes} />
+              <Doughnut data={doughnutData} />
             </div>
           </div>
         </div>
