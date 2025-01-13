@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use MongoDB\Laravel\Eloquent\Model;
+use App\Models\Donations;
 
 class SchoolInfo extends Model
 {
@@ -64,7 +65,7 @@ class SchoolInfo extends Model
 
     public function donation()
     {
-        return $this->hasMany(Donation::class, 'school_id');
+        return $this->hasMany(Donations::class, 'school_id');
     }
 
 }
