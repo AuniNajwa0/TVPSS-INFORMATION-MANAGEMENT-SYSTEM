@@ -12,6 +12,7 @@ use App\Enums\StatusEnum;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class PPDAdminController extends Controller
 {
@@ -293,7 +294,7 @@ class PPDAdminController extends Controller
 
     public function getPPDAdminStats()
     {
-        $user = auth()->user();
+        $user = request()->user();
 
         // Fetch the PPD Admin's district
         $schoolInfo = SchoolInfo::where('user_id', $user->id)->first();
