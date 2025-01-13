@@ -176,9 +176,28 @@ class StateAdminController extends Controller
         ]);
     }
     
+    public function destroy($id)
+    {
+        $template = CertificateTemplate::find($id);
+        
+        if (!$template) {
+            return response()->json(['error' => 'Template not found.'], 404);
+        }
 
-    
-    
+        try {
+            // Delete the file from storage if it exists
+            if ($template->file_path) {
+                Storage::delete($template->file_path);
+            }
+
+            // Delete the template from the database
+            $template->delete();
+
+            return redirect()->route('certList')->with('success', 'Template deleted successfully.');
+        } catch (\Exception $e) {
+            return redirect()->route('certList')->with('error', 'Failed to delete template.');
+        }
+    }
     
     public function tvpssInfoIndex(Request $request)
     {

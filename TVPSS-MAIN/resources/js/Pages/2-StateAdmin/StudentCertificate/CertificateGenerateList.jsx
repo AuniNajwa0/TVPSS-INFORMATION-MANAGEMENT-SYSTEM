@@ -151,7 +151,7 @@ export default function ListSchool({ schools }) {
                       
                       <td className="border-b px-4 py-6 text-center">
                         <Link
-                          href={`/generateCertificate/${school.schoolCode}`}  // Use dynamic schoolCode
+                          href="/certificate-Template-List"
                           className="text-blue-600 flex justify-center items-center"
                         >
                           <FaEye className="text-xl color-[blue]" />
