@@ -22,6 +22,9 @@ Route::post('/equipmentPPD/{equipmentId}/update', [PPDAdminController::class, 'u
 Route::post('/equipmentPPD/{equipmentId}/follow-up', [PPDAdminController::class, 'saveFollowUp'])->name('equipmentManagementPPD.followUp');
 Route::delete('/eqManagementPPD/{equipmentId}/delete', [PPDAdminController::class, 'deleteEquipment'])->name('equipmentManagementPPD.delete');
 
+//Dashbaord 
+Route::get('/ppd-admin-stats', [PPDAdminController::class, 'getPPDAdminStats']);
+
 //Settings
 Route::get('/profilePPDAdmin', function () {
     return Inertia::render('3-PPDAdmin/Profile/Edit');

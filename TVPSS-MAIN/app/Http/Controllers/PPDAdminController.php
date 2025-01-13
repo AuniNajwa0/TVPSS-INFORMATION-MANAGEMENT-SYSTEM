@@ -291,4 +291,38 @@ class PPDAdminController extends Controller
         }
     }
 
+    public function getPPDAdminStats()
+    {
+        $user = auth()->user();
+
+        // Fetch the PPD Admin's district
+        $schoolInfo = SchoolInfo::where('user_id', $user->id)->first();
+
+        if (!$schoolInfo) {
+            return response()->json([
+                'approved_tvpss' => 0,
+                'pending_validation' => 0,
+                'schools_in_district' => 0,
+            ]);
+        }
+
+        // Bilangan TVPPS Diluluskan (Approved TVPSS Versions)
+        $approvedTVPSSCount = TVPSSVersion::where('school_info_id', $schoolInfo->id)
+            ->where('status', 'approved') // Assuming 'approved' is a status
+            ->count();
+
+        // Bilangan Pending Validasi (Pending TVPSS Validations)
+        $pendingValidationCount = TVPSSVersion::where('school_info_id', $schoolInfo->id)
+            ->where('status', 'pending') // Assuming 'pending' is a status
+            ->count();
+
+        // Bilangan Sekolah Di Daerah Anda (Schools in the District)
+        $schoolsInDistrictCount = SchoolInfo::where('district', $schoolInfo->district)->count();
+
+        return response()->json([
+            'approved_tvpss' => $approvedTVPSSCount,
+            'pending_validation' => $pendingValidationCount,
+            'schools_in_district' => $schoolsInDistrictCount,
+        ]);
+    }
 }
