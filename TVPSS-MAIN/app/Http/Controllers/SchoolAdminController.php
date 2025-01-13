@@ -1110,6 +1110,33 @@ class SchoolAdminController extends Controller
         }
     }
     
+    public function getSchoolAdminStats()
+{
+    $user = auth()->user();
 
+    // Fetch the school information linked to the School Admin
+    $schoolInfo = SchoolInfo::where('user_id', $user->id)->first();
+
+    if (!$schoolInfo) {
+        return response()->json([
+            'students_count' => 0,
+            'achievements_count' => 0,
+            'student_crews_count' => 0,
+        ]);
+    }
+
+    // Get the counts for students, achievements, and crews
+    $studentsCount = Student::where('school_info_id', $schoolInfo->id)->count();
+    $achievementsCount = StudentAchievement::where('school_info_id', $schoolInfo->id)->count();
+    $studentCrewsCount = Studcrew::whereHas('student', function ($query) use ($schoolInfo) {
+        $query->where('school_info_id', $schoolInfo->id);
+    })->count();
+
+    return response()->json([
+        'students_count' => $studentsCount,
+        'achievements_count' => $achievementsCount,
+        'student_crews_count' => $studentCrewsCount,
+    ]);
+}
 
 }
