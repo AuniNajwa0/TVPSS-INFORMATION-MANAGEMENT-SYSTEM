@@ -25,7 +25,13 @@ export default function Dashboard() {
   const [date, setDate] = useState("2024-07-02");
   const [tvpssVersion, setTvpssVersion] = useState("Memuatkan...");
 
+  // States for counts
+  const [studentsCount, setStudentsCount] = useState(null);
+  const [achievementsCount, setAchievementsCount] = useState(null);
+  const [studentCrewsCount, setStudentCrewsCount] = useState(null);
+
   useEffect(() => {
+    // Fetch TVPSS version
     fetch("/get-tvpss-version")
       .then((response) => response.json())
       .then((data) => {
@@ -34,6 +40,18 @@ export default function Dashboard() {
       .catch((error) => {
         console.error("Error fetching TVPSS version:", error);
         setTvpssVersion("Error");
+      });
+
+    // Fetch counts from the server
+    fetch("/school-admin-stats")
+      .then((response) => response.json())
+      .then((data) => {
+        setStudentsCount(data.students_count ?? 0);
+        setAchievementsCount(data.achievements_count ?? 0);
+        setStudentCrewsCount(data.student_crews_count ?? 0);
+      })
+      .catch((error) => {
+        console.error("Error fetching school stats:", error);
       });
   }, []);
 
@@ -61,18 +79,19 @@ export default function Dashboard() {
   };
 
   const doughnutData = {
-    labels: ["Lelaki", "Perempuan"],
+    labels: ["Gaffer", "Jurukamera", "Penemuduga"],
     datasets: [
       {
-        label: "Pengguna dalam Tempoh 30 Minit Terakhir",
-        data: [200, 300],
-        backgroundColor: ["#455185", "#008080"],
-        borderColor: ["#455185", "#008080"],
+        label: "Jumlah:",
+        data: [200, 300, 150], // Now there are 3 data points, matching the 3 labels
+        backgroundColor: ["#455185", "#008080", "#f6ebcb"],
+        borderColor: ["#455185", "#008080", "#f6ebcb"], // Border color for each section
         borderWidth: 2,
         hoverOffset: 4,
       },
     ],
   };
+  
 
   const handleTimeRangeChange = (event, newValue) => {
     if (newValue !== null) {
@@ -153,10 +172,34 @@ export default function Dashboard() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-            <SummaryCard title="Bilangan Pelajar Sekolah" value="20" icon={<FaUsers />} bgColor="#f6ebcb" iconColor="#9d8338" />
-            <SummaryCard title="Bilangan Pencapaian" value="5" icon={<FaStar />} bgColor="#cbf6d1" iconColor="#287033" />
-            <SummaryCard title="Bilangan Krew Pelajar" value="15" icon={<FaUserFriends />} bgColor="#bbd1ef" iconColor="#0f3365" />
-            <SummaryCard title="Versi TVPSS Terkini" value={tvpssVersion} icon={<FaSortNumericUp />} bgColor="#e6e6fa" iconColor="#6a0dad" />
+            <SummaryCard
+              title="Bilangan Pelajar Sekolah"
+              value={studentsCount ?? "Memuatkan..."}
+              icon={<FaUsers />}
+              bgColor="#f6ebcb"
+              iconColor="#9d8338"
+            />
+            <SummaryCard
+              title="Bilangan Pencapaian"
+              value={achievementsCount ?? "Memuatkan..."}
+              icon={<FaStar />}
+              bgColor="#cbf6d1"
+              iconColor="#287033"
+            />
+            <SummaryCard
+              title="Bilangan Krew Pelajar"
+              value={studentCrewsCount ?? "Memuatkan..."}
+              icon={<FaUserFriends />}
+              bgColor="#bbd1ef"
+              iconColor="#0f3365"
+            />
+            <SummaryCard
+              title="Versi TVPSS Terkini"
+              value={tvpssVersion}
+              icon={<FaSortNumericUp />}
+              bgColor="#e6e6fa"
+              iconColor="#6a0dad"
+            />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -166,7 +209,7 @@ export default function Dashboard() {
             </div>
 
             <div className="bg-white p-5 rounded-2xl border-2 border-gray-200">
-              <h3 className="text-xl font-semibold mb-4">Jumlah Peratusan Mengikut Versi</h3>
+              <h3 className="text-xl font-semibold mb-4">Jumlah Peratusan Krew Mengikut Jawatan</h3>
               <Doughnut data={doughnutData} />
             </div>
           </div>

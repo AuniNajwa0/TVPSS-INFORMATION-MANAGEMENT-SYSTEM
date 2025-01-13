@@ -42,6 +42,10 @@ Route::post('/updateEditSchoolTVPSSVersion2', [SchoolAdminController::class, 'ed
 
 //Dashboard Count 
 Route::get('/get-tvpss-version', [SchoolAdminController::class, 'getTVPSSVersion'])->name('tvpss.getVersion');
+Route::get('/school-admin-stats', [SchoolAdminController::class, 'getSchoolAdminStats']);
+
+
+
 
 //Student Data
 Route::get('/listStudent', [SchoolAdminController::class, 'studentList'])->name('student.studentList');
