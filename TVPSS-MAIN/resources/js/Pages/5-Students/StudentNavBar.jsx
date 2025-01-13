@@ -1,7 +1,7 @@
 import { Inertia } from '@inertiajs/inertia'; // Import Inertia
 import { CheckCircle, ChevronDown, Home, LogOut, Users } from 'lucide-react';
 import { useState } from 'react';
-import { router } from '@inertiajs/react'
+import { router } from '@inertiajs/react';
 
 const StudentNavBar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);

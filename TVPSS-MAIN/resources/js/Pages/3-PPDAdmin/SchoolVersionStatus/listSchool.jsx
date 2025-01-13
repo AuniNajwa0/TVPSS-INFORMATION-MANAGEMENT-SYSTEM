@@ -199,12 +199,7 @@ export default function ListPPDSchool({ schools = [] }) {
                                                     >
                                                         <FaEdit size={18} />
                                                     </button>
-                                                    <button
-                                                        onClick={() => handleDelete(school.schoolCode)}
-                                                        className="text-gray-400 hover:text-gray-600"
-                                                    >
-                                                        <FaTrashAlt size={18} />
-                                                    </button>
+                                                    
                                                 </div>
                                             </td>
                                         </tr>
