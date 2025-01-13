@@ -23,6 +23,11 @@ const StudCrewList = ({ studcrews, school }) => {
         Inertia.get(route('studcrew.list'), { search, rowsPerPage: e.target.value });
     };
 
+    // Function to handle pagination change
+    const handlePageChange = (page) => {
+        Inertia.get(route('studcrew.list'), { search, page, rowsPerPage });
+    };
+
     // Function to determine the status color
     const getStatusColor = (status) => {
         switch (status) {
@@ -96,7 +101,6 @@ const StudCrewList = ({ studcrews, school }) => {
                             </div>
 
                             <div className="flex items-center space-x-4">
-
                                 <button
                                     style={{ marginTop: '1.45rem' }}
                                     className="px-4 py-2 bg-[#455185] text-white rounded-lg shadow hover:bg-[#3b477a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all"
@@ -179,6 +183,37 @@ const StudCrewList = ({ studcrews, school }) => {
                             </tbody>
                         </table>
 
+                        {/* Pagination */}
+                        <div className="flex justify-between items-center mt-4">
+                            {/* Previous Button (Left) */}
+                            <div className="flex items-center">
+                                <button
+                                    onClick={() => handlePageChange(studcrews.current_page - 1)}
+                                    disabled={studcrews.current_page === 1}
+                                    className="px-4 py-2 bg-gray-200 rounded-lg text-gray-700 hover:bg-gray-300"
+                                >
+                                    Previous
+                                </button>
+                            </div>
+
+                            {/* Current Page Info (Center) */}
+                            <div className="text-center flex-grow">
+                                <span className="text-gray-700">
+                                    Halaman {studcrews.current_page} dari {studcrews.last_page}
+                                </span>
+                            </div>
+
+                            {/* Next Button (Right) */}
+                            <div className="flex items-center">
+                                <button
+                                    onClick={() => handlePageChange(studcrews.current_page + 1)}
+                                    disabled={studcrews.current_page === studcrews.last_page}
+                                    className="px-4 py-2 bg-gray-200 rounded-lg text-gray-700 hover:bg-gray-300"
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
