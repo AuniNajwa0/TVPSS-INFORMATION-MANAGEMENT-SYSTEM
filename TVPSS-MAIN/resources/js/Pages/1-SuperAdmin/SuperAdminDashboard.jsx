@@ -73,6 +73,8 @@ export default function Dashboard() {
     ],
   };
 
+  
+
   const doughnutData = {
     labels: ["Admin State", "Admin PPD", "Admin Sekolah"],
     datasets: [
@@ -81,7 +83,7 @@ export default function Dashboard() {
         data: [
           (userCounts.stateAdmin / (userCounts.stateAdmin + userCounts.ppdAdmin + userCounts.schoolAdmin)) * 100,
           (userCounts.ppdAdmin / (userCounts.stateAdmin + userCounts.ppdAdmin + userCounts.schoolAdmin)) * 100,
-          (userCounts.schoolAdmin / (userCounts.stateAdmin + userCounts.ppdAdmin + userCounts.schoolAdmin)) * 100
+          (userCounts.schoolAdmin / (userCounts.stateAdmin + userCounts.ppdAdmin + userCounts.schoolAdmin)) * 100,
         ],
         backgroundColor: ["#4158A6", "#179BAE", "#FF8343"],
         borderColor: ["#4158A6", "#179BAE", "#FF8343"],
@@ -97,8 +99,7 @@ export default function Dashboard() {
       tooltip: {
         callbacks: {
           label: (tooltipItem) => {
-            // Format the tooltip to show percentage with 2 decimal places
-            return tooltipItem.raw.toFixed(2) + "%";
+            return `${tooltipItem.raw.toFixed(2)}%`;
           },
         },
       },
@@ -287,7 +288,7 @@ export default function Dashboard() {
 
             <div className="bg-white p-5 rounded-2xl border-2 border-gray-200 flex flex-col items-center">
               <h3 className="text-xl font-bold text-gray-800 mb-6">Bilangan Peratusan Pengguna</h3>
-              <Doughnut data={doughnutData} options={{ responsive: true }} />
+              <Doughnut data={doughnutData} options={options} />
             </div>
           </div>
         </div>
