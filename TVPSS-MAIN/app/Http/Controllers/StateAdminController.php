@@ -303,36 +303,35 @@ class StateAdminController extends Controller
     }
     
     public function getStateAdminStats()
+{
+    try {
+        $data = [
+            'schools_count' => SchoolInfo::count(),
+            'achievements_count' => StudentAchievement::count(),
+            'approved_tvpss_count' => TVPSSVersion::where('status', 'Pending')->count(),
+        ];
+
+        return response()->json($data);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+}
+
+
+    public function getVersionCounts()
     {
-        $user = auth()->user();
-    
-        // Fetch the state ID linked to the State Admin
-        $stateId = $user->state_id; // Adjust this if your state info is stored differently
-    
-        if (!$stateId) {
-            return response()->json([
-                'students_count' => 0,
-                'achievements_count' => 0,
-                'schools_count' => 0,
-            ]);
-        }
-    
-        // Get the counts for students, achievements, and schools
-        $studentsCount = Student::whereHas('schoolInfo', function ($query) use ($stateId) {
-            $query->where('state_id', $stateId); // Adjust to use the correct state field
-        })->count();
-    
-        $achievementsCount = StudentAchievement::whereHas('student.schoolInfo', function ($query) use ($stateId) {
-            $query->where('state_id', $stateId); // Adjust to use the correct state field
-        })->count();
-    
-        $schoolsCount = SchoolInfo::where('state_id', $stateId)->count(); // Use state_id to get the number of schools
-    
+        // Count the number of schools for each TVPSS version
+        $version1Count = TVPSSVersion::where('version', '1')->count();
+        $version2Count = TVPSSVersion::where('version', '2')->count();
+        $version3Count = TVPSSVersion::where('version', '3')->count();
+        $version4Count = TVPSSVersion::where('version', '4')->count();
+
+        // Return the counts as a JSON response
         return response()->json([
-            'students_count' => $studentsCount,
-            'achievements_count' => $achievementsCount,
-            'schools_count' => $schoolsCount,
+            'version1_count' => $version1Count,
+            'version2_count' => $version2Count,
+            'version3_count' => $version3Count,
+            'version4_count' => $version4Count,
         ]);
     }
-    
 }

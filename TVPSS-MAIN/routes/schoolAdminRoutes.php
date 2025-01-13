@@ -45,8 +45,6 @@ Route::get('/get-tvpss-version', [SchoolAdminController::class, 'getTVPSSVersion
 Route::get('/school-admin-stats', [SchoolAdminController::class, 'getSchoolAdminStats']);
 
 
-
-
 //Student Data
 Route::get('/listStudent', [SchoolAdminController::class, 'studentList'])->name('student.studentList');
 Route::get('/students/create', [SchoolAdminController::class, 'studentCreate'])->name('student.create');
