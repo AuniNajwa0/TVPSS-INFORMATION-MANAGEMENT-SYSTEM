@@ -3,18 +3,18 @@ import { Briefcase, CheckCircle, Mail, MapPin, School, Send, User } from "lucide
 import { useState } from "react";
 import StudentNavBar from "./StudentNavBar";
 
-function ApplyCrew({ student }) { // Accept student as a prop
+function ApplyCrew({ student }) {
     const [isModalVisible, setIsModalVisible] = useState(false);
 
     // Initialize form data with student information
     const { data, setData, post, errors } = useForm({
-        ic_num: student.ic_num || '', // Initialize with student data
-        name: student.name || '', // Initialize with student data
-        email: student.email || '', // Initialize with student data
-        state: student.state || '', // Initialize with student data
-        district: student.district || '', // Initialize with student data
-        schoolName: student.schoolName || '', // Initialize with student data
-        jawatan: '', // Only the jawatan is required
+        ic_num: student.ic_num || '',
+        name: student.name || '',
+        email: student.email || '',
+        state: student.state || '',
+        district: student.district || '',
+        schoolName: student.schoolName || '',
+        jawatan: '', 
     });
 
     const handleInputChange = (e) => {
@@ -145,29 +145,29 @@ function ApplyCrew({ student }) { // Accept student as a prop
                     <div style={styles.sectionTitle}>Maklumat Peribadi</div>
                     <div style={styles.formGroup}>
                         <div style={styles.iconContainer}>
-                            <User  size={18} />
+                            <User size={18} />
                         </div>
                         <input
                             type="text"
                             name="ic_num"
                             placeholder="Nombor Kad Pengenalan (000000-00-0000)"
                             style={styles.input}
-                            value={data.ic_num} // Use student data
-                            readOnly // Make it read-only
+                            value={data.ic_num}
+                            readOnly
                             autoComplete="off"
                         />
                     </div>
                     <div style={styles.formGroup}>
                         <div style={styles.iconContainer}>
-                            <User  size={18} />
+                            <User size={18} />
                         </div>
                         <input
                             type="text"
                             name="name"
                             placeholder="Nama Pelajar"
                             style={styles.input}
-                            value={data.name} // Use student data
-                            readOnly // Make it read-only
+                            value={data.name}
+                            readOnly
                             autoComplete="off"
                         />
                     </div>
@@ -180,8 +180,8 @@ function ApplyCrew({ student }) { // Accept student as a prop
                             name="email"
                             placeholder="Email Pelajar"
                             style={styles.input}
-                            value={data.email} // Use student data
-                            readOnly // Make it read-only
+                            value={data.email}
+                            readOnly
                             autoComplete="email" 
                         />
                     </div>
@@ -196,8 +196,8 @@ function ApplyCrew({ student }) { // Accept student as a prop
                             name="state"
                             placeholder="Negeri"
                             style={styles.input}
-                            value={data.state} // Use student data
-                            readOnly // Make it read-only
+                            value={data.state}
+                            readOnly
                             autoComplete="off"
                         />
                     </div>
@@ -210,8 +210,8 @@ function ApplyCrew({ student }) { // Accept student as a prop
                             name="district"
                             placeholder="Daerah"
                             style={styles.input}
-                            value={data.district} // Use student data
-                            readOnly // Make it read-only
+                            value={data.district}
+                            readOnly
                             autoComplete="off"
                         />
                     </div>
@@ -224,8 +224,8 @@ function ApplyCrew({ student }) { // Accept student as a prop
                             name="schoolName"
                             placeholder="Nama Sekolah"
                             style={styles.input}
-                            value={data.schoolName} // Use student data
-                            readOnly // Make it read-only
+                            value={data.schoolName}
+                            readOnly
                             autoComplete="off"
                         />
                     </div>
@@ -236,12 +236,11 @@ function ApplyCrew({ student }) { // Accept student as a prop
                             <Briefcase size={18} />
                         </div>
                         <select
-                            id="jawatan" // Added
+                            id="jawatan"
                             name="jawatan"
                             style={styles.input}
                             value={data.jawatan}
                             onChange={handleInputChange}
-                            autocomplete="off" // Use "off" for dropdowns unless there's a specific autocomplete value
                         >
                             <option value="">Pilih Jawatan Krew</option>
                             <option value="Jurukamera">Jurukamera</option>
@@ -250,7 +249,7 @@ function ApplyCrew({ student }) { // Accept student as a prop
                         </select>
                     </div>
 
- <button type="submit" style={styles.button}>
+                    <button type="submit" style={styles.button}>
                         <Send size={20} />
                         Hantar Permohonan
                     </button>
@@ -260,9 +259,10 @@ function ApplyCrew({ student }) { // Accept student as a prop
             <div style={styles.modal}>
                 <div style={styles.modalContent}>
                     <CheckCircle size={50} style={styles.checkIcon} />
-                    <h2>Permohonan Berjaya Dihantar</h2>
+                    <h2>Pendaftaran Berjaya!</h2>
+                    <p>Permohonan Krew TVPSS anda telah berjaya dihantar.</p>
                     <button onClick={handleCloseModal} style={styles.okButton}>
-                        OK
+                        Ok
                     </button>
                 </div>
             </div>

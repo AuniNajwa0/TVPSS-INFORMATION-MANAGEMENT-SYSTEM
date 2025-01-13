@@ -84,42 +84,39 @@ class StudentController extends Controller
     }
 
     public function resultApply(Request $request)
-    {
-        // Get the IC number of the logged-in user
-        $icNum = Auth::user()->ic_num; // Assuming `ic_num` is part of the `users` table
-        
-        // Fetch student by IC number
-        $student = Student::where('ic_num', $icNum)->with('studcrews')->first();
-        
-        if (!$student) {
-            return Inertia::render('5-Students/ResultApply', [
-                'applications' => [],  // No applications to show
-                'message' => 'No student found with the provided IC number.',
-            ]);
-        }
+{
+    // Get the IC number of the logged-in user
+    $ic_num = session('ic_num'); // Assuming `ic_num` is part of the `users` table
     
-        // Map the student's Studcrew data
-        $applications = $student->studcrews->map(function ($studcrew) {
-            return [
-                'id' => $studcrew->id,
-                'jawatan' => $studcrew->jawatan, // Position
-                'status' => $studcrew->status, // Application status
-                'dateSubmitted' => $studcrew->created_at->format('d-m-Y H:i:s'), // Format the date if needed
-                'name' => $studcrew->student->name,
-                'email' => $studcrew->student->email,
-                'ic_num' => $studcrew->student->ic_num,
-            ];
-        });
+    // Fetch student by IC number
+    $student = Student::where('ic_num', $ic_num)->with('studcrews.student')->first(); // Make sure to load 'student' relationship with 'studcrews'
     
-        // Pass data to Inertia
+    if (!$student) {
         return Inertia::render('5-Students/ResultApply', [
-            'applications' => $applications,
-            'student' => $student,
+            'applications' => [],  // No applications to show
+            'message' => 'No student found with the provided IC number.',
         ]);
     }
-    
 
-    
+    // Map the student's Studcrew data
+    $applications = $student->studcrews->map(function ($studcrew) {
+        return [
+            'id' => $studcrew->id,
+            'jawatan' => $studcrew->jawatan, // Position
+            'status' => $studcrew->status, // Application status
+            'dateSubmitted' => $studcrew->created_at->format('d-m-Y H:i:s'), // Format the date if needed
+            'name' => $studcrew->student->name,
+            'email' => $studcrew->student->email,
+            'ic_num' => $studcrew->student->ic_num,
+        ];
+    });
+
+    // Return the data to the Inertia view
+    return Inertia::render('5-Students/ResultApply', [
+        'applications' => $applications,
+        'message' => 'Student data found.',
+    ]);
+}
 
     // Store method for creating a new student
     public function store(Request $request)

@@ -124,7 +124,7 @@ export default function Donation() {
                         <div className="h-8 w-px bg-gray-200" />
                         <img src="/assets/TVPSSLogo3.jpg" alt="TVPSS Logo" className="h-16 w-auto" />
                     </div>
-                    <Link href="/studentsPage" className="group flex items-center px-4 py-2 text-sm font-medium text-gray-600 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all duration-300">
+                    <Link href="/studentPage" className="group flex items-center px-4 py-2 text-sm font-medium text-gray-600 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all duration-300">
                         <ArrowLeft className="w-4 h-4 mr-2 transform group-hover:-translate-x-1 transition-transform duration-300" />
                         Kembali
                     </Link>

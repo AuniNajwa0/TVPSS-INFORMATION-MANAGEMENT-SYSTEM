@@ -25,10 +25,12 @@ export default function StudentLogin({ status, canResetPassword }) {
             Inertia.visit(route('student.dashboard'));
         },
         onError: (backendErrors) => {
+            // Handle backend validation errors (e.g., invalid IC number)
             setError(backendErrors.ic_num || 'An error occurred.');
         },
     });
 };
+
 
 
   return (
