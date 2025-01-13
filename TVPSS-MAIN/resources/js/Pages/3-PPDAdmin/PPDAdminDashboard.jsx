@@ -101,110 +101,110 @@ export default function PPDAdminDashboard() {
   //   }
   // ];
 
-  // const [selectedRegion, setSelectedRegion] = useState("Semua Negeri");
+  const [selectedRegion, setSelectedRegion] = useState("Semua Negeri");
 
-  // const handleTimeRangeChange = (event, newTimeRange) => {
-  //   if (newTimeRange) setTimeRange(newTimeRange);
-  // };
+  const handleTimeRangeChange = (event, newTimeRange) => {
+    if (newTimeRange) setTimeRange(newTimeRange);
+  };
 
-  // const CustomDateInput = ({ value, onClick }) => (
-  //   <div className="relative" onClick={onClick}>
-  //     <input
-  //       type="text"
-  //       value={value}
-  //       className="px-4 py-2.5 pl-10 pr-10 bg-[#f8f9fa] border border-[#ddd] rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-  //       readOnly
-  //     />
+  const CustomDateInput = ({ value, onClick }) => (
+    <div className="relative" onClick={onClick}>
+      <input
+        type="text"
+        value={value}
+        className="px-4 py-2.5 pl-10 pr-10 bg-[#f8f9fa] border border-[#ddd] rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+        readOnly
+      />
 
-  //      <Calendar
-  //       style={{
-  //         position: "absolute",
-  //         top: "50%",
-  //         left: "10px",
-  //         transform: "translateY(-50%)",
-  //         color: "#374151",
-  //         fontSize: "10px", // Icon size
-  //       }}
-  //     />
-  //     <ChevronDown
-  //       style={{
-  //         position: "absolute",
-  //         top: "50%",
-  //         right: "10px",
-  //         transform: "translateY(-50%)",
-  //         color: "#374151",
-  //         fontSize: "14px", // Arrow size
-  //       }}
-  //     />
-  //   </div>
-  // );
+       <Calendar
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "10px",
+          transform: "translateY(-50%)",
+          color: "#374151",
+          fontSize: "10px", // Icon size
+        }}
+      />
+      <ChevronDown
+        style={{
+          position: "absolute",
+          top: "50%",
+          right: "10px",
+          transform: "translateY(-50%)",
+          color: "#374151",
+          fontSize: "14px", // Arrow size
+        }}
+      />
+    </div>
+  );
 
-  //   const barData = {
-  //       labels: ['Versi 1', 'Versi 2', 'Versi 3'],
-  //       datasets: [
-  //           {
-  //               label: 'Bilangan Pengguna Mengikut Jenis',
-  //               data: [48, 800, 4000],
-  //               backgroundColor: ["#455185", "#179BAE", "#FF8343"],
-  //               borderColor: ["#455185", "#179BAE", "#FF8343"],
-  //               borderWidth: 1,
-  //               borderRadius: 20,
-  //           },
-  //       ],
-  //   };
+    const barData = {
+        labels: ['Versi 1', 'Versi 2', 'Versi 3'],
+        datasets: [
+            {
+                label: 'Bilangan Pengguna Mengikut Jenis',
+                data: [48, 800, 4000],
+                backgroundColor: ["#455185", "#179BAE", "#FF8343"],
+                borderColor: ["#455185", "#179BAE", "#FF8343"],
+                borderWidth: 1,
+                borderRadius: 20,
+            },
+        ],
+    };
 
-  //   const barOptions = {
-  //       responsive: true,
-  //       plugins: {
-  //           legend: {
-  //               display: false,
-  //           },
-  //       },
-  //   };
+    const barOptions = {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: false,
+            },
+        },
+    };
 
-  //   const doughnutData = {
-  //       labels: ['Versi 1', 'Versi 2', 'Versi 3'],
-  //       datasets: [
-  //           {
-  //               label: 'Pengguna dalam Tempoh 30 Minit Terakhir',
-  //               data: [20, 300, 800],
-  //               backgroundColor: ["#455185", "#179BAE", "#FF8343"],
-  //               borderColor: ["#455185", "#179BAE", "#FF8343"],
-  //               borderWidth: 2,
-  //               hoverOffset: 4,
-  //           },
-  //       ],
-  //   };
+    const doughnutData = {
+        labels: ['Versi 1', 'Versi 2', 'Versi 3'],
+        datasets: [
+            {
+                label: 'Pengguna dalam Tempoh 30 Minit Terakhir',
+                data: [20, 300, 800],
+                backgroundColor: ["#455185", "#179BAE", "#FF8343"],
+                borderColor: ["#455185", "#179BAE", "#FF8343"],
+                borderWidth: 2,
+                hoverOffset: 4,
+            },
+        ],
+    };
 
-  //   const lineData = {
-  //       labels: ['1 Jun', '2 Jun', '3 Jun', '4 Jun', '5 Jun', '6 Jun', '7 Jun'],
-  //       datasets: [
-  //           {
-  //               label: 'Admin State Login',
-  //               data: [1500, 300, 500, 3000, 800, 500, 700],
-  //               borderColor: '#455185',
-  //               backgroundColor: '#455185',
-  //               fill: false,
-  //               tension: 0.1,
-  //           },
-  //           {
-  //               label: 'Admin School Login',
-  //               data: [800, 500, 3500, 700, 2500, 800, 600],
-  //               borderColor: '#179BAE',
-  //               backgroundColor: '#179BAE',
-  //               fill: false,
-  //               tension: 0.1,
-  //           },
-  //           {
-  //               label: 'Admin PPD Login',
-  //               data: [500, 700, 2000, 400, 1000, 700, 500],
-  //               borderColor: '#FF8343',
-  //               backgroundColor: '#FF8343',
-  //               fill: false,
-  //               tension: 0.1,
-  //           },
-  //       ],
-  //   };
+    const lineData = {
+        labels: ['1 Jun', '2 Jun', '3 Jun', '4 Jun', '5 Jun', '6 Jun', '7 Jun'],
+        datasets: [
+            {
+                label: 'Admin State Login',
+                data: [1500, 300, 500, 3000, 800, 500, 700],
+                borderColor: '#455185',
+                backgroundColor: '#455185',
+                fill: false,
+                tension: 0.1,
+            },
+            {
+                label: 'Admin School Login',
+                data: [800, 500, 3500, 700, 2500, 800, 600],
+                borderColor: '#179BAE',
+                backgroundColor: '#179BAE',
+                fill: false,
+                tension: 0.1,
+            },
+            {
+                label: 'Admin PPD Login',
+                data: [500, 700, 2000, 400, 1000, 700, 500],
+                borderColor: '#FF8343',
+                backgroundColor: '#FF8343',
+                fill: false,
+                tension: 0.1,
+            },
+        ],
+    };
 
     const lineOptions = {
         responsive: true,
