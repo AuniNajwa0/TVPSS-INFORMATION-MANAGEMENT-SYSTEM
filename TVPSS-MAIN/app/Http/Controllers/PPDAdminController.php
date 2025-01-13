@@ -291,38 +291,48 @@ class PPDAdminController extends Controller
         }
     }
 
-    public function getPPDAdminStats()
+    public function getPPDAdminStats(Request $request)
     {
-        $user = auth()->user();
+        // Fetch the logged-in PPD Admin user
+        $user = $request->user();
 
-        // Fetch the PPD Admin's district
-        $schoolInfo = SchoolInfo::where('user_id', $user->id)->first();
+        // Fetch the district directly from the User model
+        $district = $user->district;
 
-        if (!$schoolInfo) {
+        // If no district found for the PPD Admin, return an error message
+        if (!$district) {
             return response()->json([
-                'approved_tvpss' => 0,
-                'pending_validation' => 0,
-                'schools_in_district' => 0,
+                'message' => 'No district info found for this user',
+                'schools_count' => 0,
+                'pending_tvpss_count' => 0,
+                'approved_tvpss_count' => 0,
+                'rejected_tvpss_count' => 0,  // Add rejected count in case of error
             ]);
         }
 
-        // Bilangan TVPPS Diluluskan (Approved TVPSS Versions)
-        $approvedTVPSSCount = TVPSSVersion::where('school_info_id', $schoolInfo->id)
-            ->where('status', 'approved') // Assuming 'approved' is a status
-            ->count();
+        // Get the counts for schools, pending TVPSS, approved TVPSS, and rejected TVPSS in the district
+        $schoolsCount = SchoolInfo::where('district', $district)->count();
 
-        // Bilangan Pending Validasi (Pending TVPSS Validations)
-        $pendingValidationCount = TVPSSVersion::where('school_info_id', $schoolInfo->id)
-            ->where('status', 'pending') // Assuming 'pending' is a status
-            ->count();
+        $pendingTVPSSCount = TVPSSVersion::whereHas('schoolInfo', function ($query) use ($district) {
+            $query->where('district', $district);
+        })->where('status', 'Pending')->count();
 
-        // Bilangan Sekolah Di Daerah Anda (Schools in the District)
-        $schoolsInDistrictCount = SchoolInfo::where('district', $schoolInfo->district)->count();
+        $approvedTVPSSCount = TVPSSVersion::whereHas('schoolInfo', function ($query) use ($district) {
+            $query->where('district', $district);
+        })->where('status', 'Approved')->count();
 
+        $rejectedTVPSSCount = TVPSSVersion::whereHas('schoolInfo', function ($query) use ($district) {
+            $query->where('district', $district);
+        })->where('status', 'Rejected')->count();
+
+        // Return the district statistics as a JSON response
         return response()->json([
-            'approved_tvpss' => $approvedTVPSSCount,
-            'pending_validation' => $pendingValidationCount,
-            'schools_in_district' => $schoolsInDistrictCount,
+            'schools_count' => $schoolsCount,
+            'pending_tvpss_count' => $pendingTVPSSCount,
+            'approved_tvpss_count' => $approvedTVPSSCount,
+            'rejected_tvpss_count' => $rejectedTVPSSCount, // Include rejected count in the response
         ]);
     }
+
+
 }
