@@ -92,7 +92,17 @@ export default function Dashboard() {
         display: false,
       },
     },
+    scales: {
+      y: {
+        ticks: {
+          callback: function (value) {
+            return Number.isInteger(value) ? value : null; // Only show whole numbers
+          },
+        },
+      },
+    },
   };
+  
 
   const doughnutData = {
     labels: ["Gaffer", "Penemuduga", "Jurukamera"],
