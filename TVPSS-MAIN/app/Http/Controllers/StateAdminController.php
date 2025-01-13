@@ -282,4 +282,38 @@ class StateAdminController extends Controller
             ->route('schoolInfo.tvpssInfoIndex')
             ->with('error', 'TVPSS Version has been rejected.');
     }
+    
+    public function getStateAdminStats()
+    {
+        $user = auth()->user();
+    
+        // Fetch the state ID linked to the State Admin
+        $stateId = $user->state_id; // Adjust this if your state info is stored differently
+    
+        if (!$stateId) {
+            return response()->json([
+                'students_count' => 0,
+                'achievements_count' => 0,
+                'schools_count' => 0,
+            ]);
+        }
+    
+        // Get the counts for students, achievements, and schools
+        $studentsCount = Student::whereHas('schoolInfo', function ($query) use ($stateId) {
+            $query->where('state_id', $stateId); // Adjust to use the correct state field
+        })->count();
+    
+        $achievementsCount = StudentAchievement::whereHas('student.schoolInfo', function ($query) use ($stateId) {
+            $query->where('state_id', $stateId); // Adjust to use the correct state field
+        })->count();
+    
+        $schoolsCount = SchoolInfo::where('state_id', $stateId)->count(); // Use state_id to get the number of schools
+    
+        return response()->json([
+            'students_count' => $studentsCount,
+            'achievements_count' => $achievementsCount,
+            'schools_count' => $schoolsCount,
+        ]);
+    }
+    
 }
