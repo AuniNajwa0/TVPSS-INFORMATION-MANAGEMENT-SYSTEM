@@ -44,72 +44,72 @@ export default function Dashboard() {
     }
   };
 
-  const dummyActivities = [
-    {
-      id: 1,
-      type: 'user',
-      description: 'Admin PPD baharu ditambah untuk PPD Petaling Perdana',
-      user: 'Ahmad Zaidi',
-      timestamp: '2 minit yang lalu',
-      status: 'success'
-    },
-    {
-      id: 2,
-      type: 'document',
-      description: 'Laporan prestasi sekolah-sekolah PPD Klang dimuat naik',
-      user: 'Sarah Abdullah',
-      timestamp: '45 minit yang lalu',
-      status: 'pending'
-    },
-    {
-      id: 3,
-      type: 'settings',
-      description: 'Tetapan sistem dikemaskini untuk PPD Hulu Langat',
-      user: 'System',
-      timestamp: '1 jam yang lalu',
-      status: 'success'
-    },
-    {
-      id: 4,
-      type: 'email',
-      description: 'Notifikasi pengguna baharu dihantar kepada semua admin sekolah',
-      user: 'System',
-      timestamp: '2 jam yang lalu',
-      status: 'success'
-    },
-    {
-      id: 5,
-      type: 'upload',
-      description: 'Data pelajar baharu SMK Bandar Tun Hussein Onn dimuat naik',
-      user: 'Noor Hafizah',
-      timestamp: '3 jam yang lalu',
-      status: 'success'
-    },
-    {
-      id: 6,
-      type: 'warning',
-      description: 'Cubaan log masuk yang gagal dikesan dari IP tidak dikenali',
-      user: 'Security System',
-      timestamp: '4 jam yang lalu',
-      status: 'warning'
-    },
-    {
-      id: 7,
-      type: 'success',
-      description: 'Backup sistem berjaya dilaksanakan',
-      user: 'System',
-      timestamp: '5 jam yang lalu',
-      status: 'success'
-    },
-    {
-      id: 8,
-      type: 'document',
-      description: 'Dokumen panduan pengguna dikemaskini ke versi 2.1',
-      user: 'Admin System',
-      timestamp: '6 jam yang lalu',
-      status: 'success'
-    }
-  ];
+  // const dummyActivities = [
+  //   {
+  //     id: 1,
+  //     type: 'user',
+  //     description: 'Admin PPD baharu ditambah untuk PPD Petaling Perdana',
+  //     user: 'Ahmad Zaidi',
+  //     timestamp: '2 minit yang lalu',
+  //     status: 'success'
+  //   },
+  //   {
+  //     id: 2,
+  //     type: 'document',
+  //     description: 'Laporan prestasi sekolah-sekolah PPD Klang dimuat naik',
+  //     user: 'Sarah Abdullah',
+  //     timestamp: '45 minit yang lalu',
+  //     status: 'pending'
+  //   },
+  //   {
+  //     id: 3,
+  //     type: 'settings',
+  //     description: 'Tetapan sistem dikemaskini untuk PPD Hulu Langat',
+  //     user: 'System',
+  //     timestamp: '1 jam yang lalu',
+  //     status: 'success'
+  //   },
+  //   {
+  //     id: 4,
+  //     type: 'email',
+  //     description: 'Notifikasi pengguna baharu dihantar kepada semua admin sekolah',
+  //     user: 'System',
+  //     timestamp: '2 jam yang lalu',
+  //     status: 'success'
+  //   },
+  //   {
+  //     id: 5,
+  //     type: 'upload',
+  //     description: 'Data pelajar baharu SMK Bandar Tun Hussein Onn dimuat naik',
+  //     user: 'Noor Hafizah',
+  //     timestamp: '3 jam yang lalu',
+  //     status: 'success'
+  //   },
+  //   {
+  //     id: 6,
+  //     type: 'warning',
+  //     description: 'Cubaan log masuk yang gagal dikesan dari IP tidak dikenali',
+  //     user: 'Security System',
+  //     timestamp: '4 jam yang lalu',
+  //     status: 'warning'
+  //   },
+  //   {
+  //     id: 7,
+  //     type: 'success',
+  //     description: 'Backup sistem berjaya dilaksanakan',
+  //     user: 'System',
+  //     timestamp: '5 jam yang lalu',
+  //     status: 'success'
+  //   },
+  //   {
+  //     id: 8,
+  //     type: 'document',
+  //     description: 'Dokumen panduan pengguna dikemaskini ke versi 2.1',
+  //     user: 'Admin System',
+  //     timestamp: '6 jam yang lalu',
+  //     status: 'success'
+  //   }
+  // ];
 
   const barData = {
     labels: ["Admin State", "Admin PPD", "Admin Sekolah"],
@@ -258,7 +258,7 @@ export default function Dashboard() {
                 }}
               >
                 <Download style={{ fontSize: "20px" }} />
-                Export
+                Eksport
               </Button>
             </Box>
           </div>
@@ -329,7 +329,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="bg-white p-5 rounded-2xl border-2 border-gray-200 mb-6">
+          {/* <div className="bg-white p-5 rounded-2xl border-2 border-gray-200 mb-6">
   <h3 className="text-xl font-bold text-gray-800 mb-4">Aktiviti Terkini</h3>
   <div className="overflow-auto max-h-96">
     {dummyActivities.map((activity) => (
@@ -352,7 +352,7 @@ export default function Dashboard() {
       </div>
     ))}
   </div>
-</div>
+</div> */}
 
         </div>
       </div>

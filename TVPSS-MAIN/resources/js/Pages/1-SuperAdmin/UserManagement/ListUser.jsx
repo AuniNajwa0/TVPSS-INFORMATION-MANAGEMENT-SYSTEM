@@ -4,13 +4,15 @@ import { FaUserPlus, FaSearch, FaEdit, FaTrash } from 'react-icons/fa';
 import SuperAdminSideBar from '../SuperAdminSideBar';
 import { useState } from 'react';
 import { Inertia } from '@inertiajs/inertia';
-import { Button, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { Button, FormControl, InputLabel, Select, MenuItem, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 
 export default function ListUser({ auth, users, pagination, selectedRole }) {
     const [rowsPerPage, setRowsPerPage] = useState(pagination.per_page);
     const [currentPage, setCurrentPage] = useState(pagination.current_page);
     const [selectedRoleState, setSelectedRole] = useState(selectedRole);
     const [searchQuery, setSearchQuery] = useState('');
+    const [openModal, setOpenModal] = useState(false);
+    const [userToDelete, setUserToDelete] = useState(null);
 
     const usersData = users.data;
 
@@ -54,13 +56,29 @@ export default function ListUser({ auth, users, pagination, selectedRole }) {
         setCurrentPage(1);
     };
 
-    const handleDelete = (userId) => {
-        if (confirm('Are you sure you want to delete this user?')) {
-            Inertia.delete(`/users/${userId}`, {
-                onSuccess: () => alert('User successfully deleted!'),
-                onError: (errors) => alert('Failed to delete user: ' + errors.message),
+    const handleDelete = () => {
+        if (userToDelete) {
+            Inertia.delete(`/users/${userToDelete}`, {
+                onSuccess: () => {
+                    setOpenModal(false);
+                    alert('Pengguna berjaya dipadam!');
+                },
+                onError: (errors) => {
+                    setOpenModal(false);
+                    alert('Gagal memadam pengguna: ' + errors.message);
+                },
             });
         }
+    };
+
+    const handleOpenModal = (userId) => {
+        setUserToDelete(userId);
+        setOpenModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setOpenModal(false);
+        setUserToDelete(null);
     };
 
     return (
@@ -73,26 +91,26 @@ export default function ListUser({ auth, users, pagination, selectedRole }) {
                 </div>
 
                 <div className="w-full md:ml-[120px] p-6">
-                <div className="flex items-center justify-between ">
-            <h2 className="text-4xl font-bold text-gray-900 bg-clip-text mb-4">
-              Pengurusan Pengguna
-            </h2>
-          </div>
+                    <div className="flex items-center justify-between ">
+                        <h2 className="text-4xl font-bold text-gray-900 bg-clip-text mb-4">
+                            Pengurusan Pengguna
+                        </h2>
+                    </div>
                     <div className="flex items-center justify-between mb-6">
                         {/* Breadcrumbs Section */}
                         <nav className="mb-8">
-                        <ol className="flex items-center space-x-2 text-gray-600">
-                            <li>
-                                <a href="/listUsers" className="text-[#4158A6] hover:text-blue-800 font-medium">
-                                    Pengurusan Pengguna
-                                </a>
-                            </li>
-                            <li className="text-gray-500">/</li>
-                            <li className="text-gray-900 font-medium">
-                                    Semua Pengguna
-                            </li>
-                        </ol>
-                    </nav>
+                            <ol className="flex items-center space-x-2 text-gray-600">
+                                <li>
+                                    <a href="/listUsers" className="text-[#4158A6] hover:text-blue-800 font-medium">
+                                        Pengurusan Pengguna
+                                    </a>
+                                </li>
+                                <li className="text-gray-500">/</li>
+                                <li className="text-gray-900 font-medium">
+                                        Semua Pengguna
+                                </li>
+                            </ol>
+                        </nav>
 
                         <a href="/addUser">
                             <Button
@@ -230,7 +248,7 @@ export default function ListUser({ auth, users, pagination, selectedRole }) {
                                                         <FaEdit size={18} />
                                                     </button>
                                                     <button
-                                                        onClick={() => handleDelete(user.id)}
+                                                        onClick={() => handleOpenModal(user.id)}
                                                         className="text-gray-400 hover:text-gray-600"
                                                     >
                                                         <FaTrash size={18} />
@@ -274,6 +292,27 @@ export default function ListUser({ auth, users, pagination, selectedRole }) {
                     </div>
                 </div>
             </div>
+
+            {/* Delete Confirmation Modal */}
+            <Dialog
+                open={openModal}
+                onClose={handleCloseModal}
+                aria-labelledby="delete-dialog-title"
+                aria-describedby="delete-dialog-description"
+            >
+                <DialogTitle id="delete-dialog-title">Padam Pengguna</DialogTitle>
+                <DialogContent>
+                    <p>Adakah anda pasti ingin memadam pengguna ini?</p>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseModal} color="primary">
+                        Batal
+                    </Button>
+                    <Button onClick={handleDelete} color="primary">
+                        Ya, Padam
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </AuthenticatedLayout>
     );
 }
@@ -315,10 +354,10 @@ function getRoleTextColor(role) {
         case 1:
             return '#059669';
         case 2:
-            return '#D97706';
+            return '#F59E0B';
         case 3:
             return '#7C3AED';
         default:
-            return '#1F2937';
+            return '#6B7280';
     }
 }
