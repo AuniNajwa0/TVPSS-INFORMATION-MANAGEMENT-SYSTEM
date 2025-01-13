@@ -321,10 +321,10 @@ class StateAdminController extends Controller
     public function getVersionCounts()
     {
         // Count the number of schools for each TVPSS version
-        $version1Count = TVPSSVersion::where('version', '1')->count();
-        $version2Count = TVPSSVersion::where('version', '2')->count();
-        $version3Count = TVPSSVersion::where('version', '3')->count();
-        $version4Count = TVPSSVersion::where('version', '4')->count();
+        $version1Count = TVPSSVersion::where('version', 1)->count();
+        $version2Count = TVPSSVersion::where('version', 2)->count();
+        $version3Count = TVPSSVersion::where('version', 3)->count();
+        $version4Count = TVPSSVersion::where('version', 4)->count();
 
         // Return the counts as a JSON response
         return response()->json([
@@ -334,4 +334,5 @@ class StateAdminController extends Controller
             'version4_count' => $version4Count,
         ]);
     }
+
 }
