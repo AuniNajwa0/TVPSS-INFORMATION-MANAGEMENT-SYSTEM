@@ -4,6 +4,7 @@ import { Inertia } from '@inertiajs/inertia';
 import SchoolAdminSideBar from '../SchoolAdminSideBar';
 import { useState } from 'react';
 import { Box, TextField, FormControl, InputLabel, Select, MenuItem, Typography, Button } from '@mui/material';
+import { router } from '@inertiajs/react';
 
 export default function AddEqLoc() {
     const [formData, setFormData] = useState({
@@ -27,11 +28,11 @@ export default function AddEqLoc() {
             eqLocType: formData.eqLocType === 'other' ? formData.otherType : formData.eqLocType 
         };
 
-        Inertia.post('/eqLoc', updatedFormData);
+        router.post('/eqLoc', updatedFormData);
     };
 
     const handleCancel = () => {
-        Inertia.get('/listEquipment');
+        router.get('/listEquipment');
     };
 
     return (

@@ -79,9 +79,16 @@ export default function AddAchievement({ students = [] }) {
                 data.append(key, formData[key]);
             }
         });
-
+    
         router.post("/achievements", data, {
-            onError: (err) => setErrors(err),
+            onSuccess: () => {
+                console.log("Achievement submitted successfully");
+                router.get("/listAchievement"); // Redirect to the list after successful submission
+            },
+            onError: (err) => {
+                console.error("Submission Error:", err); // Log the error
+                setErrors(err);
+            },
         });
     };
 

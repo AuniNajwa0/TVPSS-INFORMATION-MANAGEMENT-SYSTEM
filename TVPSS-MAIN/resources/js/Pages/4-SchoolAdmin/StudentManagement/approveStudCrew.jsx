@@ -4,12 +4,13 @@ import { FaArrowLeft } from 'react-icons/fa';
 import SchoolAdminSideBar from '../SchoolAdminSideBar';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Inertia } from '@inertiajs/inertia';
+import { router } from '@inertiajs/react';
 
 const ApproveStudCrew = () => {
     const { crew, errors } = usePage().props;
 
     const handleBack = () => {
-        Inertia.get(route('studcrew.list'));
+        router.get(route('studcrew.list'));
     };
 
     const handleApproval = (status) => {
@@ -17,9 +18,9 @@ const ApproveStudCrew = () => {
             ? route('studcrew.approve', { id: crew.id }) 
             : route('studcrew.reject', { id: crew.id });
 
-        Inertia.post(url, {}, {
+        router.post(url, {}, {
             onSuccess: () => {
-                Inertia.get(route('studcrew.list'));
+                router.get(route('studcrew.list'));
             }
         });
     };

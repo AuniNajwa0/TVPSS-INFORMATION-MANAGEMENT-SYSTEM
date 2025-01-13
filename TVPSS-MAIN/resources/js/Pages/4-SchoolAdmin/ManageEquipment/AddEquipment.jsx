@@ -13,6 +13,7 @@ import {
     Upload,
     X
 } from 'lucide-react';
+import { router } from '@inertiajs/react';
 
 export default function AddEquipment() {
     const [formData, setFormData] = useState({
@@ -84,11 +85,11 @@ export default function AddEquipment() {
                 formDataToSubmit.append(key, value);
             }
         });
-        Inertia.post('/equipment', formDataToSubmit);
+        router.post('/equipment', formDataToSubmit);
     };
 
     const handleCancel = () => {
-        Inertia.get('/listEquipment');
+        router.get('/listEquipment');
     };
 
     return (

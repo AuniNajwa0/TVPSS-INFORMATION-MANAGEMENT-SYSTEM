@@ -15,6 +15,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import SchoolAdminSideBar from "../SchoolAdminSideBar";
 import { Inertia } from "@inertiajs/inertia";
 import { formatDistanceToNow } from "date-fns";
+import { router } from '@inertiajs/react';
 
 export default function UpdateEquipment({ equipment, eqLocation, followUps }) {
     const [formData, setFormData] = useState({
@@ -132,7 +133,7 @@ export default function UpdateEquipment({ equipment, eqLocation, followUps }) {
             );
         }
 
-        Inertia.post(`/equipment/${equipment.id}/follow-up`, formDataToSubmit, {
+        router.post(`/equipment/${equipment.id}/follow-up`, formDataToSubmit, {
             preserveScroll: true,
             onSuccess: () => {
                 setMessage("Follow-up successfully saved!");
@@ -162,9 +163,10 @@ export default function UpdateEquipment({ equipment, eqLocation, followUps }) {
             status: formData.status || "",
         };
 
-        Inertia.put(`/equipment/${equipment.id}`, updatedData, {
+        router.put(`/equipment/${equipment.id}`, updatedData, {
             onSuccess: () => {
                 console.log("Update successful");
+                router.get("/listEquipment");
             },
             onError: (errors) => {
                 setErrors(errors);
@@ -377,7 +379,7 @@ export default function UpdateEquipment({ equipment, eqLocation, followUps }) {
                                         <button
                                             type="button"
                                             onClick={() =>
-                                                Inertia.get("/listEquipment")
+                                                router.get("/listEquipment")
                                             }
                                             className="px-6 py-3 bg-gray-500 text-white rounded-xl shadow-md hover:bg-gray-600 transition-colors duration-300"
                                         >
